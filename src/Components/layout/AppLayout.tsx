@@ -1,33 +1,37 @@
 /**
- * @fileoverview Core application layout.
- * Composes Sidebar + Navbar + main content area (<Outlet>).
- * Applied to all protected routes.
+ * @fileoverview Core app shell — Sidebar + Navbar + content area.
+ * Applies GSAP page-entry animation on route change (y: 20, opacity: 0 → 0, 1).
  */
-import React, { useState } from 'react';
-import { Outlet, useMatches } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import Sidebar from './Sidebar';
-import Navbar  from './Navbar';
-import { APP_NAME } from '@/Constants';
+import React, { useState, useRef, useEffect } from 'react';
+import { Outlet, useLocation }  from 'react-router-dom';
+import { Helmet }               from 'react-helmet-async';
+import gsap                     from 'gsap';
+import Sidebar                  from './Sidebar';
+import Navbar                   from './Navbar';
+import { APP_NAME }             from '@/Constants';
 
-/**
- * The authenticated app shell.
- * Renders the sidebar (collapsible desktop / slide-over mobile) and the
- * top navbar, then projects the active child route into `<Outlet>`.
- */
+/** Derives a human-readable page title from the current pathname. */
+function deriveTitle(pathname: string): string {
+  const segment = pathname.split('/').filter(Boolean).at(-1) ?? 'dashboard';
+  return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
+}
+
 const AppLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const matches = useMatches();
+  const location   = useLocation();
+  const contentRef = useRef<HTMLElement>(null);
 
-  /** Derive page title from the deepest matched route's handle, falling back to app name. */
-  const pageTitle = (() => {
-    const last = [...matches].reverse().find((m) => {
-      const handle = m.handle as Record<string, unknown> | undefined;
-      return typeof handle?.title === 'string';
-    });
-    const handle = last?.handle as Record<string, unknown> | undefined;
-    return typeof handle?.title === 'string' ? handle.title : 'Dashboard';
-  })();
+  const pageTitle = deriveTitle(location.pathname);
+
+  // GSAP page-entry animation on route change
+  useEffect(() => {
+    if (!contentRef.current) return;
+    gsap.fromTo(
+      contentRef.current,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.45, ease: 'expo.out', clearProps: 'all' }
+    );
+  }, [location.pathname]);
 
   return (
     <>
@@ -35,7 +39,10 @@ const AppLayout: React.FC = () => {
         <title>{pageTitle} — {APP_NAME} Admin</title>
       </Helmet>
 
-      <div className="flex h-svh overflow-hidden" style={{ backgroundColor: 'var(--bg)' }}>
+      <div
+        className="flex h-svh overflow-hidden"
+        style={{ backgroundColor: 'var(--bg)' }}
+      >
         {/* Sidebar */}
         <Sidebar
           isOpen={sidebarOpen}
@@ -43,7 +50,7 @@ const AppLayout: React.FC = () => {
         />
 
         {/* Main column */}
-        <div className="flex flex-col flex-1 overflow-hidden">
+        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
           {/* Navbar */}
           <Navbar
             onMenuClick={() => setSidebarOpen(true)}
@@ -52,9 +59,13 @@ const AppLayout: React.FC = () => {
 
           {/* Page content */}
           <main
+            ref={contentRef}
             id="main-content"
-            className="flex-1 overflow-y-auto p-4 sm:p-6"
-            style={{ backgroundColor: 'var(--bg)' }}
+            className="flex-1 overflow-y-auto"
+            style={{
+              padding:         '1.5rem',
+              backgroundColor: 'var(--bg)',
+            }}
           >
             <Outlet />
           </main>
