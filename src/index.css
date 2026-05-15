@@ -4,47 +4,272 @@
 @custom-variant dark (&:is(.dark, .dark *));
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   DYNAMIC TOKENS — Tailwind v4 Design System
+   ZERO-FLICKER THEME BOOTSTRAP
+   Applied immediately before React mounts to prevent FOUC.
 ═══════════════════════════════════════════════════════════════════════════════ */
 :root {
-  /* Core Palette */
-  --bg:               #202020;
-  --surface:          rgba(40, 40, 40, 0.90); /* Charcoal #282828E5 */
-  --accent:           #EB712B;
-  --text-primary:     #FFFFFF;
-  --text-secondary:   #B0B0B0;
-  --border:           #464646;
+  /* ── Core Palette ── */
+  --color-accent:        #EB712B;
+  --color-bg-dark:       #202020;
+  --color-surface-dark:  #282828E5;
+  --color-secondary:     #464646;
+  --color-text-primary:  #FFFFFF;
+  --color-text-muted:    #B0B0B0;
+  --color-error:         #EF4444;
 
-  /* Elevation */
-  --shadow-card:      0 20px 50px rgba(0, 0, 0, 0.5);
-  --shadow-accent:    0 0 20px rgba(235, 113, 43, 0.3);
+  /* ── Shadows ── */
+  --shadow-card:         0 20px 50px rgba(0, 0, 0, 0.5);
+  --shadow-accent:       0 0 20px rgba(235, 113, 43, 0.3);
+  --shadow-pill-glow:    0 10px 30px -5px rgba(235, 113, 43, 0.6);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   TAILWIND v4 @THEME BLOCK — Design Tokens
+═══════════════════════════════════════════════════════════════════════════════ */
 @theme {
+  /* ── CRITICAL: Tailwind v4 spacing base — without this all p-*, m-*, gap-* = 0 ── */
+  --spacing: 0.25rem;
+
   /* ── Colors ── */
-  --color-main-bg:         var(--bg);
-  --color-surface:         var(--surface);
-  --color-accent:          var(--accent);
+  --color-accent:          #EB712B;
+  --color-bg-dark:         #202020;
+  --color-main-bg:         #202020;
+  --color-surface:         rgba(40, 40, 40, 0.90);
+  --color-surface-dark:    #282828E5;
   --color-secondary:       #464646;
-  --color-text-main:       var(--text-primary);
-  --color-text-muted:      var(--text-secondary);
+  --color-text-main:       #FFFFFF;
+  --color-text-muted:      #B0B0B0;
   --color-error:           #EF4444;
 
   /* ── Typography ── */
-  --font-roboto:           'Roboto', system-ui, sans-serif;
   --font-poppins:          'Poppins', system-ui, sans-serif;
+  --font-roboto:           'Roboto', system-ui, sans-serif;
 
   /* ── Geometry ── */
-  --radius-xl:             1rem;    /* 16px */
-  --radius-2xl:            1.5rem;  /* 24px */
+  --radius-xl:             1rem;
+  --radius-2xl:            1.5rem;
   --radius-pill:           9999px;
 
   /* ── Motion ── */
   --ease-expo-out:         cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-spin-slow:     spin 8s linear infinite;
+  --animate-notif-bounce:  notif-bounce 0.8s ease-in-out infinite;
+  --animate-fade-in:       fade-in 0.25s ease-out both;
+  --animate-scale-in:      scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes notif-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    30%       { transform: translateY(-20%) rotate(-8deg); }
+    60%       { transform: translateY(-10%) rotate(6deg); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   GLOBAL STYLES & RESET
+   HARDCODED LAYOUT SPACING — Guaranteed regardless of Tailwind utility output.
+   These rules ensure every major UI region has proper padding/gap even if
+   Tailwind's spacing-scale utilities fail to compile.
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Sidebar: Logo Header ── */
+#sidebar .sidebar-logo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  padding: 0 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  flex-shrink: 0;
+}
+
+/* ── Sidebar: Nav container ── */
+#sidebar nav {
+  padding: 20px 16px;
+}
+
+/* ── Sidebar: Every nav item ── */
+#sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  margin-bottom: 6px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Poppins', system-ui, sans-serif;
+  position: relative;
+  z-index: 10;
+  transition: color 0.2s;
+}
+
+/* ── Sidebar: Divider ── */
+#sidebar .nav-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 24px 12px;
+}
+
+/* ── Sidebar: Profile footer ── */
+#sidebar .profile-footer {
+  padding: 8px 16px 24px;
+  flex-shrink: 0;
+}
+
+/* ── Sidebar: Profile menu popup ── */
+#sidebar .profile-menu {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: #1E1E1E;
+}
+
+#sidebar .profile-menu button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+#sidebar .profile-menu-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 6px 8px;
+}
+
+/* ── Sidebar: Profile tile button ── */
+#sidebar .profile-tile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.05);
+  transition: background 0.3s;
+}
+
+#sidebar .profile-tile:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+/* ── Navbar ── */
+#navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  padding: 0 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ── Main content area ── */
+#main-content {
+  padding: 32px 40px 48px;
+}
+
+/* ── Stat cards grid ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+@media (min-width: 640px)  { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1280px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+
+/* ── Individual stat card ── */
+.stat-card {
+  padding: 28px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+}
+
+.stat-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.stat-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(235,113,43,0.15);
+  color: #EB712B;
+  flex-shrink: 0;
+}
+
+.stat-card-value {
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.1;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.stat-card-label {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 4px;
+}
+
+.stat-card-trend {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  margin-top: 4px;
+}
+
+/* Light mode overrides for stat cards */
+html:not(.dark) .stat-card {
+  background: rgba(255,255,255,0.75);
+  border-color: rgba(0,0,0,0.08);
+}
+html:not(.dark) .stat-card:hover {
+  background: rgba(255,255,255,0.90);
+}
+html:not(.dark) .stat-card-value { color: #1a1a1a; }
+html:not(.dark) .stat-card-label { color: rgba(30,30,30,0.6); }
+html:not(.dark) .stat-card-trend { color: rgba(30,30,30,0.4); }
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GLOBAL RESET & BASE
 ═══════════════════════════════════════════════════════════════════════════════ */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -52,20 +277,120 @@
   padding: 0;
 }
 
+html {
+  background-color: #202020;
+}
+
 body {
   font-family: var(--font-roboto);
-  background-color: var(--bg);
-  color: var(--text-primary);
+  background-color: #202020;
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   min-height: 100svh;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ── Light Mode Overrides ──────────────────────────────────────────── */
+/* Applied when html does NOT have .dark class                              */
+html:not(.dark) body,
+html:not(.dark) #root {
+  background-color: #F0EFE9;
+  color: #1A1A1A;
+}
+
+/* Light mode: the layout shell background */
+html:not(.dark) .bg-main-bg {
+  background-color: #F0EFE9 !important;
+}
+
+/* Light mode: sidebar and navbar glass surface becomes dark-on-light */
+html:not(.dark) [id="sidebar"] {
+  background-color: rgba(255, 255, 255, 0.55) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html:not(.dark) [id="navbar"] {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Light mode: sidebar text colors */
+html:not(.dark) [id="sidebar"] .text-white\/55,
+html:not(.dark) [id="sidebar"] .text-white\/60,
+html:not(.dark) [id="sidebar"] .text-white\/45 {
+  color: rgba(40, 40, 40, 0.65) !important;
+}
+
+html:not(.dark) [id="sidebar"] .text-white {
+  color: #1A1A1A !important;
+}
+
+/* Light mode: navbar title and icons */
+html:not(.dark) [id="navbar"] h1 {
+  color: #1A1A1A !important;
+}
+
+html:not(.dark) [id="navbar"] .text-white\/60 {
+  color: rgba(40, 40, 40, 0.6) !important;
+}
+
+/* Light mode: stat cards */
+html:not(.dark) .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+html:not(.dark) .border-white\/8 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html:not(.dark) .text-white {
+  color: #1A1A1A !important;
+}
+
+html:not(.dark) .text-white\/50 {
+  color: rgba(40, 40, 40, 0.55) !important;
+}
+
+html:not(.dark) .text-white\/35 {
+  color: rgba(40, 40, 40, 0.4) !important;
+}
+
+/* Light mode: dividers */
+html:not(.dark) .bg-white\/8 {
+  background-color: rgba(0, 0, 0, 0.07) !important;
+}
+
+html:not(.dark) .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html:not(.dark) .border-white\/5 {
+  border-color: rgba(0, 0, 0, 0.05) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   UI COMPONENTS (Primitives)
+   CUSTOM SCROLLBAR
+═══════════════════════════════════════════════════════════════════════════════ */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(235, 113, 43, 0.25) transparent;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(235, 113, 43, 0.25);
+  border-radius: 99px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(235, 113, 43, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   UI PRIMITIVES
 ═══════════════════════════════════════════════════════════════════════════════ */
 
-/* Glassmorphic Field */
+/* ── Glassmorphic Field ── */
 .field {
   @apply w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white outline-none transition-all;
   backdrop-filter: blur(8px);
@@ -80,7 +405,7 @@ body {
   @apply border-error/50 ring-error/10;
 }
 
-/* Premium Button */
+/* ── Premium Button ── */
 .btn-primary {
   @apply w-full py-4 bg-accent text-[#202020] font-poppins font-bold text-sm tracking-wider uppercase rounded-pill transition-all active:scale-[0.98];
   box-shadow: 0 8px 25px rgba(235, 113, 43, 0.3);
@@ -93,7 +418,7 @@ body {
   @apply opacity-50 cursor-not-allowed grayscale;
 }
 
-/* Card Container */
+/* ── Card Container (Login) ── */
 .login-card {
   @apply w-full max-w-[450px] bg-surface border border-secondary/30 rounded-2xl px-10 py-12 md:px-14 md:py-16 backdrop-blur-xl shadow-2xl;
 }

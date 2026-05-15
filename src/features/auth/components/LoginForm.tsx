@@ -11,6 +11,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
@@ -30,6 +31,8 @@ const loginSchema = z.object({
 
 const LoginForm: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { isLoading } = useAppSelector((s) => s.auth);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -51,6 +54,10 @@ const LoginForm: React.FC = () => {
       const result = await dispatch(loginUser(data));
       if (loginUser.fulfilled.match(result)) {
         toast.success('Successfully authenticated. Welcome back!');
+        
+        // Redirect to intended destination or dashboard
+        const from = (location.state as any)?.from?.pathname || '/dashboard';
+        navigate(from, { replace: true });
       }
     } catch (err) {
       toast.error('Authentication failed. Please check your credentials.');
@@ -108,10 +115,10 @@ const LoginForm: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowPassword((p) => !p)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors"
+              className="hover:cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-white/50 hover:text-accent transition-all duration-200 z-10"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
           {errors.password && (
@@ -124,7 +131,7 @@ const LoginForm: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="btn-primary flex items-center justify-center gap-2"
+            className="btn-primary flex items-center justify-center gap-2 hover:cursor-pointer"
           >
             {isLoading ? (
               <>
@@ -148,7 +155,7 @@ const LoginForm: React.FC = () => {
           </label>
           <button
             type="button"
-            className="text-white/50 hover:text-accent transition-colors underline underline-offset-4 decoration-white/10"
+            className="text-white/50 hover:text-accent transition-colors underline underline-offset-4 decoration-white/10 hover:cursor-pointer"
             onClick={() => toast.info('Please contact your system administrator to reset your password.')}
           >
             Forgot Password

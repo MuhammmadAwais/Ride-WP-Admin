@@ -1,251 +1,418 @@
 /**
- * @fileoverview Premium application sidebar — 260px width.
+ * @fileoverview Elite Sidebar — "Floating Pill" Architecture
  *
- * Design:
- *  - Dark mode: solid charcoal (#242424) surface, no blur.
- *  - Light mode: white surface with subtle shadow.
- *  - Active nav item: accent left-border + gradient tint + text glow.
- *  - Collapsible on desktop (icon-only at 72px).
- *  - Slide-over on mobile with backdrop overlay.
- *
- * Performance: memo on sub-components to prevent re-render on parent state.
+ * All layout spacing (padding, gap, margin) is driven by explicit CSS classes
+ * defined in index.css to guarantee correct rendering in Tailwind v4.
  */
-import React, { useState, memo } from 'react';
-import { NavLink, useNavigate }  from 'react-router-dom';
+import React, { useState, useRef, useCallback } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, ShieldCheck, CreditCard,
   ClipboardList, BarChart3, Headphones, Bell,
-  FileText, ScrollText, Info, ChevronLeft, ChevronRight,
-  LogOut, X,
+  FileText, ScrollText, Info, LogOut, X, User, Settings,
+  ChevronUp,
 } from 'lucide-react';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { createPortal } from 'react-dom';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
-import { logout }         from '@/features/auth/slices/authSlice';
-import { cn }             from '@/lib/utils';
+import { useAppSelector } from '@/hooks/useAppSelector';
+import { logout } from '@/features/auth/slices/authSlice';
+import { cn } from '@/lib/utils';
 import { APP_NAME, ROUTES } from '@/Constants';
+import ProfileSettingsModal from '@/features/profile/components/ProfileSettingsModal';
+import { useTheme } from '@/hooks/useTheme';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface NavItem {
   label: string;
   route: string;
-  icon:  React.ReactElement;
-  end?:  boolean;
+  icon: React.ReactElement;
 }
 
+interface NavDivider {
+  type: 'divider';
+}
+
+type NavEntry = NavItem | NavDivider;
+
+// ── Nav Config ────────────────────────────────────────────────────────────────
+
+const ICON_SIZE = 20;
+
+const NAV_ITEMS: NavEntry[] = [
+  { label: 'Dashboard',          route: ROUTES.DASHBOARD,          icon: <LayoutDashboard size={ICON_SIZE} /> },
+  { label: 'Users',              route: ROUTES.USERS,              icon: <Users size={ICON_SIZE} /> },
+  { label: 'Clubs',              route: ROUTES.CLUBS,              icon: <ShieldCheck size={ICON_SIZE} /> },
+  { label: 'Payments',           route: ROUTES.PAYMENTS,           icon: <CreditCard size={ICON_SIZE} /> },
+  { label: 'Requests',           route: ROUTES.REQUESTS,           icon: <ClipboardList size={ICON_SIZE} /> },
+  { label: 'Analytics',          route: ROUTES.ANALYTICS,          icon: <BarChart3 size={ICON_SIZE} /> },
+  { type: 'divider' },
+  { label: 'App Support',        route: ROUTES.APP_SUPPORT,        icon: <Headphones size={ICON_SIZE} /> },
+  { label: 'Push Notifications', route: ROUTES.PUSH_NOTIFICATIONS, icon: <Bell size={ICON_SIZE} /> },
+  { label: 'Privacy Policy',     route: ROUTES.PRIVACY_POLICY,     icon: <FileText size={ICON_SIZE} /> },
+  { label: 'Terms & Conditions', route: ROUTES.TERMS,              icon: <ScrollText size={ICON_SIZE} /> },
+  { label: 'About',              route: ROUTES.ABOUT,              icon: <Info size={ICON_SIZE} /> },
+];
+
+// ── Props ─────────────────────────────────────────────────────────────────────
+
 export interface SidebarProps {
-  /** Whether the sidebar is open (mobile slide-over). */
-  isOpen:  boolean;
-  /** Callback to close the sidebar (mobile only). */
+  isOpen: boolean;
   onClose: () => void;
 }
 
-interface SidebarNavLinkProps {
-  item:      NavItem;
-  collapsed: boolean;
-  onClick:   () => void;
+// ── Logout Confirmation Modal ─────────────────────────────────────────────────
+
+interface LogoutModalProps {
+  onConfirm: () => void;
+  onCancel: () => void;
 }
 
-// ─── Navigation definition ────────────────────────────────────────────────────
+const LogoutModal: React.FC<LogoutModalProps> = ({ onConfirm, onCancel }) => {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const cardRef    = useRef<HTMLDivElement>(null);
 
-const ICON_SIZE = 18;
+  useGSAP(() => {
+    gsap.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+    gsap.fromTo(cardRef.current,
+      { scale: 0.88, opacity: 0, y: 24 },
+      { scale: 1,    opacity: 1, y: 0,  duration: 0.45, ease: 'back.out(1.7)' },
+    );
+  });
 
-const PRIMARY_NAV: NavItem[] = [
-  { label: 'Dashboard',   route: ROUTES.DASHBOARD,  icon: <LayoutDashboard size={ICON_SIZE} />, end: true },
-  { label: 'Users',       route: ROUTES.USERS,       icon: <Users           size={ICON_SIZE} /> },
-  { label: 'Clubs',       route: ROUTES.CLUBS,       icon: <ShieldCheck     size={ICON_SIZE} /> },
-  { label: 'Payments',    route: ROUTES.PAYMENTS,    icon: <CreditCard      size={ICON_SIZE} /> },
-  { label: 'Requests',    route: ROUTES.REQUESTS,    icon: <ClipboardList   size={ICON_SIZE} /> },
-  { label: 'Analytics',   route: ROUTES.ANALYTICS,   icon: <BarChart3       size={ICON_SIZE} /> },
-];
+  const handleCancel = useCallback(() => {
+    gsap.to(overlayRef.current, { opacity: 0, duration: 0.2 });
+    gsap.to(cardRef.current, { scale: 0.92, opacity: 0, y: 12, duration: 0.2, onComplete: onCancel });
+  }, [onCancel]);
 
-const SECONDARY_NAV: NavItem[] = [
-  { label: 'App Support',        route: ROUTES.APP_SUPPORT,        icon: <Headphones size={ICON_SIZE} /> },
-  { label: 'Notifications',      route: ROUTES.PUSH_NOTIFICATIONS, icon: <Bell       size={ICON_SIZE} /> },
-  { label: 'Privacy Policy',     route: ROUTES.PRIVACY_POLICY,     icon: <FileText   size={ICON_SIZE} /> },
-  { label: 'Terms & Conditions', route: ROUTES.TERMS,              icon: <ScrollText size={ICON_SIZE} /> },
-  { label: 'About',              route: ROUTES.ABOUT,              icon: <Info       size={ICON_SIZE} /> },
-];
+  const modalRoot = document.getElementById('modal-root');
+  if (!modalRoot) return null;
 
-// ─── Sub-component: NavLink ───────────────────────────────────────────────────
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center" style={{ padding: '16px' }}>
+      <div ref={overlayRef} className="absolute inset-0 bg-black/60 backdrop-blur-2xl" onClick={handleCancel} />
+      <div
+        ref={cardRef}
+        className="relative z-10 w-full text-center"
+        style={{
+          maxWidth: '400px',
+          borderRadius: '24px',
+          background: '#282828',
+          border: '1px solid rgba(255,255,255,0.10)',
+          boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
+          padding: '36px 32px',
+        }}
+      >
+        <div style={{
+          margin: '0 auto 20px',
+          width: '64px', height: '64px',
+          borderRadius: '16px',
+          background: 'rgba(239,68,68,0.10)',
+          border: '1px solid rgba(239,68,68,0.20)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <LogOut size={28} color="#f87171" />
+        </div>
+        <h3 style={{ fontFamily: 'Poppins,sans-serif', fontWeight: 700, fontSize: '20px', color: '#fff', marginBottom: '8px' }}>
+          Sign Out?
+        </h3>
+        <p style={{ fontFamily: 'Roboto,sans-serif', fontSize: '14px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: '28px' }}>
+          You'll be returned to the login screen. Unsaved changes will be lost.
+        </p>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button
+            onClick={handleCancel}
+            style={{
+              flex: 1, padding: '12px', borderRadius: '14px',
+              fontFamily: 'Poppins,sans-serif', fontWeight: 600, fontSize: '14px',
+              color: 'rgba(255,255,255,0.7)',
+              background: 'rgba(255,255,255,0.05)',
+              border: '1px solid rgba(255,255,255,0.10)',
+              cursor: 'pointer', transition: 'background 0.2s',
+            }}
+          >Cancel</button>
+          <button
+            onClick={onConfirm}
+            style={{
+              flex: 1, padding: '12px', borderRadius: '14px',
+              fontFamily: 'Poppins,sans-serif', fontWeight: 700, fontSize: '14px',
+              color: '#fff',
+              background: '#ef4444',
+              boxShadow: '0 8px 20px -4px rgba(239,68,68,0.5)',
+              cursor: 'pointer', transition: 'background 0.2s',
+              border: 'none',
+            }}
+          >Sign Out</button>
+        </div>
+      </div>
+    </div>,
+    modalRoot,
+  );
+};
 
-const SidebarNavLink: React.FC<SidebarNavLinkProps> = memo(({ item, collapsed, onClick }) => (
-  <NavLink
-    to={item.route}
-    end={item.end}
-    onClick={onClick}
-    title={collapsed ? item.label : undefined}
-    className={({ isActive }) => cn(
-      'nav-item',
-      collapsed && 'justify-center px-0',
-      isActive && 'active'
-    )}
-  >
-    <span className="shrink-0" aria-hidden="true">{item.icon}</span>
-    {!collapsed && <span className="truncate">{item.label}</span>}
-  </NavLink>
-));
-SidebarNavLink.displayName = 'SidebarNavLink';
-
-// ─── Main Sidebar ─────────────────────────────────────────────────────────────
+// ── Main Sidebar ──────────────────────────────────────────────────────────────
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
-  const dispatch  = useAppDispatch();
-  const navigate  = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const user      = useAppSelector((s) => s.auth.user);
+  const { isDark } = useTheme();
 
-  const handleLogout = (): void => {
+  const [profileMenuOpen,  setProfileMenuOpen]  = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [logoutModalOpen,  setLogoutModalOpen]  = useState(false);
+
+  const navContainerRef = useRef<HTMLElement>(null);
+  const pillRef         = useRef<HTMLDivElement>(null);
+
+  // ── GSAP Floating Pill ──────────────────────────────────────────────────────
+  useGSAP(
+    () => {
+      if (!navContainerRef.current || !pillRef.current) return;
+
+      const allLinks = navContainerRef.current.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
+      const activeLink = Array.from(allLinks).find(
+        (el) => el.getAttribute('href') === location.pathname,
+      );
+
+      if (activeLink) {
+        const cRect = navContainerRef.current.getBoundingClientRect();
+        const lRect = activeLink.getBoundingClientRect();
+        const top   = lRect.top - cRect.top + navContainerRef.current.scrollTop;
+
+        gsap.to(pillRef.current, {
+          y: top, height: lRect.height,
+          opacity: 1, duration: 0.55, ease: 'expo.out',
+        });
+      } else {
+        gsap.to(pillRef.current, { opacity: 0, duration: 0.2 });
+      }
+    },
+    { dependencies: [location.pathname], scope: navContainerRef },
+  );
+
+  const handleLogoutConfirm = useCallback(() => {
     dispatch(logout());
     navigate(ROUTES.LOGIN, { replace: true });
-  };
+  }, [dispatch, navigate]);
 
-  const EXPANDED_W  = '260px';
-  const COLLAPSED_W = '72px';
+  const handleOpenSettings = useCallback(() => {
+    setProfileMenuOpen(false);
+    setSettingsModalOpen(true);
+  }, []);
+
+  const handleOpenLogout = useCallback(() => {
+    setProfileMenuOpen(false);
+    setLogoutModalOpen(true);
+  }, []);
 
   return (
     <>
-      {/* ── Mobile backdrop overlay ── */}
+      {/* Mobile Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md lg:hidden"
           onClick={onClose}
           aria-hidden="true"
+          style={{ animation: 'fade-in 0.2s ease-out' }}
         />
       )}
 
-      {/* ── Sidebar ── */}
+      {/* ── Sidebar Panel ── */}
       <aside
+        id="sidebar"
         style={{
-          width:           collapsed ? COLLAPSED_W : EXPANDED_W,
-          minWidth:        collapsed ? COLLAPSED_W : EXPANDED_W,
-          backgroundColor: 'var(--sidebar-bg)',
-          borderRight:     '1px solid var(--sidebar-border)',
-          boxShadow:       '4px 0 24px rgba(0,0,0,0.06)',
-          transition:      'width 0.28s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+          width: '288px',
+          flexShrink: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+          position: 'sticky',
+          top: 0,
+          backdropFilter: 'blur(40px)',
+          WebkitBackdropFilter: 'blur(40px)',
+          borderRight: '1px solid rgba(255,255,255,0.08)',
+          background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.55)',
+          transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
+          // Mobile drawer
+          ...(typeof window !== 'undefined' && window.innerWidth < 1024
+            ? { position: 'fixed', top: 0, left: 0, zIndex: 50,
+                transform: isOpen ? 'translateX(0)' : 'translateX(-100%)' }
+            : {}),
         }}
         className={cn(
-          'fixed top-0 left-0 z-50 h-full flex flex-col overflow-hidden',
-          'lg:relative lg:translate-x-0 lg:z-auto lg:h-screen',
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+          'fixed top-0 left-0 z-50 lg:static lg:translate-x-0',
+          isOpen ? 'translate-x-0' : '-translate-x-full',
         )}
-        aria-label="Main navigation"
       >
-        {/* ── Logo / Header ── */}
-        <div
-          className="flex items-center h-16 px-4 shrink-0"
-          style={{ borderBottom: '1px solid var(--sidebar-border)' }}
-        >
-          {collapsed ? (
-            <img
-              src="/logos/short-logo.png"
-              alt={APP_NAME}
-              className="w-8 h-8 object-contain mx-auto"
-              draggable={false}
-            />
-          ) : (
-            <img
-              src="/logos/full-logo.png"
-              alt={APP_NAME}
-              className="h-7 object-contain flex-1"
-              draggable={false}
-            />
-          )}
-
-          {/* Mobile close button */}
+        {/* Logo Header */}
+        <div className="sidebar-logo-header">
+          <img
+            src="/logos/full-logo.png"
+            alt={APP_NAME}
+            style={{ height: '36px', objectFit: 'contain' }}
+            draggable={false}
+          />
           <button
-            id="sidebar-close-btn"
-            className="lg:hidden flex items-center justify-center w-8 h-8 rounded-lg transition-colors hover:bg-black/05 ml-auto"
             onClick={onClose}
-            aria-label="Close sidebar"
-            style={{ color: 'var(--text-secondary)' }}
+            aria-label="Close navigation"
+            className="lg:hidden"
+            style={{
+              width: '36px', height: '36px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: '10px',
+              color: 'rgba(255,255,255,0.4)',
+              background: 'transparent',
+              border: 'none', cursor: 'pointer',
+              transition: 'color 0.2s',
+            }}
           >
-            <X size={18} aria-hidden="true" />
-          </button>
-
-          {/* Desktop collapse toggle */}
-          <button
-            id="sidebar-collapse-btn"
-            className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg transition-colors hover:bg-accent-muted ml-2 shrink-0"
-            onClick={() => setCollapsed((p) => !p)}
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            {collapsed
-              ? <ChevronRight size={14} aria-hidden="true" />
-              : <ChevronLeft  size={14} aria-hidden="true" />
-            }
+            <X size={20} />
           </button>
         </div>
 
-        {/* ── Navigation ── */}
+        {/* Navigation */}
         <nav
-          className="flex-1 overflow-y-auto py-3"
-          style={{ padding: collapsed ? '12px 8px' : '12px 10px' }}
-          aria-label="Sidebar navigation"
+          ref={navContainerRef}
+          className="custom-scrollbar"
+          style={{ position: 'relative', flex: 1, overflowY: 'auto', padding: '20px 16px' }}
         >
-          {/* Primary group */}
-          {!collapsed && (
-            <p
-              className="px-3 mb-1.5 text-[10px] uppercase tracking-widest font-semibold font-roboto"
-              style={{ color: 'var(--text-tertiary)' }}
-            >
-              Main
-            </p>
-          )}
-          <div className="space-y-0.5">
-            {PRIMARY_NAV.map((item) => (
-              <SidebarNavLink
-                key={item.route}
-                item={item}
-                collapsed={collapsed}
-                onClick={onClose}
-              />
-            ))}
-          </div>
+          {/* Floating Pill */}
+          <div
+            ref={pillRef}
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              left: '16px',
+              right: '16px',
+              top: 0,
+              borderRadius: '16px',
+              background: '#EB712B',
+              boxShadow: '0 10px 30px -5px rgba(235,113,43,0.6)',
+              pointerEvents: 'none',
+              opacity: 0,
+              willChange: 'transform, height, opacity',
+            }}
+          />
 
-          {/* Secondary group */}
-          <div className="mt-5">
-            {!collapsed && (
-              <p
-                className="px-3 mb-1.5 text-[10px] uppercase tracking-widest font-semibold font-roboto"
-                style={{ color: 'var(--text-tertiary)' }}
+          {NAV_ITEMS.map((entry, idx) => {
+            if ('type' in entry && entry.type === 'divider') {
+              return <div key={`div-${idx}`} className="nav-divider" />;
+            }
+
+            const item     = entry as NavItem;
+            const isActive = location.pathname === item.route;
+
+            return (
+              <NavLink
+                key={item.route}
+                to={item.route}
+                data-nav-link
+                onClick={onClose}
+                aria-current={isActive ? 'page' : undefined}
+                style={{
+                  color: isActive ? '#ffffff' : 'rgba(255,255,255,0.55)',
+                  textDecoration: 'none',
+                  background: 'transparent',
+                }}
+                className={cn(!isActive && 'hover:!text-white')}
               >
-                System
-              </p>
-            )}
-            <div className="space-y-0.5">
-              {SECONDARY_NAV.map((item) => (
-                <SidebarNavLink
-                  key={item.route}
-                  item={item}
-                  collapsed={collapsed}
-                  onClick={onClose}
-                />
-              ))}
-            </div>
-          </div>
+                <span
+                  style={{
+                    flexShrink: 0,
+                    transition: 'transform 0.3s',
+                    transform: isActive ? 'scale(1.1)' : 'scale(1)',
+                    display: 'flex',
+                  }}
+                >
+                  {item.icon}
+                </span>
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {item.label}
+                </span>
+              </NavLink>
+            );
+          })}
         </nav>
 
-        {/* ── Logout ── */}
-        <div
-          className="shrink-0 p-2"
-          style={{ borderTop: '1px solid var(--sidebar-border)' }}
-        >
+        {/* Profile Footer */}
+        <div className="profile-footer">
+          {/* Profile Quick Menu */}
+          {profileMenuOpen && (
+            <div className="profile-menu">
+              <button onClick={handleOpenSettings} style={{ color: 'rgba(255,255,255,0.8)', background: 'transparent', border: 'none', cursor: 'pointer' }}>
+                <Settings size={18} style={{ color: 'rgba(235,113,43,0.8)', flexShrink: 0 }} />
+                <span>Profile Settings</span>
+              </button>
+              <div className="profile-menu-divider" />
+              <button onClick={handleOpenLogout} style={{ color: '#f87171', background: 'transparent', border: 'none', cursor: 'pointer' }}>
+                <LogOut size={18} style={{ color: '#f87171', flexShrink: 0 }} />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          )}
+
+          {/* Profile Tile */}
           <button
-            id="sidebar-logout-btn"
-            onClick={handleLogout}
-            className={cn(
-              'w-full flex items-center gap-3 px-3 py-2.5 font-roboto text-sm font-medium',
-              'transition-all duration-150 rounded-xl',
-              'hover:bg-red-50',
-              collapsed && 'justify-center'
-            )}
-            style={{ color: '#EF4444' }}
+            onClick={() => setProfileMenuOpen((p) => !p)}
+            aria-expanded={profileMenuOpen}
+            aria-label="Open profile menu"
+            className="profile-tile"
+            style={{ border: 'none', cursor: 'pointer', textAlign: 'left' }}
           >
-            <LogOut size={18} aria-hidden="true" className="shrink-0" />
-            {!collapsed && <span>Logout</span>}
+            {/* Avatar */}
+            <div style={{
+              width: '40px', height: '40px', borderRadius: '10px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0,
+              background: 'linear-gradient(135deg, #EB712B, #C85E22)',
+              boxShadow: '0 4px 15px rgba(235,113,43,0.4)',
+            }}>
+              <User size={20} color="#fff" />
+            </div>
+
+            {/* Name + Role */}
+            <div style={{ flex: 1, overflow: 'hidden' }}>
+              <p style={{
+                fontFamily: 'Poppins,sans-serif', fontWeight: 700, fontSize: '14px',
+                color: '#fff',
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                lineHeight: 1.3, marginBottom: '2px',
+              }}>
+                {user?.name ?? 'Administrator'}
+              </p>
+              <p style={{
+                fontFamily: 'Poppins,sans-serif', fontSize: '12px',
+                color: 'rgba(255,255,255,0.45)',
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                textTransform: 'capitalize', letterSpacing: '0.02em',
+              }}>
+                {user?.role ?? 'Admin'}
+              </p>
+            </div>
+
+            {/* Chevron */}
+            <ChevronUp
+              size={16}
+              style={{
+                color: 'rgba(255,255,255,0.3)',
+                flexShrink: 0,
+                transition: 'transform 0.3s',
+                transform: profileMenuOpen ? 'rotate(0deg)' : 'rotate(180deg)',
+              }}
+            />
           </button>
         </div>
       </aside>
+
+      {/* Modals */}
+      <ProfileSettingsModal isOpen={settingsModalOpen} onClose={() => setSettingsModalOpen(false)} />
+      {logoutModalOpen && (
+        <LogoutModal onConfirm={handleLogoutConfirm} onCancel={() => setLogoutModalOpen(false)} />
+      )}
     </>
   );
 };

@@ -1,315 +1,108 @@
 /**
- * @fileoverview Premium sticky top Navbar.
+ * @fileoverview Elite Navbar Component
  *
- * Features:
- *  - Glassmorphic backdrop-blur-md sticky header.
- *  - Theme toggle (Sun / Moon) with smooth spin animation.
- *  - Notification bell with animated pulse badge.
- *  - Profile dropdown with hover-scale avatar and name display.
- *  - Profile dropdown panel with GSAP-driven open/close.
- *  - 100% TypeScript interfaces for all props.
+ * Specs:
+ * - Height: Fixed 80px (h-20)
+ * - Surface: pure backdrop-blur-xl, no solid background
+ * - px-8 horizontal padding
+ * - Theme toggle: GSAP flip animation on icon swap
+ * - Notification bell: pinging orange dot
+ * - useGSAP for animation lifecycle management
  */
-import React, { useRef, useState, useCallback, useEffect, memo } from 'react';
-import {
-  Menu, Bell, Sun, Moon, ChevronDown,
-  User, Settings, LogOut, HelpCircle,
-} from 'lucide-react';
-import gsap                  from 'gsap';
-import { useNavigate }       from 'react-router-dom';
-import { useAppSelector }    from '@/hooks/useAppSelector';
-import { useAppDispatch }    from '@/hooks/useAppDispatch';
-import { useTheme }          from '@/hooks/useTheme';
-import { logout }            from '@/features/auth/slices/authSlice';
-import { cn }                from '@/lib/utils';
-import { ROUTES }            from '@/Constants';
-
-// ─── Types ────────────────────────────────────────────────────────────────────
+import React, { useRef } from 'react';
+import { Menu, Bell, Sun, Moon } from 'lucide-react';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { useTheme } from '@/hooks/useTheme';
+import { cn } from '@/lib/utils';
 
 export interface NavbarProps {
-  /** Callback to open the mobile sidebar. */
   onMenuClick: () => void;
-  /** Title of the currently active page. */
-  pageTitle?:  string;
+  pageTitle?: string;
 }
-
-interface DropdownItemProps {
-  icon:     React.ReactElement;
-  label:    string;
-  onClick:  () => void;
-  danger?:  boolean;
-}
-
-// ─── Dropdown Item ────────────────────────────────────────────────────────────
-
-const DropdownItem: React.FC<DropdownItemProps> = memo(({ icon, label, onClick, danger }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={cn(
-      'w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-roboto font-medium',
-      'transition-colors duration-150 rounded-xl text-left',
-      danger
-        ? 'hover:bg-red-50 text-red-500'
-        : 'hover:bg-black/05 dark:hover:bg-white/06'
-    )}
-    style={danger ? { color: '#EF4444' } : { color: 'var(--text-primary)' }}
-  >
-    <span className="shrink-0 opacity-70" aria-hidden="true">{icon}</span>
-    {label}
-  </button>
-));
-DropdownItem.displayName = 'DropdownItem';
-
-// ─── Navbar ───────────────────────────────────────────────────────────────────
 
 const Navbar: React.FC<NavbarProps> = ({ onMenuClick, pageTitle = 'Dashboard' }) => {
   const { isDark, toggleTheme } = useTheme();
-  const user                    = useAppSelector((s) => s.auth.user);
-  const dispatch                = useAppDispatch();
-  const navigate                = useNavigate();
 
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [notifBounce, setNotifBounce]   = useState(false);
+  const sunRef = useRef<SVGSVGElement>(null);
+  const moonRef = useRef<SVGSVGElement>(null);
 
-  const dropdownRef   = useRef<HTMLDivElement>(null);
-  const dropdownPanel = useRef<HTMLDivElement>(null);
+  // ── GSAP entrance flip when the icon swaps after toggle ─────────────────
+  // Runs after React commits the new icon to the DOM.
+  useGSAP(
+    () => {
+      const iconEl = isDark ? sunRef.current : moonRef.current;
+      if (!iconEl) return;
 
-  // ── Close dropdown on outside click ───────────────────────────────────────
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        closeDropdown();
-      }
-    };
-    if (dropdownOpen) document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [dropdownOpen]);
-
-  // ── GSAP: Dropdown open / close ───────────────────────────────────────────
-  const openDropdown = useCallback(() => {
-    setDropdownOpen(true);
-    requestAnimationFrame(() => {
-      if (!dropdownPanel.current) return;
       gsap.fromTo(
-        dropdownPanel.current,
-        { opacity: 0, y: -8, scale: 0.96 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.22, ease: 'expo.out' }
+        iconEl,
+        { scale: 0.3, rotate: isDark ? -120 : 120, opacity: 0 },
+        { scale: 1, rotate: 0, opacity: 1, duration: 0.4, ease: 'back.out(1.7)' },
       );
-    });
-  }, []);
+    },
+    { dependencies: [isDark] },
+  );
 
-  const closeDropdown = useCallback(() => {
-    if (!dropdownPanel.current) { setDropdownOpen(false); return; }
-    gsap.to(dropdownPanel.current, {
-      opacity: 0, y: -8, scale: 0.96, duration: 0.16, ease: 'power2.in',
-      onComplete: () => setDropdownOpen(false),
-    });
-  }, []);
-
-  const toggleDropdown = useCallback(() => {
-    dropdownOpen ? closeDropdown() : openDropdown();
-  }, [dropdownOpen, openDropdown, closeDropdown]);
-
-  // ── Notification bell bounce ───────────────────────────────────────────────
-  const handleBellClick = useCallback(() => {
-    setNotifBounce(true);
-    setTimeout(() => setNotifBounce(false), 600);
-  }, []);
-
-  // ── Logout ────────────────────────────────────────────────────────────────
-  const handleLogout = useCallback(() => {
-    closeDropdown();
-    dispatch(logout());
-    navigate(ROUTES.LOGIN, { replace: true });
-  }, [dispatch, navigate, closeDropdown]);
-
-  // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <header
-      className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 sm:px-6 shrink-0 glass-nav"
+      id="navbar"
+      className="flex items-center justify-between h-20 px-8 shrink-0 backdrop-blur-xl bg-transparent border-b border-white/5"
     >
-      {/* ── Left: menu + page title ── */}
-      <div className="flex items-center gap-3">
+      {/* ── Left: Mobile Menu + Page Title ── */}
+      <div className="flex items-center gap-4">
         <button
-          id="navbar-menu-btn"
           onClick={onMenuClick}
-          className={cn(
-            'lg:hidden flex items-center justify-center w-9 h-9 rounded-xl',
-            'transition-colors hover:bg-black/06',
-          )}
           aria-label="Open navigation menu"
-          style={{ color: 'var(--text-secondary)' }}
+          className={cn(
+            'lg:hidden flex items-center justify-center w-11 h-11 rounded-xl',
+            'text-white/50 hover:text-white hover:bg-white/8 transition-all duration-300',
+          )}
         >
-          <Menu size={20} aria-hidden="true" />
+          <Menu size={24} aria-hidden="true" />
         </button>
 
-        <div>
-          <h2
-            className="font-poppins font-semibold text-base leading-none"
-            style={{ color: 'var(--text-primary)' }}
-          >
-            {pageTitle}
-          </h2>
-          <p
-            className="font-roboto text-xs mt-0.5 hidden sm:block"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            Ride with Pals — Admin
-          </p>
-        </div>
+        <h1 className="font-poppins font-bold text-[22px] tracking-tight text-white leading-tight">
+          {pageTitle}
+        </h1>
       </div>
 
-      {/* ── Right: actions ── */}
-      <div className="flex items-center gap-1.5">
-
-        {/* Theme toggle */}
+      {/* ── Right: Actions ── */}
+      <div className="flex items-center gap-2">
+        {/* Theme Toggle — toggleTheme called directly so no GSAP race condition */}
         <button
-          id="navbar-theme-btn"
           onClick={toggleTheme}
-          className={cn(
-            'flex items-center justify-center w-9 h-9 rounded-xl',
-            'transition-all duration-200 hover:bg-black/06',
-          )}
           aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          style={{ color: 'var(--text-secondary)' }}
-        >
-          {isDark
-            ? <Sun  size={18} className="animate-spin-slow" aria-hidden="true" style={{ animationDuration: '8s' }} />
-            : <Moon size={18} aria-hidden="true" />
-          }
-        </button>
-
-        {/* Notification bell */}
-        <button
-          id="navbar-notif-btn"
-          onClick={handleBellClick}
-          className={cn(
-            'relative flex items-center justify-center w-9 h-9 rounded-xl',
-            'transition-colors hover:bg-black/06',
-          )}
-          aria-label="Notifications"
-          style={{ color: 'var(--text-secondary)' }}
-        >
-          <Bell
-            size={18}
-            className={notifBounce ? 'animate-notif-bounce' : ''}
-            aria-hidden="true"
-          />
-          {/* Unread pulse dot */}
-          <span
-            className="absolute top-2 right-2 w-2 h-2 rounded-full animate-pulse-ring"
-            style={{ backgroundColor: '#EB712B' }}
-            aria-label="Unread notifications"
-          />
-        </button>
-
-        {/* Divider */}
-        <div className="w-px h-5 mx-1" style={{ backgroundColor: 'var(--border)' }} aria-hidden="true" />
-
-        {/* Profile dropdown */}
-        <div ref={dropdownRef} className="relative">
-          <button
-            id="navbar-profile-btn"
-            onClick={toggleDropdown}
-            className={cn(
-              'flex items-center gap-2 pl-1 pr-2.5 py-1.5 rounded-xl',
-              'transition-all duration-200 hover:bg-black/06',
-              'group',
-            )}
-            aria-expanded={dropdownOpen}
-            aria-haspopup="menu"
-            aria-label="User profile menu"
-          >
-            {/* Avatar */}
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105"
-              style={{ background: 'linear-gradient(135deg, #EB712B 0%, #C85E22 100%)' }}
-            >
-              <User size={15} className="text-white" aria-hidden="true" />
-            </div>
-
-            {/* Name */}
-            <div className="hidden sm:block text-left">
-              <p
-                className="text-sm font-roboto font-semibold leading-none max-w-[110px] truncate"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                {user?.name ?? 'Admin'}
-              </p>
-              <p
-                className="text-xs font-roboto mt-0.5 leading-none capitalize"
-                style={{ color: 'var(--text-secondary)' }}
-              >
-                {user?.role ?? 'administrator'}
-              </p>
-            </div>
-
-            <ChevronDown
-              size={13}
-              className={cn(
-                'transition-transform duration-200 shrink-0 hidden sm:block',
-                dropdownOpen && 'rotate-180'
-              )}
-              style={{ color: 'var(--text-secondary)' }}
+          className="relative flex items-center justify-center w-11 h-11 rounded-2xl text-white/60 hover:text-white hover:bg-white/8 transition-colors duration-300">
+          {isDark ? (
+            <Sun
+              ref={sunRef}
+              size={22}
               aria-hidden="true"
+              className="text-amber-300"
             />
-          </button>
-
-          {/* Dropdown panel */}
-          {dropdownOpen && (
-            <div
-              ref={dropdownPanel}
-              role="menu"
-              aria-label="Profile menu"
-              className="absolute right-0 top-full mt-2 w-52 p-1.5"
-              style={{
-                backgroundColor: 'var(--surface)',
-                border:          '1px solid var(--border)',
-                borderRadius:    16,
-                boxShadow:       '0 16px 48px rgba(0,0,0,0.14), 0 4px 14px rgba(0,0,0,0.08)',
-                zIndex:          100,
-              }}
-            >
-              {/* User info header */}
-              <div
-                className="px-3.5 py-2.5 mb-1"
-                style={{ borderBottom: '1px solid var(--border)' }}
-              >
-                <p className="text-sm font-roboto font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
-                  {user?.name ?? 'Admin'}
-                </p>
-                <p className="text-xs font-roboto mt-0.5 truncate" style={{ color: 'var(--text-secondary)' }}>
-                  {user?.email ?? 'admin@admin.com'}
-                </p>
-              </div>
-
-              <DropdownItem
-                icon={<User size={16} />}
-                label="My Profile"
-                onClick={() => { closeDropdown(); }}
-              />
-              <DropdownItem
-                icon={<Settings size={16} />}
-                label="Settings"
-                onClick={() => { closeDropdown(); }}
-              />
-              <DropdownItem
-                icon={<HelpCircle size={16} />}
-                label="Help Center"
-                onClick={() => { closeDropdown(); }}
-              />
-
-              <div className="my-1" style={{ height: 1, backgroundColor: 'var(--border)' }} aria-hidden="true" />
-
-              <DropdownItem
-                icon={<LogOut size={16} />}
-                label="Sign Out"
-                onClick={handleLogout}
-                danger
-              />
-            </div>
+          ) : (
+            <Moon
+              ref={moonRef}
+              size={22}
+              aria-hidden="true"
+              className="text-indigo-300"
+            />
           )}
-        </div>
+        </button>
+
+        {/* Notification Bell */}
+        <button
+          aria-label="View notifications"
+          className="relative flex items-center justify-center w-11 h-11 rounded-2xl text-white/60 hover:text-white hover:bg-white/6 transition-colors duration-300 group"
+        >
+          <Bell size={22} className="group-hover:animate-notif-bounce" aria-hidden="true" />
+
+          {/* Pinging dot */}
+          <span className="absolute top-2.5 right-2.5 w-2 h-2" aria-label="New notifications">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-accent opacity-75 animate-ping" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
+          </span>
+        </button>
       </div>
     </header>
   );

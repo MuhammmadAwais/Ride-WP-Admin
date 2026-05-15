@@ -1,16 +1,30 @@
 /**
- * @fileoverview Core app shell — Sidebar + Navbar + content area.
- * Applies GSAP page-entry animation on route change (y: 20, opacity: 0 → 0, 1).
+ * @fileoverview Elite AppLayout — Z-Index Hierarchy Root
+ *
+ * Z-Index Contract:
+ *   z-0  → BackgroundBubbles (global fixed layer, glassmorphism substrate)
+ *   z-10 → Main layout (sidebar + content column)
+ *   z-30 → Navbar (within content column, above scrollable content)
+ *   z-50 → Sidebar (on mobile, drawer mode)
+ *   z-[200] → Portal Modals (into #modal-root, highest)
+ *
+ * Key Architectural Decisions:
+ * - BackgroundBubbles is rendered at root level so backdrop-blur has blobs to blur.
+ * - Sidebar is sticky (desktop) / drawer (mobile).
+ * - Navbar is positioned at top of content column, content scrolls under it.
+ * - Content entry animation via GSAP on every route change (useGSAP).
  */
-import React, { useState, useRef, useEffect } from 'react';
-import { Outlet, useLocation }  from 'react-router-dom';
-import { Helmet }               from 'react-helmet-async';
-import gsap                     from 'gsap';
-import Sidebar                  from './Sidebar';
-import Navbar                   from './Navbar';
-import { APP_NAME }             from '@/Constants';
+import React, { useState, useRef } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import Sidebar from './Sidebar';
+import Navbar from './Navbar';
+import BackgroundBubbles from '@/Components/ui/BackgroundBubbles';
+import { APP_NAME } from '@/Constants';
 
-/** Derives a human-readable page title from the current pathname. */
+/** Derive a human-readable page title from the current pathname. */
 function deriveTitle(pathname: string): string {
   const segment = pathname.split('/').filter(Boolean).at(-1) ?? 'dashboard';
   return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
@@ -18,20 +32,22 @@ function deriveTitle(pathname: string): string {
 
 const AppLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location   = useLocation();
+  const location = useLocation();
   const contentRef = useRef<HTMLElement>(null);
-
   const pageTitle = deriveTitle(location.pathname);
 
-  // GSAP page-entry animation on route change
-  useEffect(() => {
-    if (!contentRef.current) return;
-    gsap.fromTo(
-      contentRef.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.45, ease: 'expo.out', clearProps: 'all' }
-    );
-  }, [location.pathname]);
+  // ── Page Content Entry Animation ─────────────────────────────────────────
+  useGSAP(
+    () => {
+      if (!contentRef.current) return;
+      gsap.fromTo(
+        contentRef.current,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out', clearProps: 'all' },
+      );
+    },
+    { dependencies: [location.pathname], scope: contentRef },
+  );
 
   return (
     <>
@@ -39,36 +55,42 @@ const AppLayout: React.FC = () => {
         <title>{pageTitle} — {APP_NAME} Admin</title>
       </Helmet>
 
-      <div
-        className="flex h-svh overflow-hidden"
-        style={{ backgroundColor: 'var(--bg)' }}
-      >
-        {/* Sidebar */}
-        <Sidebar
-          isOpen={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
-        />
+      {/* ── Base: Full-screen container with dark bg ── */}
+      <div className="relative min-h-svh w-full overflow-hidden bg-main-bg">
 
-        {/* Main column */}
-        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-          {/* Navbar */}
-          <Navbar
-            onMenuClick={() => setSidebarOpen(true)}
-            pageTitle={pageTitle}
+        {/* ── Layer 0: Zero-G Background (fixed, z-0) ── */}
+        <BackgroundBubbles />
+
+        {/* ── Layer 1: App Shell (z-10) ── */}
+        <div className="relative z-10 flex h-svh w-full">
+
+          {/* Sidebar — sticky on desktop, drawer on mobile */}
+          <Sidebar
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
           />
 
-          {/* Page content */}
-          <main
-            ref={contentRef}
-            id="main-content"
-            className="flex-1 overflow-y-auto"
-            style={{
-              padding:         '1.5rem',
-              backgroundColor: 'var(--bg)',
-            }}
-          >
-            <Outlet />
-          </main>
+          {/* ── Main Column ── */}
+          <div className="flex flex-col flex-1 min-w-0 relative h-svh">
+
+            {/* Sticky Navbar (z-30) */}
+            <div className="sticky top-0 left-0 right-0 z-30">
+              <Navbar
+                onMenuClick={() => setSidebarOpen(true)}
+                pageTitle={pageTitle}
+              />
+            </div>
+
+            {/* Scrollable Page Content */}
+            <main
+              ref={contentRef}
+              id="main-content"
+              className="custom-scrollbar"
+              style={{ flex: 1, overflowY: 'auto' }}
+            >
+              <Outlet />
+            </main>
+          </div>
         </div>
       </div>
     </>
