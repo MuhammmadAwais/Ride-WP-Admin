@@ -69,7 +69,7 @@ const LoginForm: React.FC = () => {
       {/* Brand & Greeting */}
       <div className="flex flex-col items-center gap-6">
         <img
-          src="/logos/full-logo.png"
+          src="/logos/dark-theme-logo.png"
           alt="Ride with Pals"
           className="w-48 object-contain"
           draggable={false}

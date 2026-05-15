@@ -274,6 +274,70 @@ html.dark .stat-card:hover {
   opacity: 0.8;
 }
 
+/* ── Login Page Classes ── */
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 48px 40px;
+  border-radius: var(--radius-2xl);
+  background: rgba(40, 40, 40, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--color-accent);
+  color: #FFFFFF;
+  font-family: var(--font-poppins);
+  font-weight: 700;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 10px 20px -5px rgba(235, 113, 43, 0.4);
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(235, 113, 43, 0.5);
+  filter: brightness(1.1);
+}
+.btn-primary:active {
+  transform: translateY(0);
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.field {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  font-family: var(--font-roboto);
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+.field:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px rgba(235, 113, 43, 0.1);
+}
+.field::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+.field-error {
+  border-color: var(--color-error) !important;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════════
    GLOBAL RESET & BASE
 ═══════════════════════════════════════════════════════════════════════════════ */
