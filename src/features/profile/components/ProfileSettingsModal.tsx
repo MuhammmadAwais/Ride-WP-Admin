@@ -77,19 +77,19 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
       <div
         ref={modalRef}
         className={cn(
-          "relative w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden",
-          "bg-white dark:bg-[#282828] text-gray-900 dark:text-gray-100"
+          "relative w-full max-w-sm rounded-[var(--radius-2xl)] shadow-2xl overflow-hidden",
+          "bg-[var(--color-secondary-bg)] text-[var(--color-main-text)]"
         )}
       >
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold font-poppins text-center flex-1 ml-6">
+            <h2 className="text-xl font-semibold font-[var(--font-poppins)] text-center flex-1 ml-6 text-[var(--color-main-text)]">
               {view === 'profile' ? 'Profile Settings' : 'Change Password'}
             </h2>
             <button
               onClick={handleClose}
-              className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              className="p-1.5 rounded-full hover:bg-[var(--color-hover)] transition-colors text-[var(--color-secondary-text)] hover:text-[var(--color-main-text)]"
             >
               <X size={20} />
             </button>
@@ -104,7 +104,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
                   <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gradient-to-br from-[#EB712B] to-[#C85E22] shadow-lg">
                     <User size={40} className="text-white" />
                   </div>
-                  <div className="absolute bottom-0 right-0 p-1.5 rounded-full bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 group-hover:text-[#EB712B] transition-colors">
+                  <div className="absolute bottom-0 right-0 p-1.5 rounded-full shadow-md border bg-[var(--color-secondary-bg)] border-[var(--color-border)] text-[var(--color-secondary-text)] hover:text-[var(--color-accent)] transition-colors">
                     <Camera size={14} />
                   </div>
                 </div>
@@ -113,26 +113,26 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
               {/* Form Fields */}
               <div className="space-y-4 font-roboto mt-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium mb-1 text-[var(--color-secondary-text)]">
                     Enter Username:
                   </label>
                   <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1f1f1f] focus:outline-none focus:ring-2 focus:ring-[#EB712B]/50 focus:border-[#EB712B] transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border bg-[var(--color-main-bg)] border-[var(--color-border)] text-[var(--color-main-text)] focus:outline-none focus:ring-2 focus:ring-[#EB712B]/50 focus:border-[#EB712B] transition-all"
                     placeholder="User name"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label className="block text-sm font-medium mb-1 text-[var(--color-secondary-text)]">
                     Enter Email :
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1f1f1f] focus:outline-none focus:ring-2 focus:ring-[#EB712B]/50 focus:border-[#EB712B] transition-all"
+                    className="w-full px-4 py-2.5 rounded-xl border bg-[var(--color-main-bg)] border-[var(--color-border)] text-[var(--color-main-text)] focus:outline-none focus:ring-2 focus:ring-[#EB712B]/50 focus:border-[#EB712B] transition-all"
                     placeholder="Email address"
                   />
                 </div>
@@ -153,38 +153,38 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
           {view === 'password' && (
             <div className="flex flex-col gap-4 font-roboto animate-in fade-in zoom-in-95 duration-300">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium mb-1 text-[var(--color-secondary-text)]">
                   Current Password
                 </label>
                 <input
                   type="password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1f1f1f] focus:outline-none focus:ring-2 focus:ring-[#EB712B]/50 focus:border-[#EB712B] transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl border bg-[var(--color-main-bg)] border-[var(--color-border)] text-[var(--color-main-text)] focus:outline-none focus:ring-2 focus:ring-[#EB712B]/50 focus:border-[#EB712B] transition-all"
                   placeholder="Enter current password"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium mb-1 text-[var(--color-secondary-text)]">
                   New Password
                 </label>
                 <input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1f1f1f] focus:outline-none focus:ring-2 focus:ring-[#EB712B]/50 focus:border-[#EB712B] transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl border bg-[var(--color-main-bg)] border-[var(--color-border)] text-[var(--color-main-text)] focus:outline-none focus:ring-2 focus:ring-[#EB712B]/50 focus:border-[#EB712B] transition-all"
                   placeholder="Enter new password"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium mb-1 text-[var(--color-secondary-text)]">
                   Confirm Password
                 </label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#1f1f1f] focus:outline-none focus:ring-2 focus:ring-[#EB712B]/50 focus:border-[#EB712B] transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl border bg-[var(--color-main-bg)] border-[var(--color-border)] text-[var(--color-main-text)] focus:outline-none focus:ring-2 focus:ring-[#EB712B]/50 focus:border-[#EB712B] transition-all"
                   placeholder="Confirm new password"
                 />
               </div>
@@ -195,7 +195,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
           <div className="flex justify-center gap-4 mt-8">
             <button
               onClick={view === 'password' ? () => setView('profile') : handleClose}
-              className="px-8 py-2.5 rounded-full font-medium text-sm text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              className="px-8 py-2.5 rounded-full font-medium text-sm text-[var(--color-main-text)] bg-[var(--color-hover)] hover:opacity-80 transition-opacity border border-[var(--color-border)]"
             >
               Cancel
             </button>

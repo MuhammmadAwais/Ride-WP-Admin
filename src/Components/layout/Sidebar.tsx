@@ -99,9 +99,9 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ onConfirm, onCancel }) => {
         style={{
           maxWidth: '400px',
           borderRadius: '24px',
-          background: '#282828',
-          border: '1px solid rgba(255,255,255,0.10)',
-          boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
+          background: 'var(--color-secondary-bg)',
+          border: '1px solid var(--color-border)',
+          boxShadow: '0 24px 60px rgba(0,0,0,0.2)',
           padding: '36px 32px',
         }}
       >
@@ -115,10 +115,10 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ onConfirm, onCancel }) => {
         }}>
           <LogOut size={28} color="#f87171" />
         </div>
-        <h3 style={{ fontFamily: 'Poppins,sans-serif', fontWeight: 700, fontSize: '20px', color: '#fff', marginBottom: '8px' }}>
+        <h3 style={{ fontFamily: 'var(--font-poppins)', fontWeight: 700, fontSize: '20px', color: 'var(--color-main-text)', marginBottom: '8px' }}>
           Sign Out?
         </h3>
-        <p style={{ fontFamily: 'Roboto,sans-serif', fontSize: '14px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: '28px' }}>
+        <p style={{ fontFamily: 'var(--font-roboto)', fontSize: '14px', color: 'var(--color-secondary-text)', lineHeight: 1.6, marginBottom: '28px' }}>
           You'll be returned to the login screen. Unsaved changes will be lost.
         </p>
         <div style={{ display: 'flex', gap: '12px' }}>
@@ -126,10 +126,10 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ onConfirm, onCancel }) => {
             onClick={handleCancel}
             style={{
               flex: 1, padding: '12px', borderRadius: '14px',
-              fontFamily: 'Poppins,sans-serif', fontWeight: 600, fontSize: '14px',
-              color: 'rgba(255,255,255,0.7)',
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.10)',
+              fontFamily: 'var(--font-poppins)', fontWeight: 600, fontSize: '14px',
+              color: 'var(--color-main-text)',
+              background: 'transparent',
+              border: '1px solid var(--color-border)',
               cursor: 'pointer', transition: 'background 0.2s',
             }}
           >Cancel</button>
@@ -137,7 +137,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ onConfirm, onCancel }) => {
             onClick={onConfirm}
             style={{
               flex: 1, padding: '12px', borderRadius: '14px',
-              fontFamily: 'Poppins,sans-serif', fontWeight: 700, fontSize: '14px',
+              fontFamily: 'var(--font-poppins)', fontWeight: 700, fontSize: '14px',
               color: '#fff',
               background: '#ef4444',
               boxShadow: '0 8px 20px -4px rgba(239,68,68,0.5)',
@@ -234,8 +234,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           top: 0,
           backdropFilter: 'blur(40px)',
           WebkitBackdropFilter: 'blur(40px)',
-          borderRight: '1px solid rgba(255,255,255,0.08)',
-          background: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.55)',
+          borderRight: '1px solid var(--color-border)',
+          background: 'var(--color-glass-bg)',
           transition: 'transform 0.5s cubic-bezier(0.16,1,0.3,1)',
           // Mobile drawer
           ...(typeof window !== 'undefined' && window.innerWidth < 1024
@@ -251,7 +251,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Logo Header */}
         <div className="sidebar-logo-header">
           <img
-            src="/logos/full-logo.png"
+            src={isDark ? "/logos/dark-theme-logo.png" : "/logos/light-theme-logo.png"}
             alt={APP_NAME}
             style={{ height: '36px', objectFit: 'contain' }}
             draggable={false}
@@ -259,12 +259,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <button
             onClick={onClose}
             aria-label="Close navigation"
-            className="lg:hidden"
+            className="flex lg:hidden items-center justify-center"
             style={{
               width: '36px', height: '36px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
               borderRadius: '10px',
-              color: 'rgba(255,255,255,0.4)',
+              color: 'var(--color-secondary-text)',
               background: 'transparent',
               border: 'none', cursor: 'pointer',
               transition: 'color 0.2s',
@@ -314,11 +313,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                 onClick={onClose}
                 aria-current={isActive ? 'page' : undefined}
                 style={{
-                  color: isActive ? '#ffffff' : 'rgba(255,255,255,0.55)',
+                  color: isActive ? '#ffffff' : 'var(--color-secondary-text)',
                   textDecoration: 'none',
                   background: 'transparent',
                 }}
-                className={cn(!isActive && 'hover:!text-white')}
+                className={cn(!isActive && 'hover:!text-[var(--color-main-text)]')}
               >
                 <span
                   style={{
@@ -361,7 +360,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             aria-expanded={profileMenuOpen}
             aria-label="Open profile menu"
             className="profile-tile"
-            style={{ border: 'none', cursor: 'pointer', textAlign: 'left' }}
+            style={{ border: '1px solid var(--color-border)', cursor: 'pointer', textAlign: 'left' }}
           >
             {/* Avatar */}
             <div style={{
@@ -377,16 +376,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             {/* Name + Role */}
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <p style={{
-                fontFamily: 'Poppins,sans-serif', fontWeight: 700, fontSize: '14px',
-                color: '#fff',
+                fontFamily: 'var(--font-poppins)', fontWeight: 700, fontSize: '14px',
+                color: 'var(--color-main-text)',
                 whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                 lineHeight: 1.3, marginBottom: '2px',
               }}>
                 {user?.name ?? 'Administrator'}
               </p>
               <p style={{
-                fontFamily: 'Poppins,sans-serif', fontSize: '12px',
-                color: 'rgba(255,255,255,0.45)',
+                fontFamily: 'var(--font-poppins)', fontSize: '12px',
+                color: 'var(--color-secondary-text)',
                 whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                 textTransform: 'capitalize', letterSpacing: '0.02em',
               }}>
@@ -398,7 +397,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             <ChevronUp
               size={16}
               style={{
-                color: 'rgba(255,255,255,0.3)',
+                color: 'var(--color-secondary-text)',
                 flexShrink: 0,
                 transition: 'transform 0.3s',
                 transform: profileMenuOpen ? 'rotate(0deg)' : 'rotate(180deg)',

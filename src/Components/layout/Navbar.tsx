@@ -46,7 +46,6 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick, pageTitle = 'Dashboard' })
   return (
     <header
       id="navbar"
-      className="flex items-center justify-between h-20 px-8 shrink-0 backdrop-blur-xl bg-transparent border-b border-white/5"
     >
       {/* ── Left: Mobile Menu + Page Title ── */}
       <div className="flex items-center gap-4">
@@ -55,13 +54,14 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick, pageTitle = 'Dashboard' })
           aria-label="Open navigation menu"
           className={cn(
             'lg:hidden flex items-center justify-center w-11 h-11 rounded-xl',
-            'text-white/50 hover:text-white hover:bg-white/8 transition-all duration-300',
+            'transition-all duration-300 hover:opacity-80',
           )}
+          style={{ color: 'var(--color-secondary-text)' }}
         >
           <Menu size={24} aria-hidden="true" />
         </button>
 
-        <h1 className="font-poppins font-bold text-[22px] tracking-tight text-white leading-tight">
+        <h1 className="font-poppins font-bold text-[22px] tracking-tight leading-tight" style={{ color: 'var(--color-main-text)' }}>
           {pageTitle}
         </h1>
       </div>
@@ -72,7 +72,9 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick, pageTitle = 'Dashboard' })
         <button
           onClick={toggleTheme}
           aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          className="relative flex items-center justify-center w-11 h-11 rounded-2xl text-white/60 hover:text-white hover:bg-white/8 transition-colors duration-300">
+          className="relative flex items-center justify-center w-11 h-11 rounded-2xl transition-colors duration-300 hover:opacity-80"
+          style={{ color: 'var(--color-secondary-text)' }}
+        >
           {isDark ? (
             <Sun
               ref={sunRef}
@@ -93,7 +95,8 @@ const Navbar: React.FC<NavbarProps> = ({ onMenuClick, pageTitle = 'Dashboard' })
         {/* Notification Bell */}
         <button
           aria-label="View notifications"
-          className="relative flex items-center justify-center w-11 h-11 rounded-2xl text-white/60 hover:text-white hover:bg-white/6 transition-colors duration-300 group"
+          className="relative flex items-center justify-center w-11 h-11 rounded-2xl transition-colors duration-300 group hover:opacity-80"
+          style={{ color: 'var(--color-secondary-text)' }}
         >
           <Bell size={22} className="group-hover:animate-notif-bounce" aria-hidden="true" />
 

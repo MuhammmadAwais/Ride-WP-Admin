@@ -4,41 +4,45 @@
 @custom-variant dark (&:is(.dark, .dark *));
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   ZERO-FLICKER THEME BOOTSTRAP
-   Applied immediately before React mounts to prevent FOUC.
+   THEME VARIABLES
 ═══════════════════════════════════════════════════════════════════════════════ */
 :root {
-  /* ── Core Palette ── */
-  --color-accent:        #EB712B;
-  --color-bg-dark:       #202020;
-  --color-surface-dark:  #282828E5;
-  --color-secondary:     #464646;
-  --color-text-primary:  #FFFFFF;
-  --color-text-muted:    #B0B0B0;
-  --color-error:         #EF4444;
+  /* Light Theme (Default) */
+  --color-main-bg: #F6F6F6;
+  --color-secondary-bg: #FFFFFF;
+  --color-main-text: #363636;
+  --color-secondary-text: #818181;
+  --color-accent: #EB712B;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-hover: rgba(0, 0, 0, 0.04);
+  --color-glass-bg: rgba(255, 255, 255, 0.7);
+}
 
-  /* ── Shadows ── */
-  --shadow-card:         0 20px 50px rgba(0, 0, 0, 0.5);
-  --shadow-accent:       0 0 20px rgba(235, 113, 43, 0.3);
-  --shadow-pill-glow:    0 10px 30px -5px rgba(235, 113, 43, 0.6);
+html.dark {
+  /* Dark Theme */
+  --color-main-bg: #202020;
+  --color-secondary-bg: #282828E5;
+  --color-main-text: #FFFFFF;
+  --color-secondary-text: #95908D;
+  --color-accent: #EB712B;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-hover: rgba(255, 255, 255, 0.05);
+  --color-glass-bg: rgba(40, 40, 40, 0.5);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    TAILWIND v4 @THEME BLOCK — Design Tokens
 ═══════════════════════════════════════════════════════════════════════════════ */
 @theme {
-  /* ── CRITICAL: Tailwind v4 spacing base — without this all p-*, m-*, gap-* = 0 ── */
+  /* ── CRITICAL: Tailwind v4 spacing base ── */
   --spacing: 0.25rem;
 
   /* ── Colors ── */
-  --color-accent:          #EB712B;
-  --color-bg-dark:         #202020;
-  --color-main-bg:         #202020;
-  --color-surface:         rgba(40, 40, 40, 0.90);
-  --color-surface-dark:    #282828E5;
-  --color-secondary:       #464646;
-  --color-text-main:       #FFFFFF;
-  --color-text-muted:      #B0B0B0;
+  --color-accent:          var(--color-accent);
+  --color-main-bg:         var(--color-main-bg);
+  --color-surface:         var(--color-secondary-bg);
+  --color-text-main:       var(--color-main-text);
+  --color-text-muted:      var(--color-secondary-text);
   --color-error:           #EF4444;
 
   /* ── Typography ── */
@@ -76,9 +80,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   HARDCODED LAYOUT SPACING — Guaranteed regardless of Tailwind utility output.
-   These rules ensure every major UI region has proper padding/gap even if
-   Tailwind's spacing-scale utilities fail to compile.
+   HARDCODED LAYOUT SPACING & STYLING
 ═══════════════════════════════════════════════════════════════════════════════ */
 
 /* ── Sidebar: Logo Header ── */
@@ -88,7 +90,7 @@
   justify-content: space-between;
   height: 80px;
   padding: 0 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
 }
 
@@ -104,19 +106,24 @@
   gap: 14px;
   padding: 14px 20px;
   margin-bottom: 6px;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   font-size: 14px;
-  font-weight: 600;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-weight: 500;
+  font-family: var(--font-poppins);
   position: relative;
   z-index: 10;
-  transition: color 0.2s;
+  color: var(--color-secondary-text);
+  transition: color 0.2s, background-color 0.2s;
+}
+
+#sidebar nav a:hover, #sidebar nav a.active {
+  color: var(--color-main-text);
 }
 
 /* ── Sidebar: Divider ── */
 #sidebar .nav-divider {
   height: 1px;
-  background: rgba(255,255,255,0.08);
+  background: var(--color-border);
   margin: 24px 12px;
 }
 
@@ -130,9 +137,9 @@
 #sidebar .profile-menu {
   margin-bottom: 10px;
   padding: 8px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: #1E1E1E;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: var(--color-secondary-bg);
 }
 
 #sidebar .profile-menu button {
@@ -143,14 +150,18 @@
   padding: 14px 16px;
   border-radius: 12px;
   font-size: 14px;
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: var(--font-poppins);
   font-weight: 500;
   transition: background 0.2s;
+  color: var(--color-main-text);
+}
+#sidebar .profile-menu button:hover {
+  background: var(--color-hover);
 }
 
 #sidebar .profile-menu-divider {
   height: 1px;
-  background: rgba(255,255,255,0.08);
+  background: var(--color-border);
   margin: 6px 8px;
 }
 
@@ -161,14 +172,14 @@
   gap: 14px;
   width: 100%;
   padding: 14px 16px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: transparent;
   transition: background 0.3s;
 }
 
 #sidebar .profile-tile:hover {
-  background: rgba(255,255,255,0.08);
+  background: var(--color-hover);
 }
 
 /* ── Navbar ── */
@@ -178,7 +189,7 @@
   justify-content: space-between;
   height: 80px;
   padding: 0 32px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid var(--color-border);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
@@ -201,15 +212,21 @@
 /* ── Individual stat card ── */
 .stat-card {
   padding: 28px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  border-radius: var(--radius-xl);
+  background: var(--color-secondary-bg);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
+html.dark .stat-card {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
 .stat-card:hover {
   transform: translateY(-4px);
-  background: rgba(255,255,255,0.08);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+}
+html.dark .stat-card:hover {
   box-shadow: 0 16px 40px rgba(0,0,0,0.4);
 }
 
@@ -228,197 +245,75 @@
   align-items: center;
   justify-content: center;
   background: rgba(235,113,43,0.15);
-  color: #EB712B;
+  color: var(--color-accent);
   flex-shrink: 0;
 }
 
 .stat-card-value {
-  font-family: 'Poppins', system-ui, sans-serif;
+  font-family: var(--font-poppins);
   font-weight: 700;
   font-size: 28px;
   line-height: 1.1;
-  color: #ffffff;
+  color: var(--color-main-text);
   margin-bottom: 6px;
 }
 
 .stat-card-label {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-roboto);
   font-size: 13px;
   font-weight: 500;
-  color: rgba(255,255,255,0.55);
+  color: var(--color-secondary-text);
   margin-bottom: 4px;
 }
 
 .stat-card-trend {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--font-roboto);
   font-size: 12px;
-  color: rgba(255,255,255,0.35);
+  color: var(--color-secondary-text);
   margin-top: 4px;
+  opacity: 0.8;
 }
-
-/* Light mode overrides for stat cards */
-html:not(.dark) .stat-card {
-  background: rgba(255,255,255,0.75);
-  border-color: rgba(0,0,0,0.08);
-}
-html:not(.dark) .stat-card:hover {
-  background: rgba(255,255,255,0.90);
-}
-html:not(.dark) .stat-card-value { color: #1a1a1a; }
-html:not(.dark) .stat-card-label { color: rgba(30,30,30,0.6); }
-html:not(.dark) .stat-card-trend { color: rgba(30,30,30,0.4); }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    GLOBAL RESET & BASE
 ═══════════════════════════════════════════════════════════════════════════════ */
 *, *::before, *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html {
-  background-color: #202020;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-main-bg);
+  color: var(--color-main-text);
   font-family: var(--font-roboto);
-  background-color: #202020;
-  color: var(--color-text-primary);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  min-height: 100svh;
-  overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
+  overflow: hidden; /* AppLayout manages scrolling */
 }
 
-/* ── Light Mode Overrides ──────────────────────────────────────────── */
-/* Applied when html does NOT have .dark class                              */
-html:not(.dark) body,
-html:not(.dark) #root {
-  background-color: #F0EFE9;
-  color: #1A1A1A;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-/* Light mode: the layout shell background */
-html:not(.dark) .bg-main-bg {
-  background-color: #F0EFE9 !important;
+/* Hide scrollbars for cleaner aesthetic but keep scrolling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
-
-/* Light mode: sidebar and navbar glass surface becomes dark-on-light */
-html:not(.dark) [id="sidebar"] {
-  background-color: rgba(255, 255, 255, 0.55) !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
-
-html:not(.dark) [id="navbar"] {
-  border-color: rgba(0, 0, 0, 0.06) !important;
-}
-
-/* Light mode: sidebar text colors */
-html:not(.dark) [id="sidebar"] .text-white\/55,
-html:not(.dark) [id="sidebar"] .text-white\/60,
-html:not(.dark) [id="sidebar"] .text-white\/45 {
-  color: rgba(40, 40, 40, 0.65) !important;
-}
-
-html:not(.dark) [id="sidebar"] .text-white {
-  color: #1A1A1A !important;
-}
-
-/* Light mode: navbar title and icons */
-html:not(.dark) [id="navbar"] h1 {
-  color: #1A1A1A !important;
-}
-
-html:not(.dark) [id="navbar"] .text-white\/60 {
-  color: rgba(40, 40, 40, 0.6) !important;
-}
-
-/* Light mode: stat cards */
-html:not(.dark) .bg-white\/5 {
-  background-color: rgba(255, 255, 255, 0.7) !important;
-}
-
-html:not(.dark) .border-white\/8 {
-  border-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-html:not(.dark) .text-white {
-  color: #1A1A1A !important;
-}
-
-html:not(.dark) .text-white\/50 {
-  color: rgba(40, 40, 40, 0.55) !important;
-}
-
-html:not(.dark) .text-white\/35 {
-  color: rgba(40, 40, 40, 0.4) !important;
-}
-
-/* Light mode: dividers */
-html:not(.dark) .bg-white\/8 {
-  background-color: rgba(0, 0, 0, 0.07) !important;
-}
-
-html:not(.dark) .border-white\/10 {
-  border-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-html:not(.dark) .border-white\/5 {
-  border-color: rgba(0, 0, 0, 0.05) !important;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════════
-   CUSTOM SCROLLBAR
-═══════════════════════════════════════════════════════════════════════════════ */
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(235, 113, 43, 0.25) transparent;
-}
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(235, 113, 43, 0.25);
-  border-radius: 99px;
+  background: var(--color-border);
+  border-radius: 10px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(235, 113, 43, 0.5);
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════════
-   UI PRIMITIVES
-═══════════════════════════════════════════════════════════════════════════════ */
-
-/* ── Glassmorphic Field ── */
-.field {
-  @apply w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white outline-none transition-all;
-  backdrop-filter: blur(8px);
-}
-.field:focus {
-  @apply border-accent ring-4 ring-accent/20 bg-white/10;
-}
-.field::placeholder {
-  @apply text-white/30;
-}
-.field-error {
-  @apply border-error/50 ring-error/10;
-}
-
-/* ── Premium Button ── */
-.btn-primary {
-  @apply w-full py-4 bg-accent text-[#202020] font-poppins font-bold text-sm tracking-wider uppercase rounded-pill transition-all active:scale-[0.98];
-  box-shadow: 0 8px 25px rgba(235, 113, 43, 0.3);
-}
-.btn-primary:hover:not(:disabled) {
-  @apply bg-[#F08644] -translate-y-0.5;
-  box-shadow: 0 12px 30px rgba(235, 113, 43, 0.45);
-}
-.btn-primary:disabled {
-  @apply opacity-50 cursor-not-allowed grayscale;
-}
-
-/* ── Card Container (Login) ── */
-.login-card {
-  @apply w-full max-w-[450px] bg-surface border border-secondary/30 rounded-2xl px-10 py-12 md:px-14 md:py-16 backdrop-blur-xl shadow-2xl;
+  background: var(--color-secondary-text);
 }

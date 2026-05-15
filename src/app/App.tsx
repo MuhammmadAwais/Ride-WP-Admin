@@ -10,7 +10,7 @@ import { RouterProvider } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { store, persistor } from './store';
 import { router } from './router';
-import { useTheme } from '@/hooks/useTheme';
+import { ThemeProvider, useTheme } from '@/Components/providers/ThemeProvider';
 import { useSecureSession } from '@/hooks/useSecureSession';
 
 /**
@@ -43,7 +43,9 @@ function App(): React.ReactElement {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <AppInner />
+        <ThemeProvider>
+          <AppInner />
+        </ThemeProvider>
       </PersistGate>
     </Provider>
   );
