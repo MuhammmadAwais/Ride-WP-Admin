@@ -122,7 +122,7 @@ export function ChatWindow({ activeUser, messages, onBack, isHiddenOnMobile }: C
       {/* Message Feed */}
       <div 
         ref={containerRef}
-        className="relative z-10 flex-1 overflow-y-auto p-4 sm:p-6 scrollbar-thin flex flex-col"
+        className="relative z-10 flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar flex flex-col"
       >
         <div className="text-center my-4">
           <span className="inline-block px-3 py-1 bg-surface border border-border dark:border-white/5 rounded-lg text-[11px] font-roboto font-medium text-text-muted shadow-sm">

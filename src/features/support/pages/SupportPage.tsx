@@ -8,7 +8,7 @@ import { MOCK_CHAT_USERS, MOCK_MESSAGES } from '../utils/constants';
 export default function SupportPage() {
   const [activeUserId, setActiveUserId] = useState<string | null>(null);
 
-  const handleSelectUser = (id: string) => {
+  const handleSelectUser = (id: string | null) => {
     setActiveUserId(id);
   };
 
@@ -21,7 +21,7 @@ export default function SupportPage() {
   const isChatActive = activeUserId !== null;
 
   return (
-    <div className="flex flex-col h-[calc(100svh-120px)] sm:h-[calc(100svh-100px)]">
+    <div className="flex flex-col h-[calc(100vh-130px)] md:h-[calc(100vh-160px)] min-h-[500px]">
       <Helmet>
         <title>App Support — {APP_NAME} Admin</title>
       </Helmet>

@@ -5,7 +5,7 @@ import { type ChatUser } from '../utils/constants';
 interface ChatSidebarProps {
   users: ChatUser[];
   activeUserId: string | null;
-  onSelectUser: (id: string) => void;
+  onSelectUser: (id: string | null) => void;
   isHiddenOnMobile: boolean;
 }
 
@@ -45,13 +45,18 @@ export function ChatSidebar({ users, activeUserId, onSelectUser, isHiddenOnMobil
 
   return (
     <div 
-      className={`absolute md:relative z-20 top-0 bottom-0 left-0 w-full md:w-[360px] flex flex-col border-r border-white/5 backdrop-blur-xl bg-white/5 transition-transform duration-300 ${
+      className={`absolute md:relative z-20 top-0 bottom-0 left-0 w-full md:w-[360px] flex flex-col border-r border-border dark:border-white/5 backdrop-blur-xl bg-white/5 transition-transform duration-300 ${
         isHiddenOnMobile ? '-translate-x-full md:translate-x-0' : 'translate-x-0'
       }`}
     >
       {/* Header & Search */}
       <div className="p-4 border-b border-border dark:border-white/5">
-        <h2 className="font-poppins font-bold text-xl text-text-main mb-4 px-2">Messages</h2>
+        <button 
+          onClick={() => onSelectUser(null)}
+          className="w-full text-left font-poppins font-bold text-xl text-text-main mb-4 px-2 hover:text-accent transition-colors"
+        >
+          Messages
+        </button>
         <div className="relative group">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors group-focus-within:text-accent">
             <Search size={16} className="text-text-muted/50 group-focus-within:text-accent" />
@@ -67,7 +72,7 @@ export function ChatSidebar({ users, activeUserId, onSelectUser, isHiddenOnMobil
       </div>
 
       {/* User List */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
         {filteredUsers.map((user) => {
           const isActive = user.id === activeUserId;
           return (

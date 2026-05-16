@@ -73,7 +73,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 shadow-sm relative group ${
           isOutgoing 
             ? 'bg-[#EB712B] text-white rounded-tr-sm' 
-            : 'bg-[#282828E5] text-white/90 rounded-tl-sm dark:bg-surface border border-border dark:border-white/5'
+            : 'bg-surface text-text-main rounded-tl-sm border border-border dark:border-white/5'
         }`}
       >
         {/* Only show sender name if incoming and in a group chat context, but for support we assume 1-on-1, so omitted */}
@@ -83,7 +83,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         {/* Footer (Timestamp + Status) */}
         <div 
           className={`flex items-center justify-end gap-1 mt-1 font-roboto text-[10px] ${
-            isOutgoing ? 'text-white/80' : 'text-white/50 dark:text-text-muted'
+            isOutgoing ? 'text-white/80' : 'text-text-muted'
           }`}
         >
           <span>{message.timestamp}</span>
