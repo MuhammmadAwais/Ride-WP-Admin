@@ -125,40 +125,40 @@ function RidesTabContent() {
   return (
     <div className="flex flex-col space-y-8 pb-10">
       {/* Ride Participation Summary Card (from Image 2) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {MOCK_RIDES.slice(0, 1).map((ride) => (
-          <div key={ride.id} className="rounded-[32px] p-8 bg-surface border border-border shadow-md relative overflow-hidden group">
-            <div className="flex justify-between items-start mb-8">
+          <div key={ride.id} className="rounded-[32px] p-6 sm:p-8 bg-surface border border-border shadow-md relative overflow-hidden group">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
               <div>
-                <h3 className="text-2xl font-poppins font-bold text-text-main mb-2">{ride.route.split('→')[0].trim()} Ride</h3>
+                <h3 className="text-xl sm:text-2xl font-poppins font-bold text-text-main mb-2">{ride.route.split('→')[0].trim()} Ride</h3>
                 <div className="space-y-1">
-                  <p className="text-[15px] text-text-muted font-roboto flex items-center gap-2">
+                  <p className="text-sm sm:text-[15px] text-text-muted font-roboto flex items-center gap-2">
                     <Clock size={16} className="text-accent/60" /> {ride.date} • {ride.time}
                   </p>
-                  <p className="text-[15px] text-text-muted font-roboto flex items-center gap-2">
+                  <p className="text-sm sm:text-[15px] text-text-muted font-roboto flex items-center gap-2">
                     <Star size={16} className="text-accent/60" /> {ride.clubName}
                   </p>
                 </div>
               </div>
               {ride.hasGpx && (
-                <div className="px-5 py-2.5 rounded-full bg-blue-600 text-white text-sm font-bold tracking-wide shadow-lg shadow-blue-600/20">
+                <div className="px-5 py-2.5 rounded-full bg-blue-600 text-white text-xs sm:text-sm font-bold tracking-wide shadow-lg shadow-blue-600/20">
                   GPX
                 </div>
               )}
             </div>
 
-            <div className="grid grid-cols-3 gap-4 mt-8">
-              <div className="bg-text-muted/10 dark:bg-white/5 rounded-3xl p-6 text-center group-hover:bg-accent/5 transition-colors">
-                <p className="text-xl font-bold text-text-main mb-1">{ride.pace}</p>
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Pace</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+              <div className="bg-text-muted/5 dark:bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center group-hover:bg-accent/5 transition-colors border border-border/50 sm:border-0">
+                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.pace}</p>
+                <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Pace</p>
               </div>
-              <div className="bg-text-muted/10 dark:bg-white/5 rounded-3xl p-6 text-center group-hover:bg-accent/5 transition-colors">
-                <p className="text-xl font-bold text-text-main mb-1">{ride.distance}</p>
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Distance</p>
+              <div className="bg-text-muted/5 dark:bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center group-hover:bg-accent/5 transition-colors border border-border/50 sm:border-0">
+                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.distance}</p>
+                <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Distance</p>
               </div>
-              <div className="bg-text-muted/10 dark:bg-white/5 rounded-3xl p-6 text-center group-hover:bg-accent/5 transition-colors">
-                <p className="text-xl font-bold text-text-main mb-1">{ride.participants}</p>
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Participants</p>
+              <div className="bg-text-muted/5 dark:bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center group-hover:bg-accent/5 transition-colors border border-border/50 sm:border-0">
+                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.participants}</p>
+                <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Participants</p>
               </div>
             </div>
           </div>

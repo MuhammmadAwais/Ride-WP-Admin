@@ -52,11 +52,11 @@ export function DetailTabs({ activeTab, onChange }: DetailTabsProps) {
   }, [activeTab, indicatorStyle.opacity]);
 
   return (
-    <div className="relative inline-flex backdrop-blur-md bg-white/5 p-1.5 rounded-xl border border-white/5 gap-2" ref={containerRef}>
+    <div className="relative inline-flex backdrop-blur-md bg-surface/50 p-1.5 rounded-2xl border border-border gap-2 overflow-x-auto no-scrollbar max-w-full" ref={containerRef}>
       {/* Floating active background */}
       <div
         ref={activeBgRef}
-        className="absolute top-1.5 bottom-1.5 left-0 rounded-lg bg-[#EB712B] shadow-[0_4px_15px_-3px_rgba(235,113,43,0.5)] pointer-events-none"
+        className="absolute top-1.5 bottom-1.5 left-0 rounded-xl bg-accent shadow-[0_8px_20px_-4px_rgba(235,113,43,0.3)] pointer-events-none"
         style={{ opacity: 0 }} // Starts hidden until effect sets it
       />
       
@@ -68,8 +68,8 @@ export function DetailTabs({ activeTab, onChange }: DetailTabsProps) {
             data-tab-id={tab.id}
             onClick={() => onChange(tab.id)}
             className={cn(
-              "relative z-10 px-4 py-2 font-poppins text-sm font-medium rounded-lg transition-colors duration-300",
-              isActive ? "text-white" : "text-white/60 hover:text-white/90"
+              "relative z-10 px-6 py-2.5 font-poppins text-sm font-semibold rounded-xl transition-all duration-300 whitespace-nowrap",
+              isActive ? "text-white scale-105" : "text-text-muted hover:text-text-main hover:bg-accent/5"
             )}
           >
             {tab.label}
