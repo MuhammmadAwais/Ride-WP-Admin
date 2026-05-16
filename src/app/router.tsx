@@ -42,7 +42,6 @@ export const router = createBrowserRouter([
       { path: 'clubs', element: <ClubsPage /> },
       { path: 'payments', element: <PaymentsPage /> },
       { path: 'support', element: <SupportPage /> },
-      { path: 'requests', element: <div className="p-8 text-white">Requests Page (Coming Soon)</div> },
       { path: 'analytics', element: <div className="p-8 text-white">Analytics Page (Coming Soon)</div> },
       { path: 'notifications', element: <div className="p-8 text-white">Notifications Page (Coming Soon)</div> },
       { path: 'privacy-policy', element: <div className="p-8 text-white">Privacy Policy Page (Coming Soon)</div> },

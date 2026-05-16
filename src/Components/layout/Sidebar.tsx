@@ -46,7 +46,6 @@ const NAV_ITEMS: NavEntry[] = [
   { label: 'Users',              route: ROUTES.USERS,              icon: <Users size={ICON_SIZE} /> },
   { label: 'Clubs',              route: ROUTES.CLUBS,              icon: <ShieldCheck size={ICON_SIZE} /> },
   { label: 'Payments',           route: ROUTES.PAYMENTS,           icon: <CreditCard size={ICON_SIZE} /> },
-  { label: 'Requests',           route: ROUTES.REQUESTS,           icon: <ClipboardList size={ICON_SIZE} /> },
   { label: 'Analytics',          route: ROUTES.ANALYTICS,          icon: <BarChart3 size={ICON_SIZE} /> },
   { type: 'divider' },
   { label: 'App Support',        route: ROUTES.APP_SUPPORT,        icon: <Headphones size={ICON_SIZE} /> },
