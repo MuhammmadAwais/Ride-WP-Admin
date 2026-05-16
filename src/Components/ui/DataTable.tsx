@@ -32,7 +32,7 @@ function HighlightedText({ text, highlight }: { text: string; highlight?: string
     <>
       {parts.map((part, i) =>
         regex.test(part) ? (
-          <mark key={i} className="bg-red-500/20 text-red-200 px-1 rounded inline-block">
+          <mark key={i} className="bg-accent/20 text-accent font-bold px-0.5 rounded-sm">
             {part}
           </mark>
         ) : (

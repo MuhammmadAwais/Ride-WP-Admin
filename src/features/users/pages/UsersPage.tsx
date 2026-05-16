@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Search, User } from 'lucide-react';
+import { Search, User, X } from 'lucide-react';
 import { MOCK_USERS, type User as UserType } from '../utils/constants';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { UserActionsMenu } from '../components/UserActionsMenu';
@@ -74,8 +74,16 @@ export default function UsersPage() {
               placeholder="Search users..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="w-full bg-surface border border-border text-text-main text-sm rounded-2xl pl-12 pr-4 py-3.5 outline-none focus:border-accent/40 focus:ring-4 focus:ring-accent/10 transition-all placeholder:text-text-muted/40 shadow-sm backdrop-blur-xl"
+              className="w-full bg-surface border border-border text-text-main text-sm rounded-2xl pl-12 pr-10 py-3.5 outline-none focus:border-accent/40 focus:ring-4 focus:ring-accent/10 transition-all placeholder:text-text-muted/40 shadow-sm backdrop-blur-xl"
             />
+            {searchInput && (
+              <button
+                onClick={() => setSearchInput('')}
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-text-muted/40 hover:text-accent transition-colors"
+              >
+                <X size={16} />
+              </button>
+            )}
           </div>
           
           <button className="hidden sm:flex items-center justify-center p-3.5 rounded-2xl bg-accent/10 text-accent hover:bg-accent hover:text-white transition-all duration-300 border border-accent/20">
