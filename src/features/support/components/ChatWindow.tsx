@@ -40,15 +40,17 @@ export function ChatWindow({ activeUser, messages, onBack, isHiddenOnMobile }: C
   if (!activeUser) {
     return (
       <div className={`flex-1 hidden md:flex flex-col items-center justify-center relative bg-main-bg`}>
-        {/* Geometric Wallpaper - Dark/Light compatible */}
-        <div 
-          className="absolute inset-0 z-0 pointer-events-none mix-blend-overlay opacity-[0.03] dark:opacity-[0.06]"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          }}
-        />
+        {/* Custom Geometric Wallpaper */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-[0.04] dark:opacity-[0.08]">
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="hexagons-empty" width="50" height="43.4" patternUnits="userSpaceOnUse" patternTransform="scale(1.5)">
+                <path d="M25,0 L50,14.5 L50,43.4 L25,57.9 L0,43.4 L0,14.5 Z" stroke="currentColor" strokeWidth="1" fill="none"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#hexagons-empty)" className="text-text-main" />
+          </svg>
+        </div>
         <div className="z-10 text-center">
           <div className="w-20 h-20 bg-surface rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-border">
              <img src="/integri-logo.svg" alt="App Logo" className="w-10 h-10 opacity-50 grayscale" onError={(e) => e.currentTarget.style.display = 'none'} />
@@ -68,15 +70,17 @@ export function ChatWindow({ activeUser, messages, onBack, isHiddenOnMobile }: C
         isHiddenOnMobile ? 'translate-x-full md:translate-x-0' : 'translate-x-0'
       }`}
     >
-      {/* Geometric Wallpaper */}
-      <div 
-        className="absolute inset-0 z-0 pointer-events-none mix-blend-overlay opacity-[0.03] dark:opacity-[0.06]"
-        style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      />
+      {/* Custom Geometric Wallpaper */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-[0.04] dark:opacity-[0.08]">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="hexagons-active" width="50" height="43.4" patternUnits="userSpaceOnUse" patternTransform="scale(1.5)">
+              <path d="M25,0 L50,14.5 L50,43.4 L25,57.9 L0,43.4 L0,14.5 Z" stroke="currentColor" strokeWidth="1" fill="none"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#hexagons-active)" className="text-text-main" />
+        </svg>
+      </div>
 
       {/* Sticky Header */}
       <div className="relative z-10 h-16 px-4 py-2 border-b border-border dark:border-white/5 bg-surface/80 backdrop-blur-xl flex items-center justify-between shadow-sm">
