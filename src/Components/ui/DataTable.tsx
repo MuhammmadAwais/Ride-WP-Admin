@@ -81,10 +81,10 @@ export function DataTable<T>({ data, columns, searchTerm = '', keyExtractor }: D
   };
 
   return (
-    <div className="w-full overflow-x-auto custom-scrollbar rounded-xl border border-white/10 dark:border-white/5 bg-surface backdrop-blur-xl shadow-lg">
+    <div className="w-full overflow-x-auto custom-scrollbar rounded-xl border border-border bg-surface backdrop-blur-xl shadow-lg">
       <table className="w-full min-w-[800px] text-left border-collapse">
         <thead>
-          <tr className="border-b border-white/10 dark:border-white/5 bg-[var(--color-table-header)] transition-colors">
+          <tr className="border-b border-border bg-[var(--color-table-header)] transition-colors">
             {columns.map((col, idx) => {
               const isSortable = col.sortable !== false && (typeof col.accessorKey !== 'function' || col.sortKey);
               const sortKey = col.sortKey || (typeof col.accessorKey !== 'function' ? col.accessorKey : null);
@@ -125,7 +125,7 @@ export function DataTable<T>({ data, columns, searchTerm = '', keyExtractor }: D
             sortedData.map((row) => (
               <tr
                 key={keyExtractor(row)}
-                className="border-b border-white/5 last:border-0 hover:bg-accent/[0.03] dark:hover:bg-white/[0.03] transition-colors group"
+                className="border-b border-border/50 last:border-0 hover:bg-accent/[0.03] dark:hover:bg-white/[0.03] transition-colors group"
               >
                 {columns.map((col, idx) => (
                   <td key={idx} className="p-5 font-roboto text-[14px] text-text-main/90 whitespace-nowrap">

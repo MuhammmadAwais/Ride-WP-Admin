@@ -86,11 +86,12 @@ export interface PurchaseTransaction {
   amount: string;
   method: 'Card' | 'Easypaisa' | 'JazzCash';
   status: 'Success' | 'Pending' | 'Failed';
+  itemImage?: string;
 }
 
 export const MOCK_PURCHASES: PurchaseTransaction[] = [
-  { id: 'pt1', dateTime: '20-05-2025 10:30 AM', type: 'Subscription', amount: 'PKR 5000', method: 'Card', status: 'Success' },
-  { id: 'pt2', dateTime: '15-06-2025 02:15 PM', type: 'Ride Booking', amount: 'PKR 1500', method: 'Easypaisa', status: 'Success' },
-  { id: 'pt3', dateTime: '01-07-2025 09:00 AM', type: 'Top-up', amount: 'PKR 10000', method: 'JazzCash', status: 'Pending' },
-  { id: 'pt4', dateTime: '10-07-2025 11:45 AM', type: 'Subscription', amount: 'PKR 8000', method: 'Card', status: 'Failed' },
+  { id: 'pt1', dateTime: '20-05-2025 10:30 AM', type: 'Subscription', amount: 'PKR 5000', method: 'Card', status: 'Success', itemImage: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=100&h=100&fit=crop' },
+  { id: 'pt2', dateTime: '15-06-2025 02:15 PM', type: 'Ride Booking', amount: 'PKR 1500', method: 'Easypaisa', status: 'Success', itemImage: 'https://images.unsplash.com/photo-1558981403-c5f97cb94ad2?w=100&h=100&fit=crop' },
+  { id: 'pt3', dateTime: '01-07-2025 09:00 AM', type: 'Top-up', amount: 'PKR 10000', method: 'JazzCash', status: 'Pending', itemImage: 'https://images.unsplash.com/photo-1580519542036-c47de6196ba5?w=100&h=100&fit=crop' },
+  { id: 'pt4', dateTime: '10-07-2025 11:45 AM', type: 'Subscription', amount: 'PKR 8000', method: 'Card', status: 'Failed', itemImage: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=100&h=100&fit=crop' },
 ];

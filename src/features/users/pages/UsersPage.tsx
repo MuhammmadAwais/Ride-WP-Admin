@@ -29,11 +29,11 @@ export default function UsersPage() {
     {
       header: 'Profile Photo',
       accessorKey: (row) => (
-        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/5">
+        <div className="w-10 h-10 rounded-full bg-accent/5 flex items-center justify-center flex-shrink-0 border border-border overflow-hidden">
           {row.profilePhoto ? (
-            <img src={row.profilePhoto} alt={row.name} className="w-full h-full rounded-full object-cover" />
+            <img src={row.profilePhoto} alt={row.name} className="w-full h-full object-cover" />
           ) : (
-            <User size={20} className="text-white/50" />
+            <User size={20} className="text-accent/30" />
           )}
         </div>
       ),

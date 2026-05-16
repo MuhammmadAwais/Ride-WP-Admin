@@ -73,7 +73,7 @@ export function UserActionsMenu({ userId }: UserActionsMenuProps) {
       <button
         ref={buttonRef}
         onClick={toggleMenu}
-        className="p-1.5 rounded-md hover:bg-[#EB712B]/10 transition-colors text-white/50 hover:text-[#EB712B]"
+        className="p-1.5 rounded-md hover:bg-accent/10 transition-colors text-text-muted hover:text-accent"
         aria-label="Actions"
       >
         <MoreVertical size={18} />
@@ -82,23 +82,23 @@ export function UserActionsMenu({ userId }: UserActionsMenuProps) {
       {isOpen && createPortal(
         <div 
           ref={menuRef}
-          className="fixed w-48 bg-[#282828] dark:bg-[#1e1e1ecf] backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl z-[300] overflow-hidden"
+          className="fixed w-48 bg-surface backdrop-blur-xl border border-border rounded-xl shadow-2xl z-[300] overflow-hidden"
           style={{ 
             top: menuPosition.top, 
             left: menuPosition.left,
             animation: 'fade-in 0.2s ease-out' 
           }}
         >
-          <button onClick={handleViewDetail} className="w-full text-left px-4 py-2.5 text-sm font-poppins text-white/80 hover:bg-[#EB712B]/10 hover:text-white flex items-center gap-3 transition-colors">
-            <Eye size={16} className="text-[#EB712B]" />
+          <button onClick={handleViewDetail} className="w-full text-left px-4 py-2.5 text-sm font-poppins text-text-main/80 hover:bg-accent/10 hover:text-accent flex items-center gap-3 transition-colors">
+            <Eye size={16} className="text-accent" />
             View user Detail
           </button>
-          <button onClick={() => handleAction('suspend')} className="w-full text-left px-4 py-2.5 text-sm font-poppins text-white/80 hover:bg-[#EB712B]/10 hover:text-white flex items-center gap-3 transition-colors">
-            <UserMinus size={16} className="text-[#eab308]" />
+          <button onClick={() => handleAction('suspend')} className="w-full text-left px-4 py-2.5 text-sm font-poppins text-text-main/80 hover:bg-accent/10 hover:text-accent flex items-center gap-3 transition-colors">
+            <UserMinus size={16} className="text-yellow-500" />
             Suspend user
           </button>
-          <button onClick={() => handleAction('delete')} className="w-full text-left px-4 py-2.5 text-sm font-poppins text-white/80 hover:bg-red-500/10 hover:text-white flex items-center gap-3 transition-colors">
-            <Trash2 size={16} className="text-[#ef4444]" />
+          <button onClick={() => handleAction('delete')} className="w-full text-left px-4 py-2.5 text-sm font-poppins text-text-main/80 hover:bg-red-500/10 hover:text-red-500 flex items-center gap-3 transition-colors">
+            <Trash2 size={16} className="text-red-500" />
             Delete user
           </button>
         </div>,
@@ -147,16 +147,16 @@ function ActionModal({ type, onClose, onConfirm }: { type: 'suspend' | 'delete',
       <div ref={overlayRef} className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={handleCancel} />
       <div
         ref={cardRef}
-        className="relative z-10 w-full max-w-[400px] rounded-[24px] bg-[#282828E5] border border-white/10 shadow-[0_24px_60px_rgba(0,0,0,0.5)] p-[36px_32px] text-center"
+        className="relative z-10 w-full max-w-[400px] rounded-[24px] bg-surface border border-border shadow-[0_24px_60px_rgba(0,0,0,0.2)] p-[36px_32px] text-center"
       >
-        <div className="mx-auto mb-5 w-16 h-16 rounded-2xl flex items-center justify-center bg-[#EB712B]/10 border border-[#EB712B]/20">
-          {isDelete ? <Trash2 size={28} className="text-[#EB712B]" /> : <UserMinus size={28} className="text-[#EB712B]" />}
+        <div className="mx-auto mb-5 w-16 h-16 rounded-2xl flex items-center justify-center bg-accent/10 border border-accent/20">
+          {isDelete ? <Trash2 size={28} className="text-accent" /> : <UserMinus size={28} className="text-accent" />}
         </div>
         
-        <h3 className="font-poppins font-bold text-[20px] text-white mb-2">
+        <h3 className="font-poppins font-bold text-[20px] text-text-main mb-2">
           {isDelete ? 'Delete this user?' : 'Suspend this user?'}
         </h3>
-        <p className="font-roboto text-[14px] text-white/60 leading-relaxed mb-7">
+        <p className="font-roboto text-[14px] text-text-muted leading-relaxed mb-7">
           {isDelete 
             ? 'This action will permanently delete the user and all associated data.' 
             : 'This user will be temporarily suspended from accessing the platform.'}
@@ -165,13 +165,13 @@ function ActionModal({ type, onClose, onConfirm }: { type: 'suspend' | 'delete',
         <div className="flex gap-3">
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white bg-[#EB712B] hover:bg-[#C85E22] transition-colors shadow-[0_8px_20px_-4px_rgba(235,113,43,0.5)]"
+            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white bg-accent hover:bg-accent/90 transition-colors shadow-[0_8px_20px_-4px_rgba(235,113,43,0.5)]"
           >
             Yes
           </button>
           <button
             onClick={handleCancel}
-            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white bg-transparent border border-white/10 hover:bg-white/5 transition-colors"
+            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-text-main bg-transparent border border-border hover:bg-surface/50 transition-colors"
           >
             No
           </button>
