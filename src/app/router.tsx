@@ -16,6 +16,7 @@ import UserDetailPage from '@/features/users/pages/UserDetailPage';
 
 import ClubsPage from '@/features/clubs/pages/ClubsPage';
 import PaymentsPage from '@/features/payments/pages/PaymentsPage';
+import SupportPage from '@/features/support/pages/SupportPage';
 
 /**
  * Application router instance.
@@ -40,9 +41,9 @@ export const router = createBrowserRouter([
       { path: 'users/:id', element: <UserDetailPage /> },
       { path: 'clubs', element: <ClubsPage /> },
       { path: 'payments', element: <PaymentsPage /> },
+      { path: 'support', element: <SupportPage /> },
       { path: 'requests', element: <div className="p-8 text-white">Requests Page (Coming Soon)</div> },
       { path: 'analytics', element: <div className="p-8 text-white">Analytics Page (Coming Soon)</div> },
-      { path: 'support', element: <div className="p-8 text-white">Support Page (Coming Soon)</div> },
       { path: 'notifications', element: <div className="p-8 text-white">Notifications Page (Coming Soon)</div> },
       { path: 'privacy-policy', element: <div className="p-8 text-white">Privacy Policy Page (Coming Soon)</div> },
       { path: 'terms', element: <div className="p-8 text-white">Terms Page (Coming Soon)</div> },
