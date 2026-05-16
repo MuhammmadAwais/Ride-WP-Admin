@@ -99,44 +99,34 @@ export default function UserDetailPage() {
 // ─── Tab Contents ────────────────────────────────────────────────────────────
 
 function RidesTabContent() {
+  const columns: ColumnDef<ParticipatedRide>[] = [
+    { header: 'Date & Time', accessorKey: (r) => `${r.date} ${r.time}`, sortKey: 'date' },
+    { header: 'Route', accessorKey: 'route' },
+    { header: 'Club/Host Name', accessorKey: 'clubName' },
+    { header: 'Role', accessorKey: (r) => (
+      <span className={`px-2.5 py-1 rounded-md text-xs font-medium ${r.role === 'Driver' ? 'bg-accent/20 text-accent border border-accent/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'}`}>
+        {r.role}
+      </span>
+    ), sortKey: 'role' },
+    { header: 'Fare Paid', accessorKey: 'fare' },
+    { header: 'Status', accessorKey: (r) => (
+      <div className="flex items-center gap-1.5">
+        {r.status === 'Completed' && <CheckCircle2 size={14} className="text-green-400" />}
+        {r.status === 'Upcoming' && <Clock size={14} className="text-yellow-400" />}
+        {r.status === 'Cancelled' && <XCircle size={14} className="text-red-400" />}
+        <span className={
+          r.status === 'Completed' ? 'text-green-400' :
+          r.status === 'Upcoming' ? 'text-yellow-400' : 'text-red-400'
+        }>{r.status}</span>
+      </div>
+    ), sortKey: 'status' }
+  ];
+
   return (
     <div className="flex flex-col space-y-8 pb-10">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="rounded-2xl p-6 border border-border bg-surface shadow-sm flex items-center justify-between group hover:border-accent/30 transition-all">
-          <div>
-            <p className="text-text-muted text-sm font-poppins mb-1">Total Rides</p>
-            <p className="text-3xl font-bold text-text-main font-roboto">124</p>
-          </div>
-          <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
-            <TrendingUp size={28} />
-          </div>
-        </div>
-        <div className="rounded-2xl p-6 border border-border bg-surface shadow-sm flex items-center justify-between group hover:border-accent/30 transition-all">
-          <div>
-            <p className="text-text-muted text-sm font-poppins mb-1">Distance Covered</p>
-            <p className="text-3xl font-bold text-text-main font-roboto">1,240 <span className="text-lg text-text-muted font-normal">km</span></p>
-          </div>
-          <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
-            <Car size={28} />
-          </div>
-        </div>
-        <div className="rounded-2xl p-6 border border-border bg-surface shadow-sm flex items-center justify-between group hover:border-accent/30 transition-all">
-          <div>
-            <p className="text-text-muted text-sm font-poppins mb-1">User Reputation</p>
-            <div className="flex items-end gap-2">
-              <p className="text-3xl font-bold text-text-main font-roboto">4.8</p>
-              <p className="text-sm text-text-muted mb-1">/ 5.0</p>
-            </div>
-          </div>
-          <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 flex items-center justify-center text-yellow-500 group-hover:scale-110 transition-transform">
-            <Star size={28} fill="currentColor" />
-          </div>
-        </div>
-      </div>
-      
-      {/* Ride Participation Cards Design */}
+      {/* Ride Participation Summary Card (from Image 2) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {MOCK_RIDES.map((ride) => (
+        {MOCK_RIDES.slice(0, 1).map((ride) => (
           <div key={ride.id} className="rounded-[32px] p-8 bg-surface border border-border shadow-md relative overflow-hidden group">
             <div className="flex justify-between items-start mb-8">
               <div>
@@ -174,6 +164,41 @@ function RidesTabContent() {
           </div>
         ))}
       </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="rounded-xl p-5 border border-border bg-surface flex items-center justify-between">
+          <div>
+            <p className="text-text-muted text-sm font-poppins mb-1">Total Rides</p>
+            <p className="text-3xl font-bold text-text-main font-roboto">124</p>
+          </div>
+          <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
+            <TrendingUp size={24} />
+          </div>
+        </div>
+        <div className="rounded-xl p-5 border border-border bg-surface flex items-center justify-between">
+          <div>
+            <p className="text-text-muted text-sm font-poppins mb-1">Distance Covered</p>
+            <p className="text-3xl font-bold text-text-main font-roboto">1,240 <span className="text-lg text-text-muted font-normal">km</span></p>
+          </div>
+          <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+            <Car size={24} />
+          </div>
+        </div>
+        <div className="rounded-xl p-5 border border-border bg-surface flex items-center justify-between">
+          <div>
+            <p className="text-text-muted text-sm font-poppins mb-1">User Reputation</p>
+            <div className="flex items-end gap-2">
+              <p className="text-3xl font-bold text-text-main font-roboto">4.8</p>
+              <p className="text-sm text-text-muted mb-1">/ 5.0</p>
+            </div>
+          </div>
+          <div className="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-400">
+            <Star size={24} fill="currentColor" />
+          </div>
+        </div>
+      </div>
+      
+      <DataTable data={MOCK_RIDES} columns={columns} keyExtractor={(r) => r.id} />
     </div>
   );
 }

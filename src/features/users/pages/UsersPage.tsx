@@ -74,7 +74,7 @@ export default function UsersPage() {
               placeholder="Search users..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="w-full bg-surface border border-white/10 dark:border-white/5 text-text-main text-sm rounded-2xl pl-12 pr-4 py-3.5 outline-none focus:border-accent/40 focus:ring-4 focus:ring-accent/10 transition-all placeholder:text-text-muted/40 shadow-sm backdrop-blur-xl"
+              className="w-full bg-surface border border-border text-text-main text-sm rounded-2xl pl-12 pr-4 py-3.5 outline-none focus:border-accent/40 focus:ring-4 focus:ring-accent/10 transition-all placeholder:text-text-muted/40 shadow-sm backdrop-blur-xl"
             />
           </div>
           

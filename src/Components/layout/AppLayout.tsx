@@ -56,13 +56,13 @@ const AppLayout: React.FC = () => {
       </Helmet>
 
       {/* ── Base: Full-screen container with dark bg ── */}
-      <div className="relative min-h-svh w-full overflow-hidden bg-main-bg">
+      <div className="relative min-h-svh w-full bg-main-bg">
 
         {/* ── Layer 0: Zero-G Background (fixed, z-0) ── */}
         <BackgroundBubbles />
 
         {/* ── Layer 1: App Shell (z-10) ── */}
-        <div className="relative z-10 flex h-svh w-full">
+        <div className="relative z-10 flex w-full">
 
           {/* Sidebar — sticky on desktop, drawer on mobile */}
           <Sidebar
@@ -71,7 +71,7 @@ const AppLayout: React.FC = () => {
           />
 
           {/* ── Main Column ── */}
-          <div className="flex flex-col flex-1 min-w-0 relative h-svh">
+          <div className="flex flex-col flex-1 min-w-0 relative">
 
             {/* Sticky Navbar (z-30) */}
             <div className="sticky top-0 left-0 right-0 z-30">
@@ -85,8 +85,7 @@ const AppLayout: React.FC = () => {
             <main
               ref={contentRef}
               id="main-content"
-              className="custom-scrollbar"
-              style={{ flex: 1, overflowY: 'auto' }}
+              className="flex-1"
             >
               <Outlet />
             </main>

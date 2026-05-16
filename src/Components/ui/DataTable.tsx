@@ -81,7 +81,7 @@ export function DataTable<T>({ data, columns, searchTerm = '', keyExtractor }: D
   };
 
   return (
-    <div className="w-full overflow-x-auto custom-scrollbar rounded-xl border border-border bg-surface backdrop-blur-xl shadow-lg">
+    <div className="w-full overflow-x-auto custom-scrollbar rounded-xl border border-border bg-surface/80 backdrop-blur-2xl shadow-lg">
       <table className="w-full min-w-[800px] text-left border-collapse">
         <thead>
           <tr className="border-b border-border bg-[var(--color-table-header)] transition-colors">
