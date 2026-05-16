@@ -14,6 +14,9 @@ import ProtectedRoute from '@/Components/layout/ProtectedRoute';
 import UsersPage from '@/features/users/pages/UsersPage';
 import UserDetailPage from '@/features/users/pages/UserDetailPage';
 
+import ClubsPage from '@/features/clubs/pages/ClubsPage';
+import PaymentsPage from '@/features/payments/pages/PaymentsPage';
+
 /**
  * Application router instance.
  * Add new protected routes under the `/dashboard` children array.
@@ -35,8 +38,8 @@ export const router = createBrowserRouter([
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'users', element: <UsersPage /> },
       { path: 'users/:id', element: <UserDetailPage /> },
-      { path: 'clubs', element: <div className="p-8 text-white">Clubs Page (Coming Soon)</div> },
-      { path: 'payments', element: <div className="p-8 text-white">Payments Page (Coming Soon)</div> },
+      { path: 'clubs', element: <ClubsPage /> },
+      { path: 'payments', element: <PaymentsPage /> },
       { path: 'requests', element: <div className="p-8 text-white">Requests Page (Coming Soon)</div> },
       { path: 'analytics', element: <div className="p-8 text-white">Analytics Page (Coming Soon)</div> },
       { path: 'support', element: <div className="p-8 text-white">Support Page (Coming Soon)</div> },

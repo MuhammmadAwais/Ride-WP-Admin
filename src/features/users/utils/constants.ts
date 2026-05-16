@@ -38,6 +38,27 @@ export const MOCK_JOINED_CLUBS: JoinedClub[] = [
   { id: 'c5', name: 'Peshawar Thumpers', members: 300, role: 'Member', dateJoined: '10-02-2025', image: '', isPublic: true },
 ];
 
+export interface Club {
+  id: string;
+  clubPhoto: string;
+  name: string;
+  clubType: 'Public' | 'Private';
+  phoneNo: string;
+  email: string;
+  founderName: string;
+  subscriptionPlan: 'Silver' | 'Gold' | 'Diamond';
+  startDate: string;
+  endDate: string;
+}
+
+export const MOCK_CLUBS: Club[] = [
+  { id: '1', clubPhoto: '', name: 'Islamabad Riders', clubType: 'Public', phoneNo: '(212)456-7890', email: 'abc@gmail.com', founderName: 'Alex George', subscriptionPlan: 'Silver', startDate: '20-05-2025', endDate: '18-07-2025' },
+  { id: '2', clubPhoto: '', name: 'Lahore Bikers', clubType: 'Private', phoneNo: '(212)456-7890', email: 'abc@gmail.com', founderName: 'Alex George', subscriptionPlan: 'Gold', startDate: '20-05-2025', endDate: '18-07-2025' },
+  { id: '3', clubPhoto: '', name: 'Karachi Cruisers', clubType: 'Public', phoneNo: '(212)456-7890', email: 'abc@gmail.com', founderName: 'Alex George', subscriptionPlan: 'Diamond', startDate: '20-05-2025', endDate: '18-07-2025' },
+  { id: '4', clubPhoto: '', name: 'Northern Adventurers', clubType: 'Private', phoneNo: '(212)456-7890', email: 'abc@gmail.com', founderName: 'Alex George', subscriptionPlan: 'Silver', startDate: '20-05-2025', endDate: '18-07-2025' },
+  { id: '5', clubPhoto: '', name: 'Peshawar Thumpers', clubType: 'Private', phoneNo: '(212)456-7890', email: 'abc@gmail.com', founderName: 'Alex George', subscriptionPlan: 'Gold', startDate: '20-05-2025', endDate: '18-07-2025' },
+];
+
 export interface ParticipatedRide {
   id: string;
   date: string;

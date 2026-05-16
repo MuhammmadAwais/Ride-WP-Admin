@@ -60,12 +60,7 @@ const DashboardPage: React.FC = () => (
 
     <div>
       {/* Welcome subtitle */}
-      <p style={{
-        fontFamily: 'Roboto, sans-serif',
-        fontSize: '14px',
-        color: 'rgba(255,255,255,0.5)',
-        marginBottom: '8px',
-      }}>
+      <p className="font-roboto text-[14px] text-text-main mb-2">
         {DASHBOARD_COPY.WELCOME}
       </p>
 
