@@ -17,16 +17,16 @@ export const MOCK_ADMIN_NAME = "Super Admin" as const;
 export const ROUTES = {
   LOGIN: "/login",
   DASHBOARD: "/dashboard",
-  USERS: "/dashboard/users",
-  CLUBS: "/dashboard/clubs",
-  PAYMENTS: "/dashboard/payments",
-  REQUESTS: "/dashboard/requests",
-  ANALYTICS: "/dashboard/analytics",
-  APP_SUPPORT: "/dashboard/support",
-  PUSH_NOTIFICATIONS: "/dashboard/notifications",
-  PRIVACY_POLICY: "/dashboard/privacy-policy",
-  TERMS: "/dashboard/terms",
-  ABOUT: "/dashboard/about",
+  USERS: "/users",
+  CLUBS: "/clubs",
+  PAYMENTS: "/payments",
+  REQUESTS: "/requests",
+  ANALYTICS: "/analytics",
+  APP_SUPPORT: "/support",
+  PUSH_NOTIFICATIONS: "/notifications",
+  PRIVACY_POLICY: "/privacy-policy",
+  TERMS: "/terms",
+  ABOUT: "/about",
 } as const;
 
 // ─── Navigation Items ────────────────────────────────────────────────────────
