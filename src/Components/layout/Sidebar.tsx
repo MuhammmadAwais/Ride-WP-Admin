@@ -251,8 +251,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           <img
             src={isDark ? "/logos/dark-theme-logo.png" : "/logos/light-theme-logo.png"}
             alt={APP_NAME}
-            style={{ height: '36px', objectFit: 'contain' }}
+            style={{ height: '36px', objectFit: 'contain', cursor: 'pointer' }}
             draggable={false}
+            onClick={() => navigate('/')}
           />
           <button
             onClick={onClose}

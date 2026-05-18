@@ -55,6 +55,7 @@ export const router = createBrowserRouter([
       { path: 'privacy-policy', element: <PrivacyPolicyPage /> },
       { path: 'terms', element: <TermsConditionsPage /> },
       { path: 'about', element: <AboutPage /> },
+      { path: '*', element: <Navigate to="/dashboard" replace /> },
     ],
   },
 ]);
