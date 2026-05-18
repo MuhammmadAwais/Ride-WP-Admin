@@ -6,33 +6,54 @@ interface CMSBlockItemProps {
   block: CMSBlock;
   isEditing: boolean;
   onUpdate: (id: string, newContent: string | string[]) => void;
+  onDelete: (id: string) => void;
 }
 
-const CMSBlockItem: React.FC<CMSBlockItemProps> = ({ block, isEditing, onUpdate }) => {
+const CMSBlockItem: React.FC<CMSBlockItemProps> = ({ block, isEditing, onUpdate, onDelete }) => {
   
   if (isEditing) {
     if (block.type === 'heading') {
       return (
-        <div className="my-4 max-w-3xl">
-          <input 
-            type="text"
-            value={block.content as string}
-            onChange={(e) => onUpdate(block.id, e.target.value)}
-            className="w-full h-12 font-poppins font-semibold text-text-main text-lg bg-main-bg border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-[#EB712B] transition-colors"
-          />
+        <div className="my-4 max-w-3xl flex gap-3 items-center">
+          <div className="flex-1">
+            <input 
+              type="text"
+              value={block.content as string}
+              onChange={(e) => onUpdate(block.id, e.target.value)}
+              className="w-full h-12 font-poppins font-semibold text-text-main text-lg bg-main-bg border border-border rounded-xl px-3 py-2 focus:outline-none focus:border-[#EB712B] transition-colors"
+            />
+          </div>
+          <button 
+            type="button"
+            onClick={() => onDelete(block.id)}
+            className="text-text-muted hover:text-red-400 p-3 bg-main-bg border border-border rounded-xl transition-colors cursor-pointer flex-shrink-0"
+            title="Delete Block"
+          >
+            <Trash2 size={18} />
+          </button>
         </div>
       );
     }
 
     if (block.type === 'paragraph') {
       return (
-        <div className="my-4 max-w-3xl">
-          <textarea 
-            value={block.content as string}
-            onChange={(e) => onUpdate(block.id, e.target.value)}
-            rows={4}
-            className="w-full bg-main-bg border border-border rounded-xl px-3 py-2 text-text-main font-roboto text-[15px] leading-relaxed focus:outline-none focus:border-[#EB712B] resize-none transition-colors"
-          />
+        <div className="my-4 max-w-3xl flex gap-3 items-start">
+          <div className="flex-1">
+            <textarea 
+              value={block.content as string}
+              onChange={(e) => onUpdate(block.id, e.target.value)}
+              rows={4}
+              className="w-full bg-main-bg border border-border rounded-xl px-3 py-2 text-text-main font-roboto text-[15px] leading-relaxed focus:outline-none focus:border-[#EB712B] resize-none transition-colors"
+            />
+          </div>
+          <button 
+            type="button"
+            onClick={() => onDelete(block.id)}
+            className="text-text-muted hover:text-red-400 p-3 bg-main-bg border border-border rounded-xl transition-colors cursor-pointer flex-shrink-0 mt-0.5"
+            title="Delete Block"
+          >
+            <Trash2 size={18} />
+          </button>
         </div>
       );
     }
@@ -56,37 +77,47 @@ const CMSBlockItem: React.FC<CMSBlockItemProps> = ({ block, isEditing, onUpdate 
       };
 
       return (
-        <div className="my-4 max-w-3xl space-y-2 py-1 px-3 border border-transparent">
-          {items.map((item, idx) => (
-            <div key={idx} className="flex gap-2 items-center">
-              <input 
-                type="text"
-                value={item}
-                onChange={(e) => handleItemChange(idx, e.target.value)}
-                className="flex-1 h-10 bg-main-bg border border-border rounded-xl px-3 py-1 text-text-main font-roboto text-[14px] focus:outline-none focus:border-[#EB712B]"
-              />
-              <button 
-                type="button"
-                onClick={() => handleRemoveItem(idx)}
-                className="text-text-muted hover:text-red-400 p-2 transition-colors cursor-pointer"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
-          ))}
+        <div className="my-4 max-w-3xl flex gap-3 items-start border border-dashed border-border/30 rounded-2xl p-4 bg-main-bg/10">
+          <div className="flex-1 space-y-2 py-1 px-3 border border-transparent">
+            {items.map((item, idx) => (
+              <div key={idx} className="flex gap-2 items-center">
+                <input 
+                  type="text"
+                  value={item}
+                  onChange={(e) => handleItemChange(idx, e.target.value)}
+                  className="flex-1 h-10 bg-main-bg border border-border rounded-xl px-3 py-1 text-text-main font-roboto text-[14px] focus:outline-none focus:border-[#EB712B]"
+                />
+                <button 
+                  type="button"
+                  onClick={() => handleRemoveItem(idx)}
+                  className="text-text-muted hover:text-red-400 p-2 transition-colors cursor-pointer"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
+            <button 
+              type="button"
+              onClick={handleAddItem}
+              className="text-[#EB712B] hover:text-[#d66524] text-[11px] font-poppins font-bold uppercase tracking-wider flex items-center gap-1.5 mt-2 transition-colors cursor-pointer"
+            >
+              <Plus size={14} /> Add Bullet Item
+            </button>
+          </div>
           <button 
             type="button"
-            onClick={handleAddItem}
-            className="text-[#EB712B] hover:text-[#d66524] text-[11px] font-poppins font-bold uppercase tracking-wider flex items-center gap-1.5 mt-2 transition-colors cursor-pointer"
+            onClick={() => onDelete(block.id)}
+            className="text-text-muted hover:text-red-400 p-3 bg-main-bg border border-border rounded-xl transition-colors cursor-pointer flex-shrink-0 mt-1"
+            title="Delete List Block"
           >
-            <Plus size={14} /> Add Bullet Item
+            <Trash2 size={18} />
           </button>
         </div>
       );
     }
   }
 
-  // --- READ MODE (Anti-CLS structured padding) ---
+  // --- READ MODE ---
   if (block.type === 'heading') {
     return (
       <div className="my-4 max-w-3xl">
@@ -124,5 +155,4 @@ const CMSBlockItem: React.FC<CMSBlockItemProps> = ({ block, isEditing, onUpdate 
   return null;
 };
 
-// performance isolation so dynamic input edits don't re-render other memoized blocks
 export default React.memo(CMSBlockItem);

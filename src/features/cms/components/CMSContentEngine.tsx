@@ -1,8 +1,8 @@
 import { useState, useCallback, useRef } from 'react';
-import { Pencil, CheckCircle2, Eye } from 'lucide-react';
+import { Pencil, CheckCircle2, Eye, Heading, AlignLeft, List, GripVertical } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { type CMSBlock } from '../types';
+import { type CMSBlock, type CMSBlockType } from '../types';
 import CMSBlockItem from './CMSBlockItem';
 
 interface CMSContentEngineProps {
@@ -18,7 +18,11 @@ export default function CMSContentEngine({ pageTitle, pageSubtitle, initialBlock
   const [showToast, setShowToast] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Linear low-latency GSAP page fades when toggling read/edit layouts (Anti-CLS, lag-free)
+  // Drag and drop state indicators
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  // Linear GSAP page fades when toggling read/edit layouts (Anti-CLS, lag-free)
   useGSAP(() => {
     if (containerRef.current) {
       gsap.fromTo(containerRef.current,
@@ -31,6 +35,49 @@ export default function CMSContentEngine({ pageTitle, pageSubtitle, initialBlock
   const handleUpdateBlock = useCallback((id: string, newContent: string | string[]) => {
     setBlocks(prev => prev.map(b => b.id === id ? { ...b, content: newContent } : b));
   }, []);
+
+  const handleDeleteBlock = useCallback((id: string) => {
+    setBlocks(prev => prev.filter(b => b.id !== id));
+  }, []);
+
+  const handleAddBlock = (type: CMSBlockType) => {
+    const newId = `new-block-${Date.now()}`;
+    const newBlock: CMSBlock = {
+      id: newId,
+      type,
+      content: type === 'list' ? ['New bullet item'] : 'New text element...'
+    };
+    setBlocks(prev => [...prev, newBlock]);
+  };
+
+  // --- HTML5 DRAG & DROP HANDLERS ---
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    if (!isEditing) return;
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    // Smooth custom drag preview visibility if needed, standard browser handles beautifully
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    if (!isEditing || draggedIndex === null) return;
+    e.preventDefault();
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = (e: React.DragEvent, index: number) => {
+    if (!isEditing || draggedIndex === null || draggedIndex === index) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+    const updated = [...blocks];
+    const dragItem = updated[draggedIndex];
+    updated.splice(draggedIndex, 1);
+    updated.splice(index, 0, dragItem);
+    setBlocks(updated);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
 
   const handleSave = () => {
     onSave(blocks);
@@ -66,15 +113,81 @@ export default function CMSContentEngine({ pageTitle, pageSubtitle, initialBlock
 
       {/* Main Professional Card Wrapper */}
       <div className="w-full max-w-5xl bg-surface border border-border rounded-3xl p-5 sm:p-10 shadow-sm relative overflow-hidden">
-        <div ref={containerRef} className="w-full">
-          {blocks.map(block => (
-            <CMSBlockItem 
+        <div ref={containerRef} className="w-full space-y-1">
+          
+          {blocks.map((block, index) => (
+            <div 
               key={block.id}
-              block={block}
-              isEditing={isEditing}
-              onUpdate={handleUpdateBlock}
-            />
+              draggable={isEditing}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={(e) => handleDrop(e, index)}
+              onDragEnd={() => {
+                setDraggedIndex(null);
+                setDragOverIndex(null);
+              }}
+              className={`flex items-center gap-4 transition-all duration-200 rounded-2xl ${
+                isEditing ? 'hover:bg-hover/30 p-2.5 -mx-2.5 border border-transparent' : ''
+              } ${
+                draggedIndex === index ? 'opacity-30 scale-[0.98]' : ''
+              } ${
+                dragOverIndex === index && draggedIndex !== index ? 'border-2 border-dashed border-[#EB712B]/40 bg-[#EB712B]/5' : ''
+              }`}
+            >
+              {/* Grip Vertical Handle (Drag/Drop Icon) */}
+              {isEditing && (
+                <div 
+                  className="text-text-muted/60 hover:text-[#EB712B] transition-colors flex-shrink-0 cursor-grab active:cursor-grabbing p-1.5 hover:bg-hover rounded-lg select-none"
+                  title="Drag to Reorder"
+                >
+                  <GripVertical size={16} />
+                </div>
+              )}
+
+              {/* Block Item */}
+              <div className="flex-1 min-w-0">
+                <CMSBlockItem 
+                  block={block}
+                  isEditing={isEditing}
+                  onUpdate={handleUpdateBlock}
+                  onDelete={handleDeleteBlock}
+                />
+              </div>
+            </div>
           ))}
+
+          {/* Dynamic Content Add Menu (Only active in dynamic block editor mode) */}
+          {isEditing && (
+            <div className="border border-dashed border-border rounded-2xl p-5 sm:p-6 my-6 max-w-3xl flex flex-col md:flex-row items-center justify-between gap-4 animate-in fade-in duration-200">
+              <div className="space-y-1 text-center md:text-left">
+                <h4 className="font-poppins font-bold text-text-main text-[14px]">Insert Content Block</h4>
+                <p className="text-[11px] sm:text-[12px] text-text-muted">Insert a new heading, paragraph, or bullet list into this page</p>
+              </div>
+              <div className="flex flex-wrap justify-center gap-2">
+                <button 
+                  type="button" 
+                  onClick={() => handleAddBlock('heading')}
+                  className="bg-main-bg hover:bg-hover border border-border text-text-main font-poppins font-bold text-[10px] uppercase tracking-wider py-2.5 px-4 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 select-none"
+                >
+                  <Heading size={13} className="text-[#EB712B]" /> Heading
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => handleAddBlock('paragraph')}
+                  className="bg-main-bg hover:bg-hover border border-border text-text-main font-poppins font-bold text-[10px] uppercase tracking-wider py-2.5 px-4 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 select-none"
+                >
+                  <AlignLeft size={13} className="text-[#EB712B]" /> Paragraph
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => handleAddBlock('list')}
+                  className="bg-main-bg hover:bg-hover border border-border text-text-main font-poppins font-bold text-[10px] uppercase tracking-wider py-2.5 px-4 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 select-none"
+                >
+                  <List size={13} className="text-[#EB712B]" /> Bullet List
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Action Footer (Only active in dynamic block editor mode) */}
           {isEditing && (
