@@ -21,6 +21,9 @@ import PaymentsPage from '@/features/payments/pages/PaymentsPage';
 import SupportPage from '@/features/support/pages/SupportPage';
 import AnalyticsPage from '@/features/analytics/pages/AnalyticsPage';
 import NotificationPage from '@/features/notifications/pages/NotificationPage';
+import PrivacyPolicyPage from '@/features/cms/pages/PrivacyPolicyPage';
+import TermsConditionsPage from '@/features/cms/pages/TermsConditionsPage';
+import AboutPage from '@/features/cms/pages/AboutPage';
 
 /**
  * Application router instance.
@@ -49,9 +52,9 @@ export const router = createBrowserRouter([
       { path: 'support', element: <SupportPage /> },
       { path: 'analytics', element: <AnalyticsPage /> },
       { path: 'notifications', element: <NotificationPage /> },
-      { path: 'privacy-policy', element: <div className="p-8 text-white">Privacy Policy Page (Coming Soon)</div> },
-      { path: 'terms', element: <div className="p-8 text-white">Terms Page (Coming Soon)</div> },
-      { path: 'about', element: <div className="p-8 text-white">About Page (Coming Soon)</div> },
+      { path: 'privacy-policy', element: <PrivacyPolicyPage /> },
+      { path: 'terms', element: <TermsConditionsPage /> },
+      { path: 'about', element: <AboutPage /> },
     ],
   },
 ]);
