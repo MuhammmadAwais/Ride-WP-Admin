@@ -137,7 +137,7 @@ export default function CMSContentEngine({ pageTitle, pageSubtitle, initialBlock
               {/* Grip Vertical Handle (Drag/Drop Icon) */}
               {isEditing && (
                 <div 
-                  className="text-text-muted/60 hover:text-[#EB712B] transition-colors flex-shrink-0 cursor-grab active:cursor-grabbing p-1.5 hover:bg-hover rounded-lg select-none"
+                  className="text-text-muted/60 hover:text-[#EB712B] transition-colors shrink-0 cursor-grab active:cursor-grabbing p-1.5 hover:bg-hover rounded-lg select-none"
                   title="Drag to Reorder"
                 >
                   <GripVertical size={16} />
@@ -207,7 +207,7 @@ export default function CMSContentEngine({ pageTitle, pageSubtitle, initialBlock
       {/* Custom Flat Success Toast */}
       {showToast && (
         <div className="fixed bottom-10 right-4 sm:right-10 bg-surface border border-border shadow-2xl rounded-2xl p-5 flex items-start gap-4 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300 w-[calc(100%-2rem)] sm:w-[360px]">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 dark:text-emerald-400 flex-shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 dark:text-emerald-400 shrink-0">
             <CheckCircle2 size={20} />
           </div>
           <div>

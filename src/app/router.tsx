@@ -9,7 +9,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import LoginPage   from '@/features/auth/components/LoginPage';
 import AppLayout   from '@/Components/layout/AppLayout';
-import DashboardPage from '@/pages/Dashboard/DashboardPage';
+import DashboardPage from '@/features/dashboard/pages/DashboardPage';
 import ProtectedRoute from '@/Components/layout/ProtectedRoute';
 import UsersPage from '@/features/users/pages/UsersPage';
 import UserDetailPage from '@/features/users/pages/UserDetailPage';

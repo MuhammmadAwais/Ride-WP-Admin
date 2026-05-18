@@ -75,7 +75,7 @@ export default function PaymentsPage() {
               {MOCK_TRANSACTIONS.map((tx) => (
                 <div key={tx.id} className="p-4 sm:p-6 flex items-center justify-between hover:bg-accent/5 transition-colors group cursor-pointer">
                   <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 border ${tx.type === 'Credit' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border ${tx.type === 'Credit' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}>
                       {tx.type === 'Credit' ? <ArrowDownToLine size={20} /> : <ArrowUpRight size={20} />}
                     </div>
                     <div>

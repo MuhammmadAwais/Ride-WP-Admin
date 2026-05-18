@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import  { useState, useRef} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -39,7 +39,7 @@ export default function UserDetailPage() {
 
       {/* Profile Header Card */}
       <div className="rounded-2xl border border-border bg-surface shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row gap-8 items-start sm:items-center">
-        <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full flex-shrink-0 bg-accent/5 flex items-center justify-center border-4 border-border overflow-hidden">
+        <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full shrink-0 bg-accent/5 flex items-center justify-center border-4 border-border overflow-hidden">
           {user.profilePhoto ? (
             <img src={user.profilePhoto} alt={user.name} className="w-full h-full object-cover" />
           ) : (
@@ -239,7 +239,7 @@ function ListingsTabContent() {
         <div className="space-y-4">
           {MOCK_VEHICLES.map((v) => (
             <div key={v.id} className="flex items-center gap-4 p-4 rounded-2xl bg-text-muted/5 border border-border group hover:border-accent/30 transition-all">
-              <div className="w-16 h-12 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0">
+              <div className="w-16 h-12 bg-accent/10 rounded-xl flex items-center justify-center shrink-0">
                 <Car size={24} className="text-accent" />
               </div>
               <div className="flex-1">
@@ -275,7 +275,7 @@ function PurchasesTabContent() {
       header: 'Item',
       accessorKey: (r) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-accent/5 border border-border overflow-hidden flex-shrink-0">
+          <div className="w-10 h-10 rounded-lg bg-accent/5 border border-border overflow-hidden shrink-0">
             {r.itemImage ? (
               <img src={r.itemImage} alt={r.type} className="w-full h-full object-cover" />
             ) : (

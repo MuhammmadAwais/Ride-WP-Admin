@@ -76,7 +76,7 @@ export default function CompositionPanel(props: CompositionPanelProps) {
         {props.targetSegment === 'Specific Users' && props.selectedUsers.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2 bg-main-bg/30 border border-border p-3 rounded-xl max-h-[140px] overflow-y-auto custom-scrollbar">
             {props.selectedUsers.map(u => (
-              <div key={u.id} className="bg-[#EB712B]/10 border border-[#EB712B]/20 text-[#EB712B] rounded-lg px-2.5 py-1 flex items-center gap-1.5 font-roboto text-[11px] font-bold uppercase tracking-wider flex-shrink-0">
+              <div key={u.id} className="bg-[#EB712B]/10 border border-[#EB712B]/20 text-[#EB712B] rounded-lg px-2.5 py-1 flex items-center gap-1.5 font-roboto text-[11px] font-bold uppercase tracking-wider shrink-0">
                 {u.username}
                 <button 
                   onClick={(e) => { e.stopPropagation(); props.onRemoveUser(u.id); }} 

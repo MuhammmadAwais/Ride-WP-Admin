@@ -106,7 +106,7 @@ export default function RecipientSelector({ initialSelectedIds, onSelectComplete
               onClick={() => toggleUser(user.id)}
               className="flex items-center gap-4 p-4 cursor-pointer hover:bg-hover transition-colors group"
             >
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors flex-shrink-0 ${selectedIds.has(user.id) ? 'border-[#EB712B] bg-[#EB712B]' : 'border-border group-hover:border-[#EB712B]'}`}>
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0 ${selectedIds.has(user.id) ? 'border-[#EB712B] bg-[#EB712B]' : 'border-border group-hover:border-[#EB712B]'}`}>
                 {selectedIds.has(user.id) && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
               </div>
               <span className="font-roboto text-text-main text-[14px] font-medium leading-none select-none">

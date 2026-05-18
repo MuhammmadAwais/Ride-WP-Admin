@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import  { useState, useRef } from 'react';
+import {useNavigate } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { 
   ChevronLeft, CheckCircle2, ShieldCheck, MapPin, 
   Users, Activity, DollarSign, Calendar, Edit2, Trash2, Pin,
-  Clock, Map, Star, ShoppingBag, Tag, ShoppingCart, UserCheck, Shield
+  Clock,  Star,  Tag, ShoppingCart, UserCheck, Shield
 } from 'lucide-react';
 
 import { ClubDetailTabs } from '../components/ClubDetailTabs';
@@ -17,7 +17,6 @@ import {
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 
 export default function ClubDetailsPage() {
-  const { id } = useParams();
   const navigate = useNavigate();
   const club = MOCK_CLUB_DETAILS;
   const [activeTab, setActiveTab] = useState<TabId>('rides');
@@ -64,7 +63,7 @@ export default function ClubDetailsPage() {
         {/* Profile Content */}
         <div className="relative z-30 px-6 sm:px-10 pb-8 -mt-20 flex flex-col xl:flex-row gap-8 items-start xl:items-end justify-between">
           <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-end w-full xl:w-auto">
-            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-surface bg-surface overflow-hidden shadow-2xl relative flex-shrink-0">
+            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-surface bg-surface overflow-hidden shadow-2xl relative shrink-0">
               <img src={club.avatarImage} alt="Avatar" className="w-full h-full object-cover" />
               {club.isVerified && (
                 <div className="absolute bottom-2 right-2 bg-blue-500 rounded-full p-1 border-2 border-surface shadow-md">
@@ -75,7 +74,7 @@ export default function ClubDetailsPage() {
             <div className="mb-2 w-full">
               <div className="flex flex-wrap items-center gap-3 mb-1">
                 <h2 className="font-poppins font-bold text-3xl sm:text-4xl text-text-main tracking-tight leading-tight">{club.name}</h2>
-                {club.isVerified && <ShieldCheck size={28} className="text-blue-500 flex-shrink-0" />}
+                {club.isVerified && <ShieldCheck size={28} className="text-blue-500 shrink-0" />}
               </div>
               <p className="font-roboto text-text-muted text-sm flex flex-wrap items-center gap-x-4 gap-y-1.5">
                 <span className="flex items-center gap-1.5"><UserCheck size={16} /> Created by {club.creator}</span>
@@ -87,7 +86,7 @@ export default function ClubDetailsPage() {
           {/* Micro-analytics banner tracking */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 bg-surface/50 backdrop-blur-xl border border-border p-4 rounded-2xl w-full xl:w-auto">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent flex-shrink-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent shrink-0">
                 <Users size={18} className="sm:size-[20px]" />
               </div>
               <div>
@@ -97,7 +96,7 @@ export default function ClubDetailsPage() {
             </div>
             <div className="hidden sm:block w-px h-10 bg-border" />
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
                 <Activity size={18} className="sm:size-[20px]" />
               </div>
               <div>
@@ -107,7 +106,7 @@ export default function ClubDetailsPage() {
             </div>
             <div className="hidden sm:block w-px h-10 bg-border" />
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 flex-shrink-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 shrink-0">
                 <DollarSign size={18} className="sm:size-[20px]" />
               </div>
               <div>
@@ -236,7 +235,6 @@ function LeaderboardTab() {
   const columns: ColumnDef<any>[] = [
     { header: 'Rank', accessorKey: (r) => {
       let colorClass = 'text-text-muted';
-      let glowClass = '';
       if (r.rank === 1) { colorClass = 'text-yellow-400'; }
       if (r.rank === 2) { colorClass = 'text-gray-300'; }
       if (r.rank === 3) { colorClass = 'text-orange-400'; }
@@ -307,7 +305,7 @@ function DiscountTab() {
       {MOCK_CLUB_DISCOUNTS.map(discount => (
         <div key={discount.id} className="bg-surface border border-border rounded-3xl p-5 shadow-sm hover:-translate-y-1 transition-transform relative overflow-hidden">
           <div className="flex items-center gap-4 mb-5">
-            <div className="w-16 h-16 rounded-2xl overflow-hidden border border-border shadow-sm flex-shrink-0">
+            <div className="w-16 h-16 rounded-2xl overflow-hidden border border-border shadow-sm shrink-0">
               <img src={discount.logo} alt={discount.brand} className="w-full h-full object-cover" />
             </div>
             <div>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { MoreVertical, Eye, ShieldOff, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -82,7 +82,7 @@ export function ClubActionsMenu({ clubId }: ClubActionsMenuProps) {
       {isOpen && createPortal(
         <div 
           ref={menuRef}
-          className="fixed w-48 bg-surface backdrop-blur-xl border border-border rounded-xl shadow-2xl z-[300] overflow-hidden"
+          className="fixed w-48 bg-surface backdrop-blur-xl border border-border rounded-xl shadow-2xl z-300 overflow-hidden"
           style={{ 
             top: menuPosition.top, 
             left: menuPosition.left,
@@ -143,7 +143,7 @@ function ActionModal({ type, onClose, onConfirm }: { type: 'suspend' | 'delete',
   if (!modalRoot) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-200 flex items-center justify-center p-4">
       <div ref={overlayRef} className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={handleCancel} />
       <div
         ref={cardRef}

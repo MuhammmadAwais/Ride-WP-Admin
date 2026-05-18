@@ -26,7 +26,7 @@ const CMSBlockItem: React.FC<CMSBlockItemProps> = ({ block, isEditing, onUpdate,
           <button 
             type="button"
             onClick={() => onDelete(block.id)}
-            className="text-text-muted hover:text-red-400 p-3 bg-main-bg border border-border rounded-xl transition-colors cursor-pointer flex-shrink-0"
+            className="text-text-muted hover:text-red-400 p-3 bg-main-bg border border-border rounded-xl transition-colors cursor-pointer shrink-0"
             title="Delete Block"
           >
             <Trash2 size={18} />
@@ -49,7 +49,7 @@ const CMSBlockItem: React.FC<CMSBlockItemProps> = ({ block, isEditing, onUpdate,
           <button 
             type="button"
             onClick={() => onDelete(block.id)}
-            className="text-text-muted hover:text-red-400 p-3 bg-main-bg border border-border rounded-xl transition-colors cursor-pointer flex-shrink-0 mt-0.5"
+            className="text-text-muted hover:text-red-400 p-3 bg-main-bg border border-border rounded-xl transition-colors cursor-pointer shrink-0 mt-0.5"
             title="Delete Block"
           >
             <Trash2 size={18} />
@@ -107,7 +107,7 @@ const CMSBlockItem: React.FC<CMSBlockItemProps> = ({ block, isEditing, onUpdate,
           <button 
             type="button"
             onClick={() => onDelete(block.id)}
-            className="text-text-muted hover:text-red-400 p-3 bg-main-bg border border-border rounded-xl transition-colors cursor-pointer flex-shrink-0 mt-1"
+            className="text-text-muted hover:text-red-400 p-3 bg-main-bg border border-border rounded-xl transition-colors cursor-pointer shrink-0 mt-1"
             title="Delete List Block"
           >
             <Trash2 size={18} />
@@ -144,7 +144,7 @@ const CMSBlockItem: React.FC<CMSBlockItemProps> = ({ block, isEditing, onUpdate,
       <div className="my-4 max-w-3xl space-y-2 py-1 px-3 border border-transparent">
         {items.map((item, idx) => (
           <div key={idx} className="flex items-start gap-3 py-1 font-roboto text-[15px]">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#EB712B] mt-2 flex-shrink-0" />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#EB712B] mt-2 shrink-0" />
             <span className="text-text-muted leading-relaxed">{item}</span>
           </div>
         ))}

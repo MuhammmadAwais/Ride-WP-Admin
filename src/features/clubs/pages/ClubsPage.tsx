@@ -28,7 +28,7 @@ export default function ClubsPage() {
     {
       header: 'Club Photo',
       accessorKey: (row) => (
-        <div className="w-10 h-10 rounded-xl bg-accent/5 flex items-center justify-center flex-shrink-0 border border-border overflow-hidden">
+        <div className="w-10 h-10 rounded-xl bg-accent/5 flex items-center justify-center shrink-0 border border-border overflow-hidden">
           {row.clubPhoto ? (
             <img src={row.clubPhoto} alt={row.name} className="w-full h-full object-cover" />
           ) : (

@@ -8,7 +8,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, ShieldCheck, CreditCard,
-  ClipboardList, BarChart3, Headphones, Bell,
+   BarChart3, Headphones, Bell,
   FileText, ScrollText, Info, LogOut, X, User, Settings,
   ChevronUp,
 } from 'lucide-react';
@@ -90,7 +90,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ onConfirm, onCancel }) => {
   if (!modalRoot) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[200] flex items-center justify-center" style={{ padding: '16px' }}>
+    <div className="fixed inset-0 z-200 flex items-center justify-center" style={{ padding: '16px' }}>
       <div ref={overlayRef} className="absolute inset-0 bg-black/60 backdrop-blur-2xl" onClick={handleCancel} />
       <div
         ref={cardRef}
@@ -314,7 +314,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   textDecoration: 'none',
                   background: 'transparent',
                 }}
-                className={cn(!isActive && 'hover:!text-[var(--color-main-text)]')}
+                className={cn(!isActive && 'hover:text-(--color-main-text)!')}
               >
                 <span
                   style={{
