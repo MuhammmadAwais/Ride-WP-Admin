@@ -20,6 +20,7 @@ import ClubDetailsPage from '../features/clubs/pages/ClubDetailsPage';
 import PaymentsPage from '@/features/payments/pages/PaymentsPage';
 import SupportPage from '@/features/support/pages/SupportPage';
 import AnalyticsPage from '@/features/analytics/pages/AnalyticsPage';
+import NotificationPage from '@/features/notifications/pages/NotificationPage';
 
 /**
  * Application router instance.
@@ -47,7 +48,7 @@ export const router = createBrowserRouter([
       { path: 'payments', element: <PaymentsPage /> },
       { path: 'support', element: <SupportPage /> },
       { path: 'analytics', element: <AnalyticsPage /> },
-      { path: 'notifications', element: <div className="p-8 text-white">Notifications Page (Coming Soon)</div> },
+      { path: 'notifications', element: <NotificationPage /> },
       { path: 'privacy-policy', element: <div className="p-8 text-white">Privacy Policy Page (Coming Soon)</div> },
       { path: 'terms', element: <div className="p-8 text-white">Terms Page (Coming Soon)</div> },
       { path: 'about', element: <div className="p-8 text-white">About Page (Coming Soon)</div> },
