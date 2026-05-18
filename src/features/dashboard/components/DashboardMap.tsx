@@ -22,7 +22,7 @@ const CountryGeography = memo(({ geo, isHovered, onMouseEnter, onMouseLeave }: C
       className={`transition-colors duration-100 cursor-pointer outline-none ${
         isHovered 
           ? 'fill-[#EB712B] stroke-[#EB712B] stroke-[0.8]' 
-          : 'fill-[#F6F6F6] dark:fill-[#202020] stroke-gray-400 dark:stroke-black stroke-[0.5] dark:stroke-[0.7]'
+          : 'fill-[#F6F6F6] dark:fill-[#202020] stroke-gray-300 dark:stroke-white/5 stroke-[0.4]'
       }`}
       style={{
         default: { outline: 'none' },
@@ -100,7 +100,7 @@ export default function DashboardMap() {
       className="relative w-full h-[400px] bg-surface border border-border rounded-3xl overflow-hidden cursor-grab active:cursor-grabbing select-none"
     >
       <ComposableMap 
-        projectionConfig={{ scale: 185 }} // Scaled up from 140 to make the world larger and fill the layout beautifully
+        projectionConfig={{ scale: 225 }} // Scaled up from 185 to make the world larger and fill the layout beautifully
         className="w-full h-full"
       >
         <ZoomableGroup 

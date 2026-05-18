@@ -4,6 +4,47 @@ import { Star } from 'lucide-react';
 import MetricCards from '../components/MetricCards';
 import DashboardMap from '../components/DashboardMap';
 import { MOCK_FEEDBACK, MOCK_LIVE_RIDES } from '../utils/constants';
+import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
+import { type LiveRideLog } from '../types';
+
+const columns: ColumnDef<LiveRideLog>[] = [
+  {
+    header: 'Ride ID',
+    accessorKey: (row) => <span className="font-mono font-bold text-text-main">{row.id}</span>,
+    sortable: true,
+    sortKey: 'id'
+  },
+  {
+    header: 'User Account',
+    accessorKey: (row) => <span className="font-medium text-text-main">{row.user}</span>,
+    sortable: true,
+    sortKey: 'user'
+  },
+  {
+    header: 'Departure Location',
+    accessorKey: 'departure',
+    sortable: true
+  },
+  {
+    header: 'Matched Club Name',
+    accessorKey: 'club',
+    sortable: true
+  },
+  {
+    header: 'Live Status',
+    accessorKey: (row) => (
+      <span className={`text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-lg ${
+        row.status === 'Ongoing' ? 'bg-emerald-500/10 text-emerald-500' :
+        row.status === 'Completed' ? 'bg-blue-500/10 text-blue-500' :
+        'bg-amber-500/10 text-amber-500'
+      }`}>
+        {row.status}
+      </span>
+    ),
+    sortable: true,
+    sortKey: 'status'
+  }
+];
 
 export default function DashboardPage() {
   return (
@@ -89,44 +130,17 @@ export default function DashboardPage() {
         </div>
 
         {/* Bottom Zone: Live ongoing runs ledger table */}
-        <div className="bg-surface border border-border rounded-3xl p-5 sm:p-6 overflow-hidden">
-          <div className="mb-4">
+        <div className="bg-surface border border-border rounded-3xl p-5 sm:p-6 space-y-4">
+          <div>
             <h3 className="font-poppins font-bold text-text-main text-[16px] tracking-tight">Live Ongoing Runs</h3>
             <p className="font-roboto text-text-muted text-xs mt-1">Active coordinated road trails and tracking routes across global hub sectors</p>
           </div>
 
-          <div className="w-full overflow-x-auto custom-scrollbar">
-            <table className="w-full border-collapse text-left text-xs font-roboto">
-              <thead>
-                <tr className="border-b border-border text-text-muted font-poppins font-bold text-[10px] uppercase tracking-wider">
-                  <th className="py-3 px-4">Ride ID</th>
-                  <th className="py-3 px-4">User Account</th>
-                  <th className="py-3 px-4">Departure Location</th>
-                  <th className="py-3 px-4">Matched Club Name</th>
-                  <th className="py-3 px-4 text-right">Live Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {MOCK_LIVE_RIDES.map(ride => (
-                  <tr key={ride.id} className="hover:bg-hover/30 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-text-main">{ride.id}</td>
-                    <td className="py-3.5 px-4 font-medium text-text-main">{ride.user}</td>
-                    <td className="py-3.5 px-4 text-text-muted">{ride.departure}</td>
-                    <td className="py-3.5 px-4 text-text-muted">{ride.club}</td>
-                    <td className="py-3.5 px-4 text-right">
-                      <span className={`text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-lg ${
-                        ride.status === 'Ongoing' ? 'bg-emerald-500/10 text-emerald-500' :
-                        ride.status === 'Completed' ? 'bg-blue-500/10 text-blue-500' :
-                        'bg-amber-500/10 text-amber-500'
-                      }`}>
-                        {ride.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable 
+            data={MOCK_LIVE_RIDES}
+            columns={columns}
+            keyExtractor={(ride) => ride.id}
+          />
         </div>
 
       </div>
