@@ -56,9 +56,7 @@ export function ClubActionsMenu({ clubId }: ClubActionsMenuProps) {
 
   const handleViewDetail = () => {
     setIsOpen(false);
-    // Placeholder for club details routing
-    // navigate(`${ROUTES.CLUBS}/${clubId}`);
-    console.log(`View Club Detail for ${clubId}`);
+    navigate(`${ROUTES.CLUBS}/${clubId}`);
   };
 
   const handleAction = (type: 'suspend' | 'delete') => {

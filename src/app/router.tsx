@@ -15,6 +15,8 @@ import UsersPage from '@/features/users/pages/UsersPage';
 import UserDetailPage from '@/features/users/pages/UserDetailPage';
 
 import ClubsPage from '@/features/clubs/pages/ClubsPage';
+import ClubDetailsPage from '../features/clubs/pages/ClubDetailsPage';
+
 import PaymentsPage from '@/features/payments/pages/PaymentsPage';
 import SupportPage from '@/features/support/pages/SupportPage';
 import AnalyticsPage from '@/features/analytics/pages/AnalyticsPage';
@@ -41,6 +43,7 @@ export const router = createBrowserRouter([
       { path: 'users', element: <UsersPage /> },
       { path: 'users/:id', element: <UserDetailPage /> },
       { path: 'clubs', element: <ClubsPage /> },
+      { path: 'clubs/:id', element: <ClubDetailsPage /> },
       { path: 'payments', element: <PaymentsPage /> },
       { path: 'support', element: <SupportPage /> },
       { path: 'analytics', element: <AnalyticsPage /> },

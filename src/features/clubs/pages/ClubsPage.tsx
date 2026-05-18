@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Search, Shield, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/Constants';
 import { MOCK_CLUBS, type Club } from '@/features/users/utils/constants';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { ClubActionsMenu } from '../components/ClubActionsMenu';
@@ -8,6 +10,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 export default function ClubsPage() {
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearchTerm = useDebounce(searchInput, 300);
+  const navigate = useNavigate();
 
   // Filter clubs based on search input
   const filteredData = MOCK_CLUBS.filter((club) => {
@@ -37,7 +40,15 @@ export default function ClubsPage() {
     },
     {
       header: 'Name',
-      accessorKey: 'name',
+      accessorKey: (row) => (
+        <button
+          onClick={() => navigate(`${ROUTES.CLUBS}/${row.id}`)}
+          className="font-poppins font-semibold text-text-main hover:text-accent transition-colors text-left focus:outline-none"
+        >
+          {row.name}
+        </button>
+      ),
+      sortKey: 'name',
     },
     {
       header: 'Club Type',
