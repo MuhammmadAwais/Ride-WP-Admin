@@ -21,7 +21,6 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
-import BackgroundBubbles from '@/Components/ui/BackgroundBubbles';
 import { APP_NAME } from '@/Constants';
 
 /** Derive a human-readable page title from the current pathname. */
@@ -57,9 +56,6 @@ const AppLayout: React.FC = () => {
 
       {/* ── Base: Full-screen container with dark bg ── */}
       <div className="relative min-h-svh w-full bg-main-bg">
-
-        {/* ── Layer 0: Zero-G Background (fixed, z-0) ── */}
-        <BackgroundBubbles />
 
         {/* ── Layer 1: App Shell (z-10) ── */}
         <div className="relative z-10 flex w-full">

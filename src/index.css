@@ -218,19 +218,11 @@ html.dark {
   border-radius: var(--radius-xl);
   background: var(--color-secondary-bg);
   border: 1px solid var(--color-border);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-html.dark .stat-card {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  transition: transform 0.3s;
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.15);
-}
-html.dark .stat-card:hover {
-  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+  transform: translateY(-2px);
 }
 
 .stat-card-top {

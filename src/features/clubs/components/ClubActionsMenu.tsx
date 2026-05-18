@@ -165,7 +165,7 @@ function ActionModal({ type, onClose, onConfirm }: { type: 'suspend' | 'delete',
         <div className="flex gap-3">
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white bg-accent hover:bg-accent/90 transition-colors shadow-[0_8px_20px_-4px_rgba(235,113,43,0.5)]"
+            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white bg-accent hover:bg-accent/90 transition-colors"
           >
             Yes
           </button>

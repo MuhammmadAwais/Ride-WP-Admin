@@ -139,7 +139,6 @@ const LogoutModal: React.FC<LogoutModalProps> = ({ onConfirm, onCancel }) => {
               fontFamily: 'var(--font-poppins)', fontWeight: 700, fontSize: '14px',
               color: '#fff',
               background: '#ef4444',
-              boxShadow: '0 8px 20px -4px rgba(239,68,68,0.5)',
               cursor: 'pointer', transition: 'background 0.2s',
               border: 'none',
             }}
@@ -289,7 +288,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               top: 0,
               borderRadius: '16px',
               background: '#EB712B',
-              boxShadow: '0 10px 30px -5px rgba(235,113,43,0.6)',
               pointerEvents: 'none',
               opacity: 0,
               willChange: 'transform, height, opacity',
@@ -366,8 +364,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               width: '40px', height: '40px', borderRadius: '10px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
-              background: 'linear-gradient(135deg, #EB712B, #C85E22)',
-              boxShadow: '0 4px 15px rgba(235,113,43,0.4)',
+              background: '#EB712B',
             }}>
               <User size={20} color="#fff" />
             </div>

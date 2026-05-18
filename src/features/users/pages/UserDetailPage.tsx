@@ -208,7 +208,7 @@ function ClubsTabContent() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {MOCK_JOINED_CLUBS.map((club) => (
         <div key={club.id} className="relative rounded-2xl overflow-hidden bg-surface border border-border group hover:border-accent/30 transition-all shadow-sm">
-          <div className="h-24 bg-gradient-to-r from-accent/10 to-purple-500/10 relative">
+          <div className="h-24 bg-accent/10 relative">
              <div className="absolute inset-0 backdrop-blur-sm bg-white/5"></div>
           </div>
           <div className="px-5 pb-5 relative -mt-8">

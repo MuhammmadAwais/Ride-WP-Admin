@@ -51,16 +51,20 @@ export default function ClubDetailsPage() {
       {/* Fixed Header Profile Card (Upper Zone) */}
       <div className="relative rounded-[32px] overflow-hidden border border-white/10 shadow-2xl bg-surface">
         {/* Banner */}
-        <div className="h-48 sm:h-64 relative w-full overflow-hidden bg-accent/20">
-          <div className="absolute inset-0 backdrop-blur-3xl bg-white/5 z-10" />
-          <img src={club.bannerImage} alt="Cover" className="w-full h-full object-cover blur-sm opacity-60 scale-105" />
-          <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent z-20" />
+        <div className="h-48 sm:h-64 relative w-full overflow-hidden bg-surface">
+          <img 
+            src={club.bannerImage} 
+            alt="Cover" 
+            className="w-full h-full object-cover opacity-90" 
+          />
+          {/* Flat Minimalist Tint Overlay */}
+          <div className="absolute inset-0 bg-black/25 z-10" />
         </div>
 
         {/* Profile Content */}
         <div className="relative z-30 px-6 sm:px-10 pb-8 -mt-20 flex flex-col xl:flex-row gap-8 items-start xl:items-end justify-between">
-          <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-end">
-            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-surface bg-surface overflow-hidden shadow-2xl relative">
+          <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-end w-full xl:w-auto">
+            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-surface bg-surface overflow-hidden shadow-2xl relative flex-shrink-0">
               <img src={club.avatarImage} alt="Avatar" className="w-full h-full object-cover" />
               {club.isVerified && (
                 <div className="absolute bottom-2 right-2 bg-blue-500 rounded-full p-1 border-2 border-surface shadow-md">
@@ -68,12 +72,12 @@ export default function ClubDetailsPage() {
                 </div>
               )}
             </div>
-            <div className="mb-2">
-              <div className="flex items-center gap-3 mb-1">
-                <h2 className="font-poppins font-bold text-3xl sm:text-4xl text-text-main tracking-tight">{club.name}</h2>
-                {club.isVerified && <ShieldCheck size={28} className="text-blue-500" />}
+            <div className="mb-2 w-full">
+              <div className="flex flex-wrap items-center gap-3 mb-1">
+                <h2 className="font-poppins font-bold text-3xl sm:text-4xl text-text-main tracking-tight leading-tight">{club.name}</h2>
+                {club.isVerified && <ShieldCheck size={28} className="text-blue-500 flex-shrink-0" />}
               </div>
-              <p className="font-roboto text-text-muted text-sm flex items-center gap-4">
+              <p className="font-roboto text-text-muted text-sm flex flex-wrap items-center gap-x-4 gap-y-1.5">
                 <span className="flex items-center gap-1.5"><UserCheck size={16} /> Created by {club.creator}</span>
                 <span className="flex items-center gap-1.5"><Calendar size={16} /> {club.createdAt}</span>
               </p>
@@ -81,34 +85,34 @@ export default function ClubDetailsPage() {
           </div>
 
           {/* Micro-analytics banner tracking */}
-          <div className="flex items-center gap-4 sm:gap-6 bg-surface/50 backdrop-blur-xl border border-border p-4 rounded-2xl w-full xl:w-auto">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 bg-surface/50 backdrop-blur-xl border border-border p-4 rounded-2xl w-full xl:w-auto">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent">
-                <Users size={20} />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent flex-shrink-0">
+                <Users size={18} className="sm:size-[20px]" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Active Members</p>
-                <p className="font-bold text-xl text-text-main">{club.stats.activeMembers}</p>
+                <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Active Members</p>
+                <p className="font-bold text-lg sm:text-xl text-text-main">{club.stats.activeMembers}</p>
               </div>
             </div>
-            <div className="w-px h-10 bg-border" />
+            <div className="hidden sm:block w-px h-10 bg-border" />
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                <Activity size={20} />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
+                <Activity size={18} className="sm:size-[20px]" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Group Runs</p>
-                <p className="font-bold text-xl text-text-main">{club.stats.groupRuns}</p>
+                <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Group Runs</p>
+                <p className="font-bold text-lg sm:text-xl text-text-main">{club.stats.groupRuns}</p>
               </div>
             </div>
-            <div className="w-px h-10 bg-border" />
+            <div className="hidden sm:block w-px h-10 bg-border" />
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500">
-                <DollarSign size={20} />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 flex-shrink-0">
+                <DollarSign size={18} className="sm:size-[20px]" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Revenue (PKR)</p>
-                <p className="font-bold text-xl text-text-main">{club.stats.revenue}</p>
+                <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Revenue (PKR)</p>
+                <p className="font-bold text-lg sm:text-xl text-text-main">{club.stats.revenue}</p>
               </div>
             </div>
           </div>
@@ -137,26 +141,51 @@ export default function ClubDetailsPage() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function RidesTab() {
-  const columns: ColumnDef<any>[] = [
-    { header: 'Ride ID', accessorKey: 'id', sortable: true },
-    { header: 'Route Map', accessorKey: (r) => (
-      <div className="flex items-center gap-2"><MapPin size={16} className="text-accent/70"/> {r.route}</div>
-    ) },
-    { header: 'Date & Time', accessorKey: (r) => `${r.date} - ${r.time}` },
-    { header: 'Host Driver', accessorKey: 'host' },
-    { header: 'Joined', accessorKey: (r) => (
-      <span className="font-medium text-text-main bg-text-muted/10 px-2 py-1 rounded">{r.joined} Pax</span>
-    ), sortKey: 'joined' },
-    { header: 'Status', accessorKey: (r) => (
-      <span className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide ${r.status === 'Completed' ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'}`}>
-        {r.status}
-      </span>
-    ), sortKey: 'status' }
-  ];
-
   return (
-    <div className="pb-8">
-      <DataTable data={MOCK_CLUB_RIDES} columns={columns} keyExtractor={(r) => r.id} />
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-8">
+      {MOCK_CLUB_RIDES.map((ride) => (
+        <div 
+          key={ride.id} 
+          className="bg-surface border border-border p-6 rounded-[28px] relative flex flex-col justify-between hover:border-accent/30 transition-all duration-300 shadow-sm"
+        >
+          {/* Top Row: Info + GPX Badge */}
+          <div className="flex justify-between items-start gap-4">
+            <div>
+              <h4 className="font-poppins font-bold text-[18px] text-text-main leading-tight mb-1">{ride.name}</h4>
+              <p className="font-roboto text-[13px] text-text-muted flex items-center gap-1.5 mb-1">
+                <Calendar size={14} className="opacity-70" /> {ride.date} • {ride.time}
+              </p>
+              <p className="font-roboto text-[13px] text-text-muted flex items-center gap-1.5">
+                <MapPin size={14} className="text-accent" /> {ride.route}
+              </p>
+            </div>
+            
+            {ride.hasGpx && (
+              <span className="bg-[#EB712B]/10 text-[#EB712B] border border-[#EB712B]/20 px-3.5 py-1 rounded-xl font-poppins font-bold text-[11px] tracking-wider uppercase select-none">
+                GPX
+              </span>
+            )}
+          </div>
+
+          {/* Bottom Row: 3 Highlight Boxes (Pace, Distance, Participants) */}
+          <div className="grid grid-cols-3 gap-3 mt-6">
+            <div className="bg-main-bg/50 border border-border/40 p-3.5 rounded-2xl flex flex-col items-center justify-center text-center">
+              <span className="font-poppins font-extrabold text-[15px] sm:text-[16px] text-text-main mb-0.5">{ride.pace}</span>
+              <span className="font-roboto font-bold text-[9px] text-text-muted uppercase tracking-wider">Pace</span>
+            </div>
+            
+            <div className="bg-main-bg/50 border border-border/40 p-3.5 rounded-2xl flex flex-col items-center justify-center text-center">
+              <span className="font-poppins font-extrabold text-[15px] sm:text-[16px] text-text-main mb-0.5">{ride.distance}</span>
+              <span className="font-roboto font-bold text-[9px] text-text-muted uppercase tracking-wider">Distance</span>
+            </div>
+
+            <div className="bg-main-bg/50 border border-border/40 p-3.5 rounded-2xl flex flex-col items-center justify-center text-center">
+              <span className="font-poppins font-extrabold text-[15px] sm:text-[16px] text-text-main mb-0.5">{ride.participants}</span>
+              <span className="font-roboto font-bold text-[9px] text-text-muted uppercase tracking-wider">Participants</span>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -208,12 +237,12 @@ function LeaderboardTab() {
     { header: 'Rank', accessorKey: (r) => {
       let colorClass = 'text-text-muted';
       let glowClass = '';
-      if (r.rank === 1) { colorClass = 'text-yellow-400'; glowClass = 'drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]'; }
-      if (r.rank === 2) { colorClass = 'text-gray-300'; glowClass = 'drop-shadow-[0_0_10px_rgba(209,213,219,0.5)]'; }
-      if (r.rank === 3) { colorClass = 'text-orange-400'; glowClass = 'drop-shadow-[0_0_10px_rgba(251,146,60,0.5)]'; }
+      if (r.rank === 1) { colorClass = 'text-yellow-400'; }
+      if (r.rank === 2) { colorClass = 'text-gray-300'; }
+      if (r.rank === 3) { colorClass = 'text-orange-400'; }
       
       return (
-        <span className={`font-poppins font-black text-xl ${colorClass} ${glowClass}`}>#{r.rank}</span>
+        <span className={`font-poppins font-black text-xl ${colorClass}`}>#{r.rank}</span>
       );
     }, sortKey: 'rank' },
     { header: 'Member Profile', accessorKey: (r) => (
@@ -277,7 +306,6 @@ function DiscountTab() {
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
       {MOCK_CLUB_DISCOUNTS.map(discount => (
         <div key={discount.id} className="bg-surface border border-border rounded-3xl p-5 shadow-sm hover:-translate-y-1 transition-transform relative overflow-hidden">
-          <div className={`absolute top-0 right-0 w-24 h-24 blur-3xl -z-10 ${discount.isActive ? 'bg-green-500/20' : 'bg-red-500/10'}`} />
           <div className="flex items-center gap-4 mb-5">
             <div className="w-16 h-16 rounded-2xl overflow-hidden border border-border shadow-sm flex-shrink-0">
               <img src={discount.logo} alt={discount.brand} className="w-full h-full object-cover" />

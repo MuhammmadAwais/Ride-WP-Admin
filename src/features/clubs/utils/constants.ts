@@ -4,8 +4,8 @@ export type TabId = 'rides' | 'news' | 'leaderboard' | 'shop' | 'discount' | 'ma
 export const MOCK_CLUB_DETAILS = {
   id: '1',
   name: 'Midnight Cruisers Club',
-  bannerImage: 'https://images.unsplash.com/photo-1541348263662-e06836264be8?auto=format&fit=crop&q=80&w=1200&h=400',
-  avatarImage: 'https://images.unsplash.com/photo-1546768292-fb12f6c92568?auto=format&fit=crop&q=80&w=200&h=200',
+  bannerImage: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
+  avatarImage: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=200&auto=format&fit=crop',
   isVerified: true,
   creator: 'Alex Mercer',
   createdAt: 'Est. 2023',
@@ -17,10 +17,62 @@ export const MOCK_CLUB_DETAILS = {
 };
 
 export const MOCK_CLUB_RIDES = [
-  { id: 'R1001', route: 'Downtown → Neon District', date: 'Oct 24, 2026', time: '10:00 PM', host: 'Marcus Wright', joined: 14, status: 'Completed' },
-  { id: 'R1002', route: 'Coastal Highway Run', date: 'Oct 26, 2026', time: '06:00 AM', host: 'Elena Rodriguez', joined: 22, status: 'Completed' },
-  { id: 'R1003', route: 'Mountain Pass Drift', date: 'Oct 31, 2026', time: '11:30 PM', host: 'Takahashi Ken', joined: 8, status: 'Active' },
-  { id: 'R1004', route: 'Valley Sprint', date: 'Nov 02, 2026', time: '09:00 AM', host: 'Sarah Jenkins', joined: 19, status: 'Active' }
+  { 
+    id: 'R1001', 
+    name: 'Midnight Chase Run',
+    route: 'Downtown → Neon District', 
+    date: 'Oct 24, 2026', 
+    time: '10:00 PM', 
+    host: 'Marcus Wright', 
+    joined: 14, 
+    status: 'Completed',
+    pace: '28 km/h',
+    distance: '80 km',
+    participants: 14,
+    hasGpx: true
+  },
+  { 
+    id: 'R1002', 
+    name: 'Coastal Sunset Highway',
+    route: 'Coastal Highway Run', 
+    date: 'Oct 26, 2026', 
+    time: '06:00 AM', 
+    host: 'Elena Rodriguez', 
+    joined: 22, 
+    status: 'Completed',
+    pace: '32 km/h',
+    distance: '120 km',
+    participants: 22,
+    hasGpx: true
+  },
+  { 
+    id: 'R1003', 
+    name: 'Mountain Pass Drift',
+    route: 'Mountain Pass Drift', 
+    date: 'Oct 31, 2026', 
+    time: '11:30 PM', 
+    host: 'Takahashi Ken', 
+    joined: 8, 
+    status: 'Active',
+    pace: '24 km/h',
+    distance: '65 km',
+    participants: 8,
+    hasGpx: false
+  },
+  { 
+    id: 'R1004', 
+    name: 'Valley Sprint',
+    route: 'Valley Sprint', 
+    date: 'Nov 02, 2026', 
+    time: '09:00 AM', 
+    host: 'Sarah Jenkins', 
+    joined: 19, 
+    status: 'Active',
+    pace: '30 km/h',
+    distance: '95 km',
+    participants: 19,
+    hasGpx: true
+  }
 ];
 
 export const MOCK_CLUB_NEWS = [
