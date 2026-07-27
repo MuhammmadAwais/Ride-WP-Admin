@@ -9,9 +9,11 @@
  * Represents an authenticated administrator user.
  */
 export interface AdminUser {
+  readonly id: number;
   readonly email: string;
   readonly name: string;
-  readonly role: 'admin';
+  readonly role: string;
+  readonly token?: string;
   readonly avatarUrl?: string;
 }
 
@@ -22,12 +24,13 @@ export interface AdminUser {
  */
 export interface AuthState {
   user: AdminUser | null;
+  token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
 }
 
-// ─── Form Schemas ─────────────────────────────────────────────────────────────
+// ─── Form Schemas & API Contracts ─────────────────────────────────────────────
 
 /**
  * Values submitted by the login form (validated with Zod).
@@ -37,17 +40,44 @@ export interface LoginFormValues {
   password: string;
 }
 
-// ─── Service Contracts ────────────────────────────────────────────────────────
-
 /**
- * Resolved value from a successful mock login attempt.
+ * Payload sent to POST /admin/login endpoint.
  */
-export interface LoginSuccessPayload {
-  user: AdminUser;
+export interface LoginAdminRequest {
+  email: string;
+  password: string;
 }
 
 /**
- * Rejected value from a failed mock login attempt.
+ * Backend data.response payload returned from POST /admin/login.
+ */
+export interface LoginAdminResponse {
+  id: number;
+  email: string;
+  name: string;
+  role: string;
+  token: string;
+}
+
+/**
+ * Standardized generic API response wrapper from backend.
+ */
+export interface AuthApiResponse<T> {
+  statusCode: number;
+  message: string;
+  response: T;
+}
+
+/**
+ * Resolved value from login attempt.
+ */
+export interface LoginSuccessPayload {
+  user: AdminUser;
+  token: string;
+}
+
+/**
+ * Rejected value from failed login attempt.
  */
 export interface LoginFailurePayload {
   message: string;

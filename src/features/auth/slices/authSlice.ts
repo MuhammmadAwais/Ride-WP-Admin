@@ -1,9 +1,10 @@
 /**
- * @fileoverview Auth Redux slice with mock login thunk and LocalStorage-backed persistence.
+ * @fileoverview Auth Redux slice with RTK Query setCredentials support and LocalStorage persistence.
  */
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { mockLogin } from '@/features/auth/services/authService';
+import { STORAGE_KEYS } from '@/Constants';
 import type {
   AuthState,
   AdminUser,
@@ -13,21 +14,23 @@ import type {
 
 // ─── Initial State ────────────────────────────────────────────────────────────
 
+const storedToken =
+  typeof window !== 'undefined'
+    ? localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
+    : null;
+
 const initialState: AuthState = {
   user: null,
-  isAuthenticated: false,
+  token: storedToken,
+  isAuthenticated: Boolean(storedToken),
   isLoading: false,
   error: null,
 };
 
-// ─── Async Thunk ──────────────────────────────────────────────────────────────
+// ─── Legacy Async Thunk (Mock Fallback) ───────────────────────────────────────
 
 /**
- * Authenticates the admin using mock credentials.
- * On success, the user object is stored in Redux (persisted via redux-persist).
- *
- * @param credentials - Email and password from the login form.
- * @returns The authenticated AdminUser on success, rejects with error message on failure.
+ * Legacy mock login thunk for offline testing or fallback.
  */
 export const loginUser = createAsyncThunk<
   LoginSuccessPayload,
@@ -37,7 +40,13 @@ export const loginUser = createAsyncThunk<
   'auth/loginUser',
   async (credentials, { rejectWithValue }) => {
     try {
-      return await mockLogin(credentials.email, credentials.password);
+      const result = await mockLogin(credentials.email, credentials.password);
+      const fakeToken = 'mock_jwt_token_development';
+      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, fakeToken);
+      return {
+        user: result.user,
+        token: fakeToken,
+      };
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Authentication failed.';
       return rejectWithValue(message);
@@ -52,12 +61,28 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     /**
-     * Clears authenticated user and resets the auth state.
+     * Store live API credentials in state and persist JWT in localStorage.
+     */
+    setCredentials(
+      state,
+      action: PayloadAction<{ user: AdminUser; token: string }>
+    ) {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.isAuthenticated = true;
+      state.error = null;
+      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, action.payload.token);
+    },
+    /**
+     * Clears authenticated user, token, and resets the auth state.
+     * Purges JWT from localStorage.
      */
     logout(state) {
       state.user = null;
+      state.token = null;
       state.isAuthenticated = false;
       state.error = null;
+      localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
     },
     /**
      * Clears the current auth error message.
@@ -82,6 +107,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload.user;
+        state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
       })
@@ -93,5 +119,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError, setUser } = authSlice.actions;
+export const { setCredentials, logout, clearError, setUser } = authSlice.actions;
 export default authSlice.reducer;

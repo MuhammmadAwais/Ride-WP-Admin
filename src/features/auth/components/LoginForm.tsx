@@ -1,22 +1,17 @@
 /**
- * @fileoverview High-fidelity Login Form component.
- * Implements react-hook-form + Zod validation with premium Tailwind v4 styling.
- * 
- * Features:
- * - Vertical layout matching image_874a98.jpg
- * - Strict TypeScript safety
- * - Accessibility-first form controls
+ * @fileoverview High-fidelity Login Form component with RTK Query integration.
+ * Implements react-hook-form + Zod validation with live /admin/login endpoint call.
  */
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAppDispatch } from '@/hooks/useAppDispatch';
-import { useAppSelector } from '@/hooks/useAppSelector';
-import { loginUser } from '@/features/auth/slices/authSlice';
+import { setCredentials } from '@/features/auth/slices/authSlice';
+import { useLoginAdminMutation } from '@/features/auth/api/authApi';
 import { cn } from '@/lib/utils';
 import type { LoginFormValues } from '@/features/auth/types/authTypes';
 
@@ -33,8 +28,9 @@ const LoginForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoading } = useAppSelector((s) => s.auth);
+  const [loginAdmin, { isLoading }] = useLoginAdminMutation();
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
     register,
@@ -47,20 +43,43 @@ const LoginForm: React.FC = () => {
 
   /**
    * Handles form submission.
-   * Dispatches the loginUser thunk and manages notifications.
+   * Invokes loginAdmin mutation and dispatches setCredentials on success.
    */
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const result = await dispatch(loginUser(data));
-      if (loginUser.fulfilled.match(result)) {
-        toast.success('Successfully authenticated. Welcome back!');
-        
-        // Redirect to intended destination or dashboard
-        const from = (location.state as any)?.from?.pathname || '/dashboard';
-        navigate(from, { replace: true });
-      }
-    } catch (err) {
-      toast.error('Authentication failed. Please check your credentials.');
+      setErrorMessage(null);
+      const res = await loginAdmin(data).unwrap();
+
+      dispatch(
+        setCredentials({
+          user: {
+            id: res.id,
+            email: res.email,
+            name: res.name,
+            role: res.role,
+            token: res.token,
+          },
+          token: res.token,
+        })
+      );
+
+      toast.success('Successfully authenticated. Welcome back!');
+
+      // Redirect to intended destination or dashboard
+      const stateObj = location.state as { from?: { pathname?: string } } | null;
+      const from = stateObj?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
+    } catch (err: unknown) {
+      const errorObj = err as {
+        message?: string;
+        data?: { message?: string } | string;
+      };
+      const msg =
+        errorObj?.message ||
+        (typeof errorObj?.data === 'object' ? errorObj.data.message : errorObj?.data) ||
+        'Authentication failed. Please check your credentials.';
+      setErrorMessage(msg);
+      toast.error(msg);
     }
   };
 
@@ -78,6 +97,14 @@ const LoginForm: React.FC = () => {
           Hi! Welcome back, <br className="md:hidden" /> you’ve been missed!
         </h1>
       </div>
+
+      {/* Backend Error Alert Banner */}
+      {errorMessage && (
+        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-3 animate-fade-in">
+          <AlertCircle size={18} className="shrink-0" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6" noValidate>
         {/* Email Field */}
@@ -162,7 +189,6 @@ const LoginForm: React.FC = () => {
           </button>
         </div>
       </form>
-
     </div>
   );
 };

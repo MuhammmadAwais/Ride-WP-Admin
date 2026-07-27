@@ -71,5 +71,6 @@ export const DASHBOARD_COPY = {
 export const STORAGE_KEYS = {
   THEME: "rwp-theme",
   AUTH: "rwp-auth",
+  AUTH_TOKEN: "rwp_admin_token",
   PERSIST_ROOT: "ride-admin-root",
 } as const;

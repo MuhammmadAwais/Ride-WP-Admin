@@ -36,10 +36,12 @@ export async function mockLogin(
 
   return {
     user: {
+      id: 1,
       email: MOCK_ADMIN_EMAIL,
       name: MOCK_ADMIN_NAME,
       role: 'admin',
       avatarUrl: undefined,
     },
+    token: 'mock_jwt_token_development',
   };
 }
