@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { MoreVertical, Eye, UserMinus, Trash2 } from 'lucide-react';
+import { MoreVertical, Eye, UserMinus, Trash2, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ROUTES } from '@/Constants';
+import { useSuspendUserMutation, useDeleteUserMutation } from '../api/userApi';
 
 interface UserActionsMenuProps {
-  userId: string;
+  userId: string | number;
 }
 
 export function UserActionsMenu({ userId }: UserActionsMenuProps) {
@@ -17,6 +18,9 @@ export function UserActionsMenu({ userId }: UserActionsMenuProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  const [suspendUser, { isLoading: isSuspending }] = useSuspendUserMutation();
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
 
   // Handle menu positioning
   const toggleMenu = () => {
@@ -68,6 +72,21 @@ export function UserActionsMenu({ userId }: UserActionsMenuProps) {
     setModalType(null);
   };
 
+  const handleConfirm = async () => {
+    try {
+      const numericId = Number(userId);
+      if (modalType === 'suspend') {
+        await suspendUser({ userId: numericId, isSuspended: true }).unwrap();
+      } else if (modalType === 'delete') {
+        await deleteUser({ userId: numericId }).unwrap();
+      }
+    } catch (error) {
+      console.error('Action failed:', error);
+    } finally {
+      closeModal();
+    }
+  };
+
   return (
     <div className="flex items-center justify-center">
       <button
@@ -109,10 +128,8 @@ export function UserActionsMenu({ userId }: UserActionsMenuProps) {
         <ActionModal 
           type={modalType} 
           onClose={closeModal} 
-          onConfirm={() => {
-            console.log(`${modalType} confirmed for user ${userId}`);
-            closeModal();
-          }} 
+          onConfirm={handleConfirm}
+          isLoading={isSuspending || isDeleting}
         />
       )}
     </div>
@@ -121,7 +138,17 @@ export function UserActionsMenu({ userId }: UserActionsMenuProps) {
 
 // ─── Modal ───────────────────────────────────────────────────────────────────
 
-function ActionModal({ type, onClose, onConfirm }: { type: 'suspend' | 'delete', onClose: () => void, onConfirm: () => void }) {
+function ActionModal({ 
+  type, 
+  onClose, 
+  onConfirm, 
+  isLoading 
+}: { 
+  type: 'suspend' | 'delete'; 
+  onClose: () => void; 
+  onConfirm: () => void; 
+  isLoading?: boolean; 
+}) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -134,6 +161,7 @@ function ActionModal({ type, onClose, onConfirm }: { type: 'suspend' | 'delete',
   });
 
   const handleCancel = () => {
+    if (isLoading) return;
     gsap.to(overlayRef.current, { opacity: 0, duration: 0.2 });
     gsap.to(cardRef.current, { scale: 0.92, opacity: 0, y: 12, duration: 0.2, onComplete: onClose });
   };
@@ -165,13 +193,16 @@ function ActionModal({ type, onClose, onConfirm }: { type: 'suspend' | 'delete',
         <div className="flex gap-3">
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white bg-accent hover:bg-accent/90 transition-colors shadow-[0_8px_20px_-4px_rgba(235,113,43,0.5)]"
+            disabled={isLoading}
+            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white bg-accent hover:bg-accent/90 transition-colors shadow-[0_8px_20px_-4px_rgba(235,113,43,0.5)] flex items-center justify-center gap-2 disabled:opacity-50"
           >
+            {isLoading && <Loader2 size={16} className="animate-spin" />}
             Yes
           </button>
           <button
             onClick={handleCancel}
-            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-text-main bg-transparent border border-border hover:bg-surface/50 transition-colors"
+            disabled={isLoading}
+            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-text-main bg-transparent border border-border hover:bg-surface/50 transition-colors disabled:opacity-50"
           >
             No
           </button>

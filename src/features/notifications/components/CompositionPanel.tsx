@@ -1,5 +1,5 @@
 import { type TargetSegment, type RecipientUser } from '../types';
-import { X } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 
 interface CompositionPanelProps {
   title: string;
@@ -14,6 +14,7 @@ interface CompositionPanelProps {
   onRemoveUser: (id: string) => void;
   onOpenSelector: () => void;
   onSend: () => void;
+  isSubmitting?: boolean;
 }
 
 export default function CompositionPanel(props: CompositionPanelProps) {
@@ -108,8 +109,10 @@ export default function CompositionPanel(props: CompositionPanelProps) {
       <div className="pt-4 flex justify-end">
         <button 
           onClick={props.onSend}
-          className="w-full sm:w-auto bg-[#EB712B] hover:bg-[#d66524] text-white font-poppins font-bold text-[11px] sm:text-[12px] uppercase tracking-widest py-3.5 px-10 rounded-xl transition-all shadow-sm cursor-pointer select-none"
+          disabled={props.isSubmitting || !props.title.trim() || !props.body.trim()}
+          className="w-full sm:w-auto bg-[#EB712B] hover:bg-[#d66524] text-white font-poppins font-bold text-[11px] sm:text-[12px] uppercase tracking-widest py-3.5 px-10 rounded-xl transition-all shadow-sm cursor-pointer select-none flex items-center justify-center gap-2 disabled:opacity-50"
         >
+          {props.isSubmitting && <Loader2 size={16} className="animate-spin" />}
           Send Notification
         </button>
       </div>

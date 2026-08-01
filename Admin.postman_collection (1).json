@@ -1,0 +1,2078 @@
+{
+  "info": {
+    "_postman_id": "24e51acb-7c91-4296-9cf7-3ff3433c6d3f",
+    "name": "Admin",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28166146",
+    "_collection_link": "https://go.postman.co/collection/28166146-24e51acb-7c91-4296-9cf7-3ff3433c6d3f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Get Users List",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}admin/users?offset=0&limit=10&search",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "type": "text"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "search",
+                  "value": null,
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}admin/users?offset=0&limit=10&search",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "users"
+                  ],
+                  "query": [
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "search",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "663"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"297-lLuPSOz9Kmb5/50rtfTsogYdfUQ\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 13 Jul 2026 12:32:09 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Users fetched successfully.\",\n    \"response\": {\n        \"users\": [\n            {\n                \"id\": 2,\n                \"fullName\": \"Saqib Usman\",\n                \"email\": \"tech54qsi@gmail.com\",\n                \"phone\": null,\n                \"profileImage\": null,\n                \"isSuspended\": false,\n                \"clubsJoined\": 3,\n                \"subscriptionPlan\": \"Free\",\n                \"startDate\": null,\n                \"endDate\": null,\n                \"createdAt\": \"2026-02-11T10:08:15.000Z\"\n            },\n            {\n                \"id\": 1,\n                \"fullName\": \"Saqib Usman\",\n                \"email\": \"tech54qi@gmail.com\",\n                \"phone\": \"+92333333333\",\n                \"profileImage\": \"saqi.png\",\n                \"isSuspended\": false,\n                \"clubsJoined\": 3,\n                \"subscriptionPlan\": \"Monthly Subscription\",\n                \"startDate\": \"2026-06-13T13:28:34.000Z\",\n                \"endDate\": \"2026-06-27T13:28:34.000Z\",\n                \"createdAt\": \"2026-02-09T08:25:48.000Z\"\n            }\n        ],\n        \"pagination\": {\n            \"total\": 2,\n            \"offset\": 0,\n            \"limit\": 10\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get User Info By ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LIVE}}admin/users/1",
+              "host": [
+                "{{LIVE}}admin"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}admin/users/1",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "users",
+                    "1"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "5038"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"13ae-9T0nmaNqwqpIhuuXEn5eKyssC5c\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 13 Jul 2026 13:00:17 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"User details fetched successfully.\",\n    \"response\": {\n        \"profile\": {\n            \"id\": 1,\n            \"fullName\": \"Saqib Usman\",\n            \"email\": \"tech54qi@gmail.com\",\n            \"phone\": \"+92333333333\",\n            \"profileImage\": \"saqi.png\",\n            \"isSuspended\": false,\n            \"subscriptionPlan\": \"Monthly Subscription\",\n            \"startDate\": \"2026-06-13T13:28:34.000Z\",\n            \"endDate\": \"2026-06-27T13:28:34.000Z\",\n            \"clubsJoined\": 3\n        },\n        \"stats\": {\n            \"totalRides\": 6,\n            \"distanceCovered\": \"178 km\",\n            \"userReputation\": \"4.8\"\n        },\n        \"rides\": [\n            {\n                \"id\": 1,\n                \"dateTime\": \"2025-02-15T03:30:00.000Z\",\n                \"route\": \"Central Park North Gate, 110th St → null\",\n                \"hostName\": \"Weekend Riders Club 2\",\n                \"status\": \"Completed\",\n                \"distance\": \"35.50\",\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"participantsCount\": 1,\n                \"rideName\": \"Saturday Mornings Bike Ride\",\n                \"gpxFile\": \"https://example.com/routes/morning-ride.gpx\"\n            },\n            {\n                \"id\": 2,\n                \"dateTime\": \"2025-02-15T03:30:00.000Z\",\n                \"route\": \"Central Park North Gate, 110th St → null\",\n                \"hostName\": \"Weekend Riders Club 2\",\n                \"status\": \"Completed\",\n                \"distance\": \"35.50\",\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"participantsCount\": 0,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"gpxFile\": \"https://example.com/routes/morning-ride.gpx\"\n            },\n            {\n                \"id\": 3,\n                \"dateTime\": \"2025-02-15T03:30:00.000Z\",\n                \"route\": \"Central Park North Gate, 110th St → null\",\n                \"hostName\": \"Weekend Riders Club 2\",\n                \"status\": \"Completed\",\n                \"distance\": \"35.50\",\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"participantsCount\": 0,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"gpxFile\": \"https://example.com/routes/morning-ride.gpx\"\n            },\n            {\n                \"id\": 4,\n                \"dateTime\": \"2025-02-15T03:30:00.000Z\",\n                \"route\": \"Central Park North Gate, 110th St → null\",\n                \"hostName\": \"Weekend Riders Club 2\",\n                \"status\": \"Completed\",\n                \"distance\": \"35.50\",\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"participantsCount\": 0,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"gpxFile\": \"https://example.com/routes/morning-ride.gpx\"\n            },\n            {\n                \"id\": 5,\n                \"dateTime\": \"2025-02-15T03:30:00.000Z\",\n                \"route\": \"Central Park North Gate, 110th St → null\",\n                \"hostName\": \"Weekend Riders Club 2\",\n                \"status\": \"Completed\",\n                \"distance\": \"35.50\",\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"participantsCount\": 0,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"gpxFile\": \"https://example.com/routes/morning-ride.gpx\"\n            },\n            {\n                \"id\": 14,\n                \"dateTime\": \"2026-07-13T07:32:49.000Z\",\n                \"route\": \"null → null\",\n                \"hostName\": \"Saqib Usman\",\n                \"status\": \"Completed\",\n                \"distance\": null,\n                \"pace\": null,\n                \"participantsCount\": 1,\n                \"rideName\": \"Cache Verification Test Ride\",\n                \"gpxFile\": null\n            }\n        ],\n        \"clubs\": [\n            {\n                \"id\": 2,\n                \"clubName\": \"Weekend Riders Club 2\",\n                \"memberCount\": \"2 Members\",\n                \"role\": \"User\",\n                \"joinedDate\": \"2026-02-11T10:08:58.000Z\"\n            },\n            {\n                \"id\": 1,\n                \"clubName\": \"Weekend Riders Club\",\n                \"memberCount\": \"1 Members\",\n                \"role\": \"Admin\",\n                \"joinedDate\": \"2026-06-23T12:27:27.000Z\"\n            },\n            {\n                \"id\": 3,\n                \"clubName\": \"Weekend Riders Club 2\",\n                \"memberCount\": \"2 Members\",\n                \"role\": \"Admin\",\n                \"joinedDate\": \"2026-06-23T12:27:27.000Z\"\n            }\n        ],\n        \"listings\": [\n            {\n                \"id\": 2,\n                \"productName\": \"saqi\",\n                \"price\": \"23.00\",\n                \"condition\": \"used\",\n                \"image\": \"profile.jpg\",\n                \"description\": \"aslkdjas klasjd lasjlkd alsjdkljsa lkjdsa\",\n                \"isActive\": false,\n                \"isSoldOut\": true,\n                \"quantity\": null,\n                \"createdAt\": \"2026-04-21T12:03:12.000Z\"\n            },\n            {\n                \"id\": 3,\n                \"productName\": \"saqi\",\n                \"price\": \"23.00\",\n                \"condition\": \"used\",\n                \"image\": \"profile.jpg\",\n                \"description\": \"aslkdjas klasjd lasjlkd alsjdkljsa lkjdsa\",\n                \"isActive\": true,\n                \"isSoldOut\": false,\n                \"quantity\": null,\n                \"createdAt\": \"2026-04-21T12:03:12.000Z\"\n            },\n            {\n                \"id\": 5,\n                \"productName\": \"saqi\",\n                \"price\": \"23.00\",\n                \"condition\": \"used\",\n                \"image\": \"profile.jpg\",\n                \"description\": \"aslkdjas klasjd lasjlkd alsjdkljsa lkjdsa\",\n                \"isActive\": true,\n                \"isSoldOut\": false,\n                \"quantity\": null,\n                \"createdAt\": \"2026-04-21T12:03:14.000Z\"\n            },\n            {\n                \"id\": 6,\n                \"productName\": \"saqi\",\n                \"price\": \"23.00\",\n                \"condition\": \"used\",\n                \"image\": \"profile.jpg\",\n                \"description\": \"aslkdjas klasjd lasjlkd alsjdkljsa lkjdsa\",\n                \"isActive\": true,\n                \"isSoldOut\": false,\n                \"quantity\": null,\n                \"createdAt\": \"2026-05-29T13:46:28.000Z\"\n            },\n            {\n                \"id\": 7,\n                \"productName\": \"saqi\",\n                \"price\": \"23.00\",\n                \"condition\": \"used\",\n                \"image\": \"profile.jpg\",\n                \"description\": \"aslkdjas klasjd lasjlkd alsjdkljsa lkjdsa\",\n                \"isActive\": true,\n                \"isSoldOut\": false,\n                \"quantity\": null,\n                \"createdAt\": \"2026-05-29T13:46:33.000Z\"\n            },\n            {\n                \"id\": 8,\n                \"productName\": \"saqi\",\n                \"price\": \"23.00\",\n                \"condition\": \"used\",\n                \"image\": \"profile.jpg\",\n                \"description\": \"aslkdjas klasjd lasjlkd alsjdkljsa lkjdsa\",\n                \"isActive\": true,\n                \"isSoldOut\": false,\n                \"quantity\": null,\n                \"createdAt\": \"2026-05-29T13:46:34.000Z\"\n            },\n            {\n                \"id\": 9,\n                \"productName\": \"saqi\",\n                \"price\": \"23.00\",\n                \"condition\": \"used\",\n                \"image\": \"profile.jpg\",\n                \"description\": \"aslkdjas klasjd lasjlkd alsjdkljsa lkjdsa\",\n                \"isActive\": true,\n                \"isSoldOut\": false,\n                \"quantity\": null,\n                \"createdAt\": \"2026-05-29T13:46:36.000Z\"\n            },\n            {\n                \"id\": 10,\n                \"productName\": \"saqi\",\n                \"price\": \"23.00\",\n                \"condition\": \"used\",\n                \"image\": \"profile.jpg\",\n                \"description\": \"aslkdjas klasjd lasjlkd alsjdkljsa lkjdsa\",\n                \"isActive\": true,\n                \"isSoldOut\": false,\n                \"quantity\": null,\n                \"createdAt\": \"2026-06-23T13:57:43.000Z\"\n            },\n            {\n                \"id\": 11,\n                \"productName\": \"saqi\",\n                \"price\": \"23.00\",\n                \"condition\": \"used\",\n                \"image\": \"profile.jpg\",\n                \"description\": \"aslkdjas klasjd lasjlkd alsjdkljsa lkjdsa\",\n                \"isActive\": true,\n                \"isSoldOut\": false,\n                \"quantity\": null,\n                \"createdAt\": \"2026-06-23T13:58:03.000Z\"\n            },\n            {\n                \"id\": 12,\n                \"productName\": \"saqi\",\n                \"price\": \"23.00\",\n                \"condition\": \"used\",\n                \"image\": \"profile.jpg\",\n                \"description\": \"aslkdjas klasjd lasjlkd alsjdkljsa lkjdsa\",\n                \"isActive\": true,\n                \"isSoldOut\": false,\n                \"quantity\": null,\n                \"createdAt\": \"2026-07-01T08:03:25.000Z\"\n            }\n        ],\n        \"purchases\": []\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Suspend User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"isSuspended\": true   // Set true for suspend and false for unsuspend.\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}admin/users/1/suspend",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "users",
+                "1",
+                "suspend"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"isSuspended\": true\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local}}admin/users/1/suspend",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "users",
+                    "1",
+                    "suspend"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "123"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"7b-3DTrn/tg/38SZhH5wOVPkviHxV4\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 13 Jul 2026 13:02:43 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"User suspended successfully.\",\n    \"response\": {\n        \"id\": 1,\n        \"fullName\": \"Saqib Usman\",\n        \"isSuspended\": true\n    }\n}"
+            },
+            {
+              "name": "unsuspend",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"isSuspended\": false   // Set true for suspend and false for unsuspend.\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local}}admin/users/1/suspend",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "users",
+                    "1",
+                    "suspend"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "126"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"7e-1x3duvRybvd6Hah+XFtP4sxRdUU\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Mon, 13 Jul 2026 13:03:01 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"User unsuspended successfully.\",\n    \"response\": {\n        \"id\": 1,\n        \"fullName\": \"Saqib Usman\",\n        \"isSuspended\": false\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{local}}admin/users/1",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Subscription/Plans",
+      "item": [
+        {
+          "name": "Create Subscription/plan",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "// // --------------- Free plan (no Stripe) --------------------\r\n// {\r\n//     \"name\": \"Free Limited Plan\",\r\n//     \"description\": \"Basic access with limits\",\r\n//     \"price\": 0,\r\n//     \"currency\": \"eur\",\r\n//     \"billingInterval\": \"free\",\r\n//     \"config\": {\r\n//         \"marketplaceItems\": 2,\r\n//         \"numberOfRides\": 1,\r\n//         //   \"stravaConnection\": true,\r\n//         //    \"gpxDownload\": true,\r\n//         //    \"unlimitedItemInMarketplace\": true,\r\n//         \"clubStripeIntegration\": true,\r\n//         \"clubMembers\": 10,\r\n//         \"unlimitedClubMembers\": true,\r\n//         \"paidActivities\": true\r\n//     },\r\n//     \"isActive\": true\r\n// }\r\n// _________ Monthly paid plan (with trial) ---------------------\r\n// {\r\n//   \"name\": \"Monthly Subscription\",\r\n//   \"description\": \"Monthly billing\",\r\n//   \"price\": 9.99,\r\n//   \"currency\": \"eur\",\r\n//   \"billingInterval\": \"monthly\",\r\n//   \"config\": {\r\n//     \"marketplaceItems\": 50,\r\n//     \"numberOfRides\": 20\r\n//   },\r\n//   \"trialPeriodDays\": 14,\r\n//   \"isActive\": true\r\n// }\r\n// ------------------- Yearly paid plan --------------------\r\n// {\r\n//     \"name\": \"Yearly Subscription\",\r\n//     \"description\": \"Full access for one year\",\r\n//     \"price\": 49.99,\r\n//     \"currency\": \"eur\",\r\n//     \"billingInterval\": \"yearly\",\r\n//     \"config\": {\r\n//         \"marketplaceItems\": 999,\r\n//         \"numberOfRides\": 999,\r\n//         \"premiumChat\": true\r\n//     },\r\n//     \"trialPeriodDays\": null,\r\n//     \"isActive\": true\r\n// }\r\n// ________________\r\n{\r\n    \"name\": \"Gold Plan\",\r\n    \"description\": \"Access everything with joy.\",\r\n    \"price\": 40,\r\n    \"currency\": \"eur\",\r\n    \"billingInterval\": \"yearly\",\r\n    \"planScope\": \"club\", // user or club,\r\n    \"config\": {\r\n        // \"marketplaceItems\": 2,\r\n        // \"numberOfRides\": 1,\r\n        \"unlimitedRides\": true,\r\n        \"stravaConnection\": true,\r\n        \"gpxDownload\": true,\r\n        \"unlimitedItemInMarketplace\": true,\r\n        \"clubStripeIntegration\": true,\r\n        // \"clubMembers\": 10,\r\n        \"unlimitedClubMembers\": true,\r\n        \"paidActivities\": true\r\n    },\r\n    \"isActive\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}admin/subscription/plan",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "subscription",
+                "plan"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "// --------------- Free plan (no Stripe) --------------------\r\n// {\r\n//   \"name\": \"Free Limited Plan\",\r\n//   \"description\": \"Basic access with limits\",\r\n//   \"price\": 0,\r\n//   \"currency\": \"eur\",\r\n//   \"billingInterval\": \"free\",\r\n//   \"config\": {\r\n//     \"marketplaceItems\": 2,\r\n//     \"numberOfRides\": 1\r\n//   },\r\n//   \"isActive\": true\r\n// }\r\n\r\n// _________ Monthly paid plan (with trial) ---------------------\r\n// {\r\n//   \"name\": \"Monthly Subscription\",\r\n//   \"description\": \"Monthly billing\",\r\n//   \"price\": 9.99,\r\n//   \"currency\": \"eur\",\r\n//   \"billingInterval\": \"monthly\",\r\n//   \"config\": {\r\n//     \"marketplaceItems\": 50,\r\n//     \"numberOfRides\": 20\r\n//   },\r\n//   \"trialPeriodDays\": 14,\r\n//   \"isActive\": true\r\n// }\r\n\r\n// ------------------- Yearly paid plan --------------------\r\n\r\n{\r\n  \"name\": \"Yearly Subscription\",\r\n  \"description\": \"Full access for one year\",\r\n  \"price\": 49.99,\r\n  \"currency\": \"eur\",\r\n  \"billingInterval\": \"yearly\",\r\n  \"config\": {\r\n    \"marketplaceItems\": 999,\r\n    \"numberOfRides\": 999,\r\n    \"premiumChat\": true\r\n  },\r\n  \"trialPeriodDays\": null,\r\n  \"isActive\": true\r\n}\r\n\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local}}admin/subscription/plan",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "subscription",
+                    "plan"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "517"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"205-MjVlo1SWcvk4svJ03g4OjLdCexY\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Fri, 29 May 2026 12:10:35 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Subscription plan created successfully.\",\n    \"response\": {\n        \"id\": 3,\n        \"name\": \"Yearly Subscription\",\n        \"description\": \"Full access for one year\",\n        \"price\": \"49.99\",\n        \"currency\": \"eur\",\n        \"billingInterval\": \"yearly\",\n        \"config\": {\n            \"premiumChat\": true,\n            \"numberOfRides\": 999,\n            \"marketplaceItems\": 999\n        },\n        \"stripeProductId\": \"prod_UbcU6y5XfaHbKz\",\n        \"stripePriceId\": \"price_1TcPFGE8Hvz1mdtYXCvhPwSC\",\n        \"trialPeriodDays\": null,\n        \"isActive\": true,\n        \"isDeleted\": false,\n        \"createdAt\": \"2026-05-29T12:10:34.000Z\",\n        \"updatedAt\": \"2026-05-29T12:10:35.000Z\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Plans List",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{local}}admin/subscription/plans",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "subscription",
+                "plans"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{local}}admin/subscription/plans",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "subscription",
+                    "plans"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "1288"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"508-gN3wpwrJWYaCK6QyK0JXVYqYD5c\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Fri, 29 May 2026 12:12:25 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Subscription plans fetched successfully.\",\n    \"response\": [\n        {\n            \"id\": 3,\n            \"name\": \"Yearly Subscription\",\n            \"description\": \"Full access for one year\",\n            \"price\": \"49.99\",\n            \"currency\": \"eur\",\n            \"billingInterval\": \"yearly\",\n            \"config\": {\n                \"premiumChat\": true,\n                \"numberOfRides\": 999,\n                \"marketplaceItems\": 999\n            },\n            \"stripeProductId\": \"prod_UbcU6y5XfaHbKz\",\n            \"stripePriceId\": \"price_1TcPFGE8Hvz1mdtYXCvhPwSC\",\n            \"trialPeriodDays\": null,\n            \"isActive\": true,\n            \"isDeleted\": false,\n            \"createdAt\": \"2026-05-29T12:10:34.000Z\",\n            \"updatedAt\": \"2026-05-29T12:10:35.000Z\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Monthly Subscription\",\n            \"description\": \"Monthly billing\",\n            \"price\": \"9.99\",\n            \"currency\": \"eur\",\n            \"billingInterval\": \"monthly\",\n            \"config\": {\n                \"numberOfRides\": 20,\n                \"marketplaceItems\": 50\n            },\n            \"stripeProductId\": \"prod_UbcR7OIDG6lG1x\",\n            \"stripePriceId\": \"price_1TcPCkE8Hvz1mdtYgL8Ehqkn\",\n            \"trialPeriodDays\": 14,\n            \"isActive\": true,\n            \"isDeleted\": false,\n            \"createdAt\": \"2026-05-29T12:07:57.000Z\",\n            \"updatedAt\": \"2026-05-29T12:07:58.000Z\"\n        },\n        {\n            \"id\": 1,\n            \"name\": \"Free Limited Plan\",\n            \"description\": \"Basic access with limits\",\n            \"price\": \"0.00\",\n            \"currency\": \"eur\",\n            \"billingInterval\": \"free\",\n            \"config\": {\n                \"numberOfRides\": 1,\n                \"marketplaceItems\": 2\n            },\n            \"stripeProductId\": null,\n            \"stripePriceId\": null,\n            \"trialPeriodDays\": null,\n            \"isActive\": true,\n            \"isDeleted\": false,\n            \"createdAt\": \"2026-05-29T12:04:28.000Z\",\n            \"updatedAt\": \"2026-05-29T12:04:28.000Z\"\n        }\n    ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Plan Info By ID",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{local}}admin/subscription/plan?planId=1",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "subscription",
+                "plan"
+              ],
+              "query": [
+                {
+                  "key": "planId",
+                  "value": "1",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{local}}admin/subscription/plan?planId=1",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "subscription",
+                    "plan"
+                  ],
+                  "query": [
+                    {
+                      "key": "planId",
+                      "value": "1"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "444"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"1bc-sN8G55D0fBfn8AYNFTDy6WgY/tE\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Fri, 29 May 2026 12:13:33 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Subscription plan fetched successfully.\",\n    \"response\": {\n        \"id\": 1,\n        \"name\": \"Free Limited Plan\",\n        \"description\": \"Basic access with limits\",\n        \"price\": \"0.00\",\n        \"currency\": \"eur\",\n        \"billingInterval\": \"free\",\n        \"config\": {\n            \"numberOfRides\": 1,\n            \"marketplaceItems\": 2\n        },\n        \"stripeProductId\": null,\n        \"stripePriceId\": null,\n        \"trialPeriodDays\": null,\n        \"isActive\": true,\n        \"isDeleted\": false,\n        \"createdAt\": \"2026-05-29T12:04:28.000Z\",\n        \"updatedAt\": \"2026-05-29T12:04:28.000Z\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Plan",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"planId\": 2,\r\n  \"name\": \"Yearly Pro\",\r\n  \"description\": \"Updated description\",\r\n  \"price\": 59.99,\r\n  \"currency\": \"eur\",\r\n  \"billingInterval\": \"yearly\",\r\n  \"config\": {\r\n    \"marketplaceItems\": 100,\r\n    \"numberOfRides\": 50\r\n  },\r\n  \"trialPeriodDays\": 30,\r\n  \"isActive\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}admin/subscription/plan",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "subscription",
+                "plan"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"planId\": 2,\r\n  \"name\": \"Yearly Pro\",\r\n  \"description\": \"Updated description\",\r\n  \"price\": 59.99,\r\n  \"currency\": \"eur\",\r\n  \"billingInterval\": \"yearly\",\r\n  \"config\": {\r\n    \"marketplaceItems\": 100,\r\n    \"numberOfRides\": 50\r\n  },\r\n  \"trialPeriodDays\": 30,\r\n  \"isActive\": true\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local}}admin/subscription/plan",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "subscription",
+                    "plan"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "481"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"1e1-G1ICrSRLAwCa8YNhn+OsoXwDMtU\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Fri, 29 May 2026 12:15:03 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Subscription plan updated successfully.\",\n    \"response\": {\n        \"id\": 2,\n        \"name\": \"Yearly Pro\",\n        \"description\": \"Updated description\",\n        \"price\": \"59.99\",\n        \"currency\": \"eur\",\n        \"billingInterval\": \"yearly\",\n        \"config\": {\n            \"numberOfRides\": 50,\n            \"marketplaceItems\": 100\n        },\n        \"stripeProductId\": \"prod_UbcR7OIDG6lG1x\",\n        \"stripePriceId\": \"price_1TcPJbE8Hvz1mdtYQdfOzoUD\",\n        \"trialPeriodDays\": 30,\n        \"isActive\": true,\n        \"isDeleted\": false,\n        \"createdAt\": \"2026-05-29T12:07:57.000Z\",\n        \"updatedAt\": \"2026-05-29T12:15:03.000Z\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Plan",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"planId\": 3\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}admin/subscription/plan",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "subscription",
+                "plan"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Plan",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"planId\": 2\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local}}admin/subscription/plan",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "subscription",
+                    "plan"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "481"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"1e1-Mh5re23kDxqGWTtKJwTob0Gvd7M\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Fri, 29 May 2026 12:16:35 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Subscription plan deleted successfully.\",\n    \"response\": {\n        \"id\": 2,\n        \"name\": \"Yearly Pro\",\n        \"description\": \"Updated description\",\n        \"price\": \"59.99\",\n        \"currency\": \"eur\",\n        \"billingInterval\": \"yearly\",\n        \"config\": {\n            \"numberOfRides\": 50,\n            \"marketplaceItems\": 100\n        },\n        \"stripeProductId\": \"prod_UbcR7OIDG6lG1x\",\n        \"stripePriceId\": \"price_1TcPJbE8Hvz1mdtYQdfOzoUD\",\n        \"trialPeriodDays\": 30,\n        \"isActive\": false,\n        \"isDeleted\": true,\n        \"createdAt\": \"2026-05-29T12:07:57.000Z\",\n        \"updatedAt\": \"2026-05-29T12:16:35.000Z\"\n    }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Club Management",
+      "item": [
+        {
+          "name": "Get All Clubs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}admin/clubs",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "clubs"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": null,
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": null,
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}admin/clubs",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "clubs"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "offset",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "search",
+                      "value": null,
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "1290"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"50a-eTFkf6Lh0/BtYkozlJJEffAqFgE\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 14 Jul 2026 06:09:18 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Clubs fetched successfully.\",\n    \"response\": {\n        \"clubs\": [\n            {\n                \"id\": 4,\n                \"clubName\": \"Weekend Riders Club 2\",\n                \"logo\": \"logo.png\",\n                \"coverImage\": null,\n                \"location\": \"New York, USA\",\n                \"clubPrivacyName\": \"Public\",\n                \"clubTypeName\": \"Cycling\",\n                \"participantCount\": 1,\n                \"createdAt\": \"2026-06-23T12:34:56.000Z\",\n                \"owner\": {\n                    \"id\": 2,\n                    \"fullName\": \"Saqib Usman\",\n                    \"email\": \"tech54qsi@gmail.com\"\n                }\n            },\n            {\n                \"id\": 3,\n                \"clubName\": \"Weekend Riders Club 2\",\n                \"logo\": \"logo.png\",\n                \"coverImage\": null,\n                \"location\": \"New York, USA\",\n                \"clubPrivacyName\": \"Private\",\n                \"clubTypeName\": \"Cycling\",\n                \"participantCount\": 3,\n                \"createdAt\": \"2026-04-17T10:40:43.000Z\",\n                \"owner\": {\n                    \"id\": 1,\n                    \"fullName\": \"Saqib Usman\",\n                    \"email\": \"tech54qi@gmail.com\"\n                }\n            },\n            {\n                \"id\": 2,\n                \"clubName\": \"Weekend Riders Club 2\",\n                \"logo\": \"logo.png\",\n                \"coverImage\": null,\n                \"location\": \"New York, USA\",\n                \"clubPrivacyName\": \"Public\",\n                \"clubTypeName\": \"Cycling\",\n                \"participantCount\": 2,\n                \"createdAt\": \"2026-02-11T05:56:16.000Z\",\n                \"owner\": {\n                    \"id\": 1,\n                    \"fullName\": \"Saqib Usman\",\n                    \"email\": \"tech54qi@gmail.com\"\n                }\n            },\n            {\n                \"id\": 1,\n                \"clubName\": \"Weekend Riders Club\",\n                \"logo\": \"logo.png\",\n                \"coverImage\": null,\n                \"location\": \"New York, USA\",\n                \"clubPrivacyName\": \"Private\",\n                \"clubTypeName\": \"Cycling\",\n                \"participantCount\": -3,\n                \"createdAt\": \"2026-02-09T11:24:42.000Z\",\n                \"owner\": {\n                    \"id\": 1,\n                    \"fullName\": \"Saqib Usman\",\n                    \"email\": \"tech54qi@gmail.com\"\n                }\n            }\n        ],\n        \"pagination\": {\n            \"total\": 4,\n            \"offset\": 0,\n            \"limit\": 10\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Club Details",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}admin/clubs/3?tab=members&limit=5&offset=0",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "clubs",
+                "3"
+              ],
+              "query": [
+                {
+                  "key": "tab",
+                  "value": "members",
+                  "description": "\"rides\", \"news\", \"leaderboard\", \"shop\", \"discounts\", \"marketplace\", \"members\""
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "search",
+                  "value": null,
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Club Profile Data",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}admin/clubs/1",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "clubs",
+                    "1"
+                  ],
+                  "query": [
+                    {
+                      "key": "tab",
+                      "value": "",
+                      "description": "\"rides\", \"news\", \"leaderboard\", \"shop\", \"discounts\", \"marketplace\", \"members\"",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "offset",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "search",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "493"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"1ed-qcsX5YHO4eXpDUG2g5NKUnNuN+8\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 14 Jul 2026 06:49:31 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Club details fetched successfully.\",\n    \"response\": {\n        \"profile\": {\n            \"id\": 1,\n            \"clubName\": \"Weekend Riders Club\",\n            \"logo\": \"logo.png\",\n            \"coverImage\": null,\n            \"location\": \"New York, USA\",\n            \"description\": \"A friendly club for weekend cycling enthusiasts.\",\n            \"clubPrivacyName\": \"Private\",\n            \"clubTypeName\": \"Cycling\",\n            \"currency\": \"usd\",\n            \"createdAt\": \"2026-02-09T11:24:42.000Z\",\n            \"owner\": {\n                \"id\": 1,\n                \"fullName\": \"Saqib Usman\",\n                \"email\": \"tech54qi@gmail.com\"\n            }\n        },\n        \"stats\": {\n            \"activeMembers\": 1,\n            \"groupRuns\": 0,\n            \"revenue\": 12\n        }\n    }\n}"
+            },
+            {
+              "name": "Get Tabs Data",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}admin/clubs/2?tab=rides&limit=5&offset=0",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "clubs",
+                    "2"
+                  ],
+                  "query": [
+                    {
+                      "key": "tab",
+                      "value": "rides",
+                      "description": "\"rides\", \"news\", \"leaderboard\", \"shop\", \"discounts\", \"marketplace\", \"members\""
+                    },
+                    {
+                      "key": "limit",
+                      "value": "5"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "search",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "3118"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"c2e-nxg5qGnXM2FlBLIo6qFjRS2gspw\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 14 Jul 2026 06:54:24 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Club details fetched successfully.\",\n    \"response\": {\n        \"rides\": [\n            {\n                \"id\": 7,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-02-19\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 8,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-02-24\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 9,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-02-26\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 10,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-03-03\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 11,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-03-05\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 12,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-03-10\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 13,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-03-12\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 6,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-02-17\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 5,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-02-15\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 4,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-02-15\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 3,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-02-15\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 2,\n                \"rideName\": \"Saturday Morning Bike Ride\",\n                \"date\": \"2025-02-15\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 0\n            },\n            {\n                \"id\": 1,\n                \"rideName\": \"Saturday Mornings Bike Ride\",\n                \"date\": \"2025-02-15\",\n                \"time\": \"08:30:00\",\n                \"meetingPoint\": \"Central Park North Gate, 110th St\",\n                \"endingPoint\": null,\n                \"pace\": \"Moderate (15-18 km/h)\",\n                \"distance\": \"35.50\",\n                \"participantsCount\": 1\n            }\n        ],\n        \"pagination\": {\n            \"total\": 13,\n            \"offset\": 0,\n            \"limit\": 20\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Club",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{local}}admin/clubs/3",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "clubs",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Suspend Club",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"isSuspended\": true // Set true for suspend and False for un-suspend.\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}admin/clubs/3/suspend",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "clubs",
+                "3",
+                "suspend"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": null,
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Push Notification",
+      "item": [
+        {
+          "name": "Send Push Notification",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"saqi\",\r\n    \"body\": \"asd;sadksa;daskd;asd\",\r\n    \"targetSegment\": \"all\", // all or specific\r\n    // \"userIds\":[2,1]  // Only in case of specifc\r\n    \"imageUrl\": \"somethijng.png\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}admin/notifications/send",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "notifications",
+                "send"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"title\": \"saqi\",\r\n    \"body\": \"asd;sadksa;daskd;asd\",\r\n    \"targetSegment\": \"all\", // all or specific\r\n    // \"userIds\":[2,1]  // Only in case of specifc\r\n    \"imageUrl\": \"somethijng.png\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local}}admin/notifications/send",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "notifications",
+                    "send"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "136"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"88-EbnUgsww2YFyAK78SK7NRjXcB6g\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 14 Jul 2026 07:52:55 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Push notification processed successfully.\",\n    \"response\": {\n        \"logId\": 3,\n        \"recipientsCount\": 1,\n        \"status\": \"delivered\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Users List",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}admin/users/picker?limit=5&offset=0",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "users",
+                "picker"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "search",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}admin/users/picker?limit=5&offset=0",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "users",
+                    "picker"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "5"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "search",
+                      "value": null,
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "300"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"12c-SZKVXVC6o9pM6Y8yXRtijtVHmBM\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 14 Jul 2026 07:51:14 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Users fetched successfully.\",\n    \"response\": {\n        \"users\": [\n            {\n                \"id\": 1,\n                \"fullName\": \"Saqib Usman\",\n                \"profileImage\": \"saqi.png\",\n                \"email\": \"tech54qi@gmail.com\"\n            },\n            {\n                \"id\": 2,\n                \"fullName\": \"Saqib Usman\",\n                \"profileImage\": null,\n                \"email\": \"tech54qsi@gmail.com\"\n            }\n        ],\n        \"pagination\": {\n            \"total\": 2,\n            \"offset\": 0,\n            \"limit\": 5\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Notification Logs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}admin/notifications/history?limit=10&offset=0",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "notifications",
+                "history"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}admin/notifications/history?limit=10&offset=0",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "notifications",
+                    "history"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "698"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"2ba-TY3ZBv0uRxtW2k8/kRcWFT3DIVg\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 14 Jul 2026 07:54:13 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Notification history log fetched successfully.\",\n    \"response\": {\n        \"history\": [\n            {\n                \"id\": 3,\n                \"title\": \"saqi\",\n                \"body\": \"asd;sadksa;daskd;asd\",\n                \"targetSegment\": \"all\",\n                \"imageUrl\": \"somethijng.png\",\n                \"status\": \"DELIVERED\",\n                \"recipientsCount\": 1,\n                \"createdAt\": \"2026-07-14T07:52:55.000Z\"\n            },\n            {\n                \"id\": 2,\n                \"title\": \"saqi\",\n                \"body\": \"asd;sadksa;daskd;asd\",\n                \"targetSegment\": \"all\",\n                \"imageUrl\": \"somethijng.png\",\n                \"status\": \"DELIVERED\",\n                \"recipientsCount\": 1,\n                \"createdAt\": \"2026-07-14T07:45:36.000Z\"\n            },\n            {\n                \"id\": 1,\n                \"title\": \"saqi\",\n                \"body\": \"asd;sadksa;daskd;asd\",\n                \"targetSegment\": \"all\",\n                \"imageUrl\": \"somethijng.png\",\n                \"status\": \"FAILED\",\n                \"recipientsCount\": 0,\n                \"createdAt\": \"2026-07-14T07:45:03.000Z\"\n            }\n        ],\n        \"pagination\": {\n            \"total\": 3,\n            \"offset\": 0,\n            \"limit\": 10\n        }\n    }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "System Content",
+      "item": [
+        {
+          "name": "Get Public Content ( FOR MOBILE APP )",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{local}}public/content/:key",
+              "host": [
+                "{{local}}public"
+              ],
+              "path": [
+                "content",
+                ":key"
+              ],
+              "variable": [
+                {
+                  "key": "key",
+                  "value": "privacy_policy",
+                  "description": "privacy_policy, terms_conditions, about"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}public/content/:key",
+                  "host": [
+                    "{{local}}public"
+                  ],
+                  "path": [
+                    "content",
+                    ":key"
+                  ],
+                  "variable": [
+                    {
+                      "key": "key",
+                      "value": "privacy_policy",
+                      "description": "privacy_policy, terms_conditions, about"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "247"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"f7-EMAICyVt6FTj3vOJ7ysS0rHcKQI\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 14 Jul 2026 08:30:11 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Content fetched successfully.\",\n    \"response\": {\n        \"key\": \"privacy_policy\",\n        \"title\": \"Privay Policy\",\n        \"content\": \"asdasd asdasdsaljdhklasjdl saljdlska\",\n        \"createdAt\": \"2026-07-14T08:26:46.000Z\",\n        \"updatedAt\": \"2026-07-14T08:26:46.000Z\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Content By ID",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{LIVE}}admin/content/:key",
+              "host": [
+                "{{LIVE}}admin"
+              ],
+              "path": [
+                "content",
+                ":key"
+              ],
+              "variable": [
+                {
+                  "key": "key",
+                  "value": "privacy_policy",
+                  "description": "privacy_policy, terms_conditions, about"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{local}}admin/content/:key",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "content",
+                    ":key"
+                  ],
+                  "variable": [
+                    {
+                      "key": "key",
+                      "value": "privacy_policy",
+                      "description": "privacy_policy, terms_conditions, about"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "254"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"fe-d7tkLnDs9KSbjNv0wix84/4ixZA\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 14 Jul 2026 08:27:07 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Content detail fetched successfully.\",\n    \"response\": {\n        \"key\": \"privacy_policy\",\n        \"title\": \"Privay Policy\",\n        \"content\": \"asdasd asdasdsaljdhklasjdl saljdlska\",\n        \"createdAt\": \"2026-07-14T08:26:46.000Z\",\n        \"updatedAt\": \"2026-07-14T08:26:46.000Z\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Content",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Privay Policy\",\r\n    \"content\": \"asdasd asdasdsaljdhklasjdl saljdlska\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}admin/content/:key",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "content",
+                ":key"
+              ],
+              "variable": [
+                {
+                  "key": "key",
+                  "value": "privacy_policy",
+                  "description": "privacy_policy, terms_conditions, about"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"title\": \"Privay Policy\",\r\n    \"content\": \"asdasd asdasdsaljdhklasjdl saljdlska\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{local}}admin/content/:key",
+                  "host": [
+                    "{{local}}admin"
+                  ],
+                  "path": [
+                    "content",
+                    ":key"
+                  ],
+                  "variable": [
+                    {
+                      "key": "key",
+                      "value": "privacy_policy",
+                      "description": "privacy_policy, terms_conditions, about"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "",
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Access-Control-Allow-Origin",
+                  "value": "*"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "169"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"a9-2sJq4NG5o2CAuyGoUfZ4aWwb6CA\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 14 Jul 2026 08:26:46 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Content updated successfully.\",\n    \"response\": {\n        \"key\": \"privacy_policy\",\n        \"title\": \"Privay Policy\",\n        \"content\": \"asdasd asdasdsaljdhklasjdl saljdlska\"\n    }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"admin@gmail.com\",\r\n    \"password\": \"Pakistan123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{LIVE}}admin/login",
+          "host": [
+            "{{LIVE}}admin"
+          ],
+          "path": [
+            "login"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"admin@gmail.com\",\r\n    \"password\": \"Pakistan123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{local}}admin/login",
+              "host": [
+                "{{local}}admin"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "*"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "304"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"130-8FVI1rLk18haiR2J9AeqWyEnlPQ\""
+            },
+            {
+              "key": "Date",
+              "value": "Fri, 29 May 2026 12:00:48 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"statusCode\": 200,\n    \"message\": \"Admin logged in successfully.\",\n    \"response\": {\n        \"id\": 1,\n        \"email\": \"admin@gmail.com\",\n        \"name\": \"Admin\",\n        \"role\": \"admin\",\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzgwMDU2MDQ4LCJleHAiOjE3ODEwOTI4NDh9._caCklm-p7C-r3ybcjAZrHqY9tX3qoFniuXJusHMUp8\"\n    }\n}"
+        }
+      ]
+    }
+  ]
+}

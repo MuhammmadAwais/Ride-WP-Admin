@@ -8,6 +8,7 @@ import { type ViewState, type TargetSegment, type RecipientUser } from '../types
 import CompositionPanel from '../components/CompositionPanel';
 import PreviousNotifications from '../components/PreviousNotifications';
 import RecipientSelector from '../components/RecipientSelector';
+import { useSendPushNotificationMutation } from '../api/notificationApi';
 
 export default function NotificationPage() {
   const [view, setView] = useState<ViewState>('compose');
@@ -22,6 +23,8 @@ export default function NotificationPage() {
   // Toast State
   const [showToast, setShowToast] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const [sendPushNotification, { isLoading: isSending }] = useSendPushNotificationMutation();
 
   // Transitions for view changes
   useGSAP(() => {
@@ -54,17 +57,30 @@ export default function NotificationPage() {
     }
   };
 
-  const handleSend = () => {
-    // Reset state
-    setTitle('');
-    setBody('');
-    setImageUrl('');
-    setTargetSegment('All Users');
-    setSelectedUsers([]);
-    
-    // Show Toast
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const handleSend = async () => {
+    try {
+      const isAllUser = targetSegment === 'All Users';
+      await sendPushNotification({
+        title,
+        body,
+        image: imageUrl || undefined,
+        isAllUser,
+        users: !isAllUser ? selectedUsers.map((u) => Number(u.id)) : undefined,
+      }).unwrap();
+
+      // Reset state
+      setTitle('');
+      setBody('');
+      setImageUrl('');
+      setTargetSegment('All Users');
+      setSelectedUsers([]);
+      
+      // Show Toast
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (err) {
+      console.error('Failed to send push notification:', err);
+    }
   };
 
   return (
@@ -132,6 +148,7 @@ export default function NotificationPage() {
                 onRemoveUser={handleRemoveUser}
                 onOpenSelector={handleOpenSelector}
                 onSend={handleSend}
+                isSubmitting={isSending}
               />
             )}
 

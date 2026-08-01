@@ -18,6 +18,10 @@ import storage from 'redux-persist/es/storage';
 import authReducer from '@/features/auth/slices/authSlice';
 import { authApi } from '@/features/auth/api/authApi';
 import { subscriptionApi } from '@/features/subscriptions/api/subscriptionApi';
+import { userApi } from '@/features/users/api/userApi';
+import { clubApi } from '@/features/clubs/api/clubApi';
+import { notificationApi } from '@/features/notifications/api/notificationApi';
+import { cmsApi } from '@/features/cms/api/cmsApi';
 import { STORAGE_KEYS } from '@/Constants';
 
 // ─── Root Reducer ─────────────────────────────────────────────────────────────
@@ -26,6 +30,10 @@ const rootReducer = combineReducers({
   auth: authReducer,
   [authApi.reducerPath]: authApi.reducer,
   [subscriptionApi.reducerPath]: subscriptionApi.reducer,
+  [userApi.reducerPath]: userApi.reducer,
+  [clubApi.reducerPath]: clubApi.reducer,
+  [notificationApi.reducerPath]: notificationApi.reducer,
+  [cmsApi.reducerPath]: cmsApi.reducer,
 });
 
 // ─── Persist Config ───────────────────────────────────────────────────────────
@@ -50,7 +58,14 @@ export const store = configureStore({
         // Ignore redux-persist internal action types
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(authApi.middleware, subscriptionApi.middleware),
+    }).concat(
+      authApi.middleware,
+      subscriptionApi.middleware,
+      userApi.middleware,
+      clubApi.middleware,
+      notificationApi.middleware,
+      cmsApi.middleware
+    ),
   devTools: import.meta.env.DEV,
 });
 

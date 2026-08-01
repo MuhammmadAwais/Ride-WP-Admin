@@ -23,7 +23,7 @@ export const axiosInstance = axios.create({
 });
 
 /**
- * Request interceptor to attach JWT token from localStorage if present.
+ * Request interceptor to attach JWT token and log outgoing API requests.
  */
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -31,9 +31,42 @@ axiosInstance.interceptors.request.use(
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    console.log(
+      `🚀 [API Request] ${config.method?.toUpperCase()} ${config.baseURL || ''}${config.url}`,
+      {
+        params: config.params,
+        data: config.data,
+        headers: config.headers,
+      }
+    );
+
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error('❌ [API Request Error]', error);
+    return Promise.reject(error);
+  }
+);
+
+/**
+ * Response interceptor to log API responses and errors.
+ */
+axiosInstance.interceptors.response.use(
+  (response) => {
+    console.log(
+      `✅ [API Response] ${response.config.method?.toUpperCase()} ${response.config.url} (${response.status})`,
+      response.data
+    );
+    return response;
+  },
+  (error: AxiosError) => {
+    console.error(
+      `❌ [API Response Error] ${error.config?.method?.toUpperCase()} ${error.config?.url} (${error.response?.status || 'Network Error'})`,
+      error.response?.data || error.message
+    );
+    return Promise.reject(error);
+  }
 );
 
 /**

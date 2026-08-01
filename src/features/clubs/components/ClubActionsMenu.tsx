@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { MoreVertical, Eye, ShieldOff, Trash2 } from 'lucide-react';
+import { MoreVertical, Eye, ShieldOff, Trash2, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ROUTES } from '@/Constants';
+import { useSuspendClubMutation, useDeleteClubMutation } from '../api/clubApi';
 
 interface ClubActionsMenuProps {
-  clubId: string;
+  clubId: string | number;
 }
 
 export function ClubActionsMenu({ clubId }: ClubActionsMenuProps) {
@@ -17,6 +18,9 @@ export function ClubActionsMenu({ clubId }: ClubActionsMenuProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  const [suspendClub, { isLoading: isSuspending }] = useSuspendClubMutation();
+  const [deleteClub, { isLoading: isDeleting }] = useDeleteClubMutation();
 
   // Handle menu positioning
   const toggleMenu = () => {
@@ -68,6 +72,21 @@ export function ClubActionsMenu({ clubId }: ClubActionsMenuProps) {
     setModalType(null);
   };
 
+  const handleConfirm = async () => {
+    try {
+      const numericId = Number(clubId);
+      if (modalType === 'suspend') {
+        await suspendClub({ clubId: numericId, isSuspended: true }).unwrap();
+      } else if (modalType === 'delete') {
+        await deleteClub({ clubId: numericId }).unwrap();
+      }
+    } catch (error) {
+      console.error('Action failed:', error);
+    } finally {
+      closeModal();
+    }
+  };
+
   return (
     <div className="flex items-center justify-center">
       <button
@@ -82,7 +101,7 @@ export function ClubActionsMenu({ clubId }: ClubActionsMenuProps) {
       {isOpen && createPortal(
         <div 
           ref={menuRef}
-          className="fixed w-48 bg-surface backdrop-blur-xl border border-border rounded-xl shadow-2xl z-300 overflow-hidden"
+          className="fixed w-48 bg-surface backdrop-blur-xl border border-border rounded-xl shadow-2xl z-[300] overflow-hidden"
           style={{ 
             top: menuPosition.top, 
             left: menuPosition.left,
@@ -109,10 +128,8 @@ export function ClubActionsMenu({ clubId }: ClubActionsMenuProps) {
         <ActionModal 
           type={modalType} 
           onClose={closeModal} 
-          onConfirm={() => {
-            console.log(`${modalType} confirmed for club ${clubId}`);
-            closeModal();
-          }} 
+          onConfirm={handleConfirm}
+          isLoading={isSuspending || isDeleting}
         />
       )}
     </div>
@@ -121,7 +138,17 @@ export function ClubActionsMenu({ clubId }: ClubActionsMenuProps) {
 
 // ─── Modal ───────────────────────────────────────────────────────────────────
 
-function ActionModal({ type, onClose, onConfirm }: { type: 'suspend' | 'delete', onClose: () => void, onConfirm: () => void }) {
+function ActionModal({ 
+  type, 
+  onClose, 
+  onConfirm, 
+  isLoading 
+}: { 
+  type: 'suspend' | 'delete'; 
+  onClose: () => void; 
+  onConfirm: () => void; 
+  isLoading?: boolean; 
+}) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -134,6 +161,7 @@ function ActionModal({ type, onClose, onConfirm }: { type: 'suspend' | 'delete',
   });
 
   const handleCancel = () => {
+    if (isLoading) return;
     gsap.to(overlayRef.current, { opacity: 0, duration: 0.2 });
     gsap.to(cardRef.current, { scale: 0.92, opacity: 0, y: 12, duration: 0.2, onComplete: onClose });
   };
@@ -143,7 +171,7 @@ function ActionModal({ type, onClose, onConfirm }: { type: 'suspend' | 'delete',
   if (!modalRoot) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-200 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
       <div ref={overlayRef} className="absolute inset-0 bg-black/60 backdrop-blur-xl" onClick={handleCancel} />
       <div
         ref={cardRef}
@@ -165,13 +193,16 @@ function ActionModal({ type, onClose, onConfirm }: { type: 'suspend' | 'delete',
         <div className="flex gap-3">
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white bg-accent hover:bg-accent/90 transition-colors"
+            disabled={isLoading}
+            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white bg-accent hover:bg-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
           >
+            {isLoading && <Loader2 size={16} className="animate-spin" />}
             Yes
           </button>
           <button
             onClick={handleCancel}
-            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white bg-[#3b5998] border border-transparent hover:bg-[#2d4373] transition-colors"
+            disabled={isLoading}
+            className="flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white bg-[#3b5998] border border-transparent hover:bg-[#2d4373] transition-colors disabled:opacity-50"
           >
             No
           </button>

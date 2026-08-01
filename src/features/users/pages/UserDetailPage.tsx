@@ -1,16 +1,19 @@
-import  { useState, useRef} from 'react';
+import { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { ChevronLeft, User, TrendingUp, Star, Shield, Car, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { ChevronLeft, User, TrendingUp, Star, Shield, Car, CheckCircle2, Clock, XCircle, Loader2 } from 'lucide-react';
 import { DetailTabs, type TabId } from '../components/DetailTabs';
 import { MOCK_USERS, MOCK_RIDES, MOCK_JOINED_CLUBS, MOCK_VEHICLES, MOCK_PURCHASES, type ParticipatedRide } from '../utils/constants';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
+import { useGetUserByIdQuery } from '../api/userApi';
 
 export default function UserDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const user = MOCK_USERS.find((u) => u.id === id) || MOCK_USERS[0]; // Fallback for demo
+  const userId = Number(id) || 1;
+  const { data, isLoading, isError } = useGetUserByIdQuery({ userId });
+
   const [activeTab, setActiveTab] = useState<TabId>('rides');
   const tabContentRef = useRef<HTMLDivElement>(null);
 
@@ -23,6 +26,32 @@ export default function UserDetailPage() {
       { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }
     );
   }, [activeTab]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] bg-surface/50 border border-border rounded-2xl">
+        <Loader2 size={36} className="animate-spin text-accent mb-3" />
+        <p className="text-text-muted text-sm font-roboto">Loading user details...</p>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] bg-red-500/5 border border-red-500/20 rounded-2xl text-center p-8">
+        <h3 className="text-text-main font-poppins font-semibold text-lg mb-1">Failed to load user details</h3>
+        <p className="text-text-muted text-sm font-roboto mb-4">Could not retrieve information for User #{id}.</p>
+        <button
+          onClick={() => navigate(-1)}
+          className="px-5 py-2 rounded-xl bg-accent text-white font-poppins text-sm font-medium hover:bg-accent/90"
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
+  const user = data.profile;
 
   return (
     <div className="flex flex-col space-y-8 pb-8">
@@ -40,8 +69,8 @@ export default function UserDetailPage() {
       {/* Profile Header Card */}
       <div className="rounded-2xl border border-border bg-surface shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row gap-8 items-start sm:items-center">
         <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full shrink-0 bg-accent/5 flex items-center justify-center border-4 border-border overflow-hidden">
-          {user.profilePhoto ? (
-            <img src={user.profilePhoto} alt={user.name} className="w-full h-full object-cover" />
+          {user.profileImage ? (
+            <img src={user.profileImage} alt={user.fullName} className="w-full h-full object-cover" />
           ) : (
             <User size={48} className="text-accent/30" />
           )}
@@ -50,7 +79,7 @@ export default function UserDetailPage() {
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Name of User</p>
-            <p className="text-text-main font-semibold font-poppins text-lg">{user.name}</p>
+            <p className="text-text-main font-semibold font-poppins text-lg">{user.fullName}</p>
           </div>
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Subscription</p>
@@ -64,11 +93,13 @@ export default function UserDetailPage() {
           </div>
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Phone number</p>
-            <p className="text-text-main font-roboto">{user.phoneNo}</p>
+            <p className="text-text-main font-roboto">{user.phone || 'N/A'}</p>
           </div>
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Start/End Date</p>
-            <p className="text-text-main font-roboto text-sm">{user.startDate} — {user.endDate}</p>
+            <p className="text-text-main font-roboto text-sm">
+              {user.startDate ? new Date(user.startDate).toLocaleDateString() : 'N/A'} — {user.endDate ? new Date(user.endDate).toLocaleDateString() : 'N/A'}
+            </p>
           </div>
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Email</p>
@@ -80,6 +111,39 @@ export default function UserDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* User Stats Card */}
+      {data.stats && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-5 rounded-2xl border border-border bg-surface shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
+              <Car size={24} />
+            </div>
+            <div>
+              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider">Total Rides</p>
+              <p className="text-text-main font-poppins font-bold text-xl mt-0.5">{data.stats.totalRides}</p>
+            </div>
+          </div>
+          <div className="p-5 rounded-2xl border border-border bg-surface shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+              <TrendingUp size={24} />
+            </div>
+            <div>
+              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider">Distance Covered</p>
+              <p className="text-text-main font-poppins font-bold text-xl mt-0.5">{data.stats.distanceCovered}</p>
+            </div>
+          </div>
+          <div className="p-5 rounded-2xl border border-border bg-surface shadow-sm flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-yellow-500/10 text-yellow-500 flex items-center justify-center">
+              <Star size={24} />
+            </div>
+            <div>
+              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider">Reputation</p>
+              <p className="text-text-main font-poppins font-bold text-xl mt-0.5">{data.stats.userReputation}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Information Matrix */}
       <div className="flex flex-col space-y-6 mt-4">

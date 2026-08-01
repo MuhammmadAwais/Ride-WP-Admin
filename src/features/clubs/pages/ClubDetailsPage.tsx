@@ -1,11 +1,11 @@
-import  { useState, useRef } from 'react';
-import {useNavigate } from 'react-router-dom';
+import { useState, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { 
   ChevronLeft, CheckCircle2, ShieldCheck, MapPin, 
   Users, Activity, DollarSign, Calendar, Edit2, Trash2, Pin,
-  Clock,  Star,  Tag, ShoppingCart, UserCheck, Shield
+  Clock, Star, Tag, ShoppingCart, UserCheck, Shield, Loader2
 } from 'lucide-react';
 
 import { ClubDetailTabs } from '../components/ClubDetailTabs';
@@ -15,10 +15,14 @@ import {
   MOCK_CLUB_MARKETPLACE, MOCK_CLUB_MEMBERS
 } from '../utils/constants';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
+import { useGetClubByIdQuery } from '../api/clubApi';
 
 export default function ClubDetailsPage() {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const club = MOCK_CLUB_DETAILS;
+  const clubId = Number(id) || 1;
+  const { data, isLoading, isError } = useGetClubByIdQuery({ clubId });
+
   const [activeTab, setActiveTab] = useState<TabId>('rides');
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -33,6 +37,35 @@ export default function ClubDetailsPage() {
     });
     return () => ctx.revert();
   }, [activeTab]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] bg-surface/50 border border-border rounded-2xl">
+        <Loader2 size={36} className="animate-spin text-accent mb-3" />
+        <p className="text-text-muted text-sm font-roboto">Loading club details...</p>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] bg-red-500/5 border border-red-500/20 rounded-2xl text-center p-8">
+        <h3 className="text-text-main font-poppins font-semibold text-lg mb-1">Failed to load club details</h3>
+        <p className="text-text-muted text-sm font-roboto mb-4">Could not retrieve information for Club #{id}.</p>
+        <button
+          onClick={() => navigate(-1)}
+          className="px-5 py-2 rounded-xl bg-accent text-white font-poppins text-sm font-medium hover:bg-accent/90"
+        >
+          Go Back
+        </button>
+      </div>
+    );
+  }
+
+  const profile = data.profile;
+  const stats = data.stats || { activeMembers: 0, groupRuns: 0, revenue: 0 };
+  const bannerImage = profile.coverImage || MOCK_CLUB_DETAILS.bannerImage;
+  const avatarImage = profile.logo || MOCK_CLUB_DETAILS.avatarImage;
 
   return (
     <div className="flex flex-col space-y-8 pb-12 min-h-full">
@@ -52,7 +85,7 @@ export default function ClubDetailsPage() {
         {/* Banner */}
         <div className="h-48 sm:h-64 relative w-full overflow-hidden bg-surface">
           <img 
-            src={club.bannerImage} 
+            src={bannerImage} 
             alt="Cover" 
             className="w-full h-full object-cover opacity-90" 
           />
@@ -64,21 +97,19 @@ export default function ClubDetailsPage() {
         <div className="relative z-30 px-6 sm:px-10 pb-8 -mt-20 flex flex-col xl:flex-row gap-8 items-start xl:items-end justify-between">
           <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-end w-full xl:w-auto">
             <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-surface bg-surface overflow-hidden shadow-2xl relative shrink-0">
-              <img src={club.avatarImage} alt="Avatar" className="w-full h-full object-cover" />
-              {club.isVerified && (
-                <div className="absolute bottom-2 right-2 bg-blue-500 rounded-full p-1 border-2 border-surface shadow-md">
-                  <CheckCircle2 size={16} className="text-white" />
-                </div>
-              )}
+              <img src={avatarImage} alt="Avatar" className="w-full h-full object-cover" />
+              <div className="absolute bottom-2 right-2 bg-blue-500 rounded-full p-1 border-2 border-surface shadow-md">
+                <CheckCircle2 size={16} className="text-white" />
+              </div>
             </div>
             <div className="mb-2 w-full">
               <div className="flex flex-wrap items-center gap-3 mb-1">
-                <h2 className="font-poppins font-bold text-3xl sm:text-4xl text-text-main tracking-tight leading-tight">{club.name}</h2>
-                {club.isVerified && <ShieldCheck size={28} className="text-blue-500 shrink-0" />}
+                <h2 className="font-poppins font-bold text-3xl sm:text-4xl text-text-main tracking-tight leading-tight">{profile.clubName}</h2>
+                <ShieldCheck size={28} className="text-blue-500 shrink-0" />
               </div>
               <p className="font-roboto text-text-muted text-sm flex flex-wrap items-center gap-x-4 gap-y-1.5">
-                <span className="flex items-center gap-1.5"><UserCheck size={16} /> Created by {club.creator}</span>
-                <span className="flex items-center gap-1.5"><Calendar size={16} /> {club.createdAt}</span>
+                <span className="flex items-center gap-1.5"><UserCheck size={16} /> Created by {profile.owner?.fullName || 'N/A'}</span>
+                <span className="flex items-center gap-1.5"><Calendar size={16} /> {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'N/A'}</span>
               </p>
             </div>
           </div>
@@ -91,7 +122,7 @@ export default function ClubDetailsPage() {
               </div>
               <div>
                 <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Active Members</p>
-                <p className="font-bold text-lg sm:text-xl text-text-main">{club.stats.activeMembers}</p>
+                <p className="font-bold text-lg sm:text-xl text-text-main">{stats.activeMembers}</p>
               </div>
             </div>
             <div className="hidden sm:block w-px h-10 bg-border" />
@@ -101,7 +132,7 @@ export default function ClubDetailsPage() {
               </div>
               <div>
                 <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Group Runs</p>
-                <p className="font-bold text-lg sm:text-xl text-text-main">{club.stats.groupRuns}</p>
+                <p className="font-bold text-lg sm:text-xl text-text-main">{stats.groupRuns}</p>
               </div>
             </div>
             <div className="hidden sm:block w-px h-10 bg-border" />
@@ -111,7 +142,7 @@ export default function ClubDetailsPage() {
               </div>
               <div>
                 <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Revenue (PKR)</p>
-                <p className="font-bold text-lg sm:text-xl text-text-main">{club.stats.revenue}</p>
+                <p className="font-bold text-lg sm:text-xl text-text-main">{stats.revenue}</p>
               </div>
             </div>
           </div>

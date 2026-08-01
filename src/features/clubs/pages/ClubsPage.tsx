@@ -1,36 +1,33 @@
 import { useState } from 'react';
-import { Search, Shield, X } from 'lucide-react';
+import { Search, Shield, X, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/Constants';
-import { MOCK_CLUBS, type Club } from '@/features/users/utils/constants';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { ClubActionsMenu } from '../components/ClubActionsMenu';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useGetClubsListQuery } from '../api/clubApi';
+import type { ClubListItem } from '../types/clubTypes';
 
 export default function ClubsPage() {
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearchTerm = useDebounce(searchInput, 300);
   const navigate = useNavigate();
 
-  // Filter clubs based on search input
-  const filteredData = MOCK_CLUBS.filter((club) => {
-    if (!debouncedSearchTerm) return true;
-    const term = debouncedSearchTerm.toLowerCase();
-    return (
-      club.name.toLowerCase().includes(term) ||
-      club.email.toLowerCase().includes(term) ||
-      club.phoneNo.includes(term) ||
-      club.founderName.toLowerCase().includes(term)
-    );
+  const { data, isLoading, isError, refetch, isFetching } = useGetClubsListQuery({
+    search: debouncedSearchTerm || undefined,
+    offset: 0,
+    limit: 20,
   });
 
-  const columns: ColumnDef<Club>[] = [
+  const clubs = data?.clubs ?? [];
+
+  const columns: ColumnDef<ClubListItem>[] = [
     {
-      header: 'Club Photo',
+      header: 'Club Logo',
       accessorKey: (row) => (
         <div className="w-10 h-10 rounded-xl bg-accent/5 flex items-center justify-center shrink-0 border border-border overflow-hidden">
-          {row.clubPhoto ? (
-            <img src={row.clubPhoto} alt={row.name} className="w-full h-full object-cover" />
+          {row.logo ? (
+            <img src={row.logo} alt={row.clubName} className="w-full h-full object-cover" />
           ) : (
             <Shield size={20} className="text-accent/40" />
           )}
@@ -45,38 +42,34 @@ export default function ClubsPage() {
           onClick={() => navigate(`${ROUTES.CLUBS}/${row.id}`)}
           className="font-poppins font-semibold text-text-main hover:text-accent transition-colors text-left focus:outline-none"
         >
-          {row.name}
+          {row.clubName}
         </button>
       ),
-      sortKey: 'name',
+      sortKey: 'clubName',
     },
     {
       header: 'Club Type',
-      accessorKey: 'clubType',
+      accessorKey: 'clubTypeName',
     },
     {
-      header: 'Phone no.',
-      accessorKey: 'phoneNo',
+      header: 'Privacy',
+      accessorKey: 'clubPrivacyName',
     },
     {
       header: 'Email',
-      accessorKey: 'email',
+      accessorKey: (row) => row.owner?.email || 'N/A',
     },
     {
       header: 'Founder Name',
-      accessorKey: 'founderName',
+      accessorKey: (row) => row.owner?.fullName || 'N/A',
     },
     {
-      header: 'Subscription plan',
-      accessorKey: 'subscriptionPlan',
+      header: 'Members',
+      accessorKey: (row) => String(row.participantCount || 0),
     },
     {
-      header: 'Start Date',
-      accessorKey: 'startDate',
-    },
-    {
-      header: 'End Date',
-      accessorKey: 'endDate',
+      header: 'Created Date',
+      accessorKey: (row) => row.createdAt ? new Date(row.createdAt).toLocaleDateString() : 'N/A',
     },
     {
       header: '',
@@ -117,22 +110,48 @@ export default function ClubsPage() {
               </button>
             )}
           </div>
-          
-          <button className="hidden sm:flex items-center justify-center p-3.5 rounded-2xl bg-accent/10 text-accent hover:bg-accent hover:text-white transition-all duration-300 border border-accent/20">
-            <Search size={20} />
+
+          <button 
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="flex items-center justify-center p-3.5 rounded-2xl bg-accent/10 text-accent hover:bg-accent hover:text-white transition-all duration-300 border border-accent/20 disabled:opacity-50"
+            title="Refresh list"
+          >
+            <RefreshCw size={18} className={isFetching ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
 
-      {/* Data Table Area */}
-      <div className="flex-1 min-h-0">
-        <DataTable
-          data={filteredData}
-          columns={columns}
-          searchTerm={debouncedSearchTerm}
-          keyExtractor={(item) => item.id}
-        />
-      </div>
+      {/* State Handlers & Data Table Area */}
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center py-20 bg-surface/50 border border-border rounded-2xl">
+          <Loader2 size={36} className="animate-spin text-accent mb-3" />
+          <p className="text-text-muted text-sm font-roboto">Loading clubs directory...</p>
+        </div>
+      ) : isError ? (
+        <div className="flex flex-col items-center justify-center py-16 bg-red-500/5 border border-red-500/20 rounded-2xl text-center px-4">
+          <AlertCircle size={36} className="text-red-500 mb-3" />
+          <h3 className="text-text-main font-poppins font-semibold text-lg mb-1">Failed to load clubs</h3>
+          <p className="text-text-muted text-sm font-roboto max-w-md mb-4">
+            There was an issue retrieving club data from the live API. Please try again.
+          </p>
+          <button
+            onClick={() => refetch()}
+            className="px-5 py-2.5 rounded-xl bg-accent text-white font-poppins text-sm font-medium hover:bg-accent/90 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      ) : (
+        <div className="flex-1 min-h-0">
+          <DataTable
+            data={clubs}
+            columns={columns}
+            searchTerm={debouncedSearchTerm}
+            keyExtractor={(item) => String(item.id)}
+          />
+        </div>
+      )}
     </div>
   );
 }

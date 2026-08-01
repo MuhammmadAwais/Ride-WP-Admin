@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 import { type RecipientUser } from '../types';
-import { MOCK_RECIPIENT_USERS } from '../utils/constants';
+import { useGetUsersListQuery } from '@/features/users/api/userApi';
 
 interface RecipientSelectorProps {
   initialSelectedIds: string[];
@@ -12,11 +12,18 @@ export default function RecipientSelector({ initialSelectedIds, onSelectComplete
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(initialSelectedIds));
 
-  const filteredUsers = useMemo(() => {
-    if (!searchQuery) return MOCK_RECIPIENT_USERS;
-    const lowerQ = searchQuery.toLowerCase();
-    return MOCK_RECIPIENT_USERS.filter(u => u.username.toLowerCase().includes(lowerQ));
-  }, [searchQuery]);
+  const { data, isLoading } = useGetUsersListQuery({
+    search: searchQuery || undefined,
+    offset: 0,
+    limit: 50,
+  });
+
+  const availableUsers: RecipientUser[] = useMemo(() => {
+    return (data?.users || []).map((u) => ({
+      id: String(u.id),
+      username: `${u.fullName} (${u.email})`,
+    }));
+  }, [data?.users]);
 
   const toggleUser = (id: string) => {
     const newSet = new Set(selectedIds);
@@ -29,24 +36,24 @@ export default function RecipientSelector({ initialSelectedIds, onSelectComplete
   };
 
   const isAllSelected = useMemo(() => {
-    if (filteredUsers.length === 0) return false;
-    return filteredUsers.every(u => selectedIds.has(u.id));
-  }, [filteredUsers, selectedIds]);
+    if (availableUsers.length === 0) return false;
+    return availableUsers.every(u => selectedIds.has(u.id));
+  }, [availableUsers, selectedIds]);
 
   const toggleSelectAll = () => {
     const newSet = new Set(selectedIds);
     if (isAllSelected) {
       // Deselect all filtered users
-      filteredUsers.forEach(u => newSet.delete(u.id));
+      availableUsers.forEach(u => newSet.delete(u.id));
     } else {
       // Select all filtered users
-      filteredUsers.forEach(u => newSet.add(u.id));
+      availableUsers.forEach(u => newSet.add(u.id));
     }
     setSelectedIds(newSet);
   };
 
   const handleComplete = () => {
-    const selectedUsers = MOCK_RECIPIENT_USERS.filter(u => selectedIds.has(u.id));
+    const selectedUsers = availableUsers.filter(u => selectedIds.has(u.id));
     onSelectComplete(selectedUsers);
   };
 
@@ -99,27 +106,34 @@ export default function RecipientSelector({ initialSelectedIds, onSelectComplete
 
       {/* Recipient User Grid Table / List */}
       <div className="w-full overflow-hidden border border-border rounded-2xl bg-main-bg/30">
-        <div className="divide-y divide-border max-h-[360px] overflow-y-auto pr-1 custom-scrollbar">
-          {filteredUsers.map(user => (
-            <div 
-              key={user.id} 
-              onClick={() => toggleUser(user.id)}
-              className="flex items-center gap-4 p-4 cursor-pointer hover:bg-hover transition-colors group"
-            >
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0 ${selectedIds.has(user.id) ? 'border-[#EB712B] bg-[#EB712B]' : 'border-border group-hover:border-[#EB712B]'}`}>
-                {selectedIds.has(user.id) && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-12">
+            <Loader2 size={24} className="animate-spin text-[#EB712B] mb-2" />
+            <p className="text-text-muted text-xs font-roboto">Loading users...</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-border max-h-[360px] overflow-y-auto pr-1 custom-scrollbar">
+            {availableUsers.map(user => (
+              <div 
+                key={user.id} 
+                onClick={() => toggleUser(user.id)}
+                className="flex items-center gap-4 p-4 cursor-pointer hover:bg-hover transition-colors group"
+              >
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0 ${selectedIds.has(user.id) ? 'border-[#EB712B] bg-[#EB712B]' : 'border-border group-hover:border-[#EB712B]'}`}>
+                  {selectedIds.has(user.id) && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+                </div>
+                <span className="font-roboto text-text-main text-[14px] font-medium leading-none select-none">
+                  {highlightText(user.username, searchQuery)}
+                </span>
               </div>
-              <span className="font-roboto text-text-main text-[14px] font-medium leading-none select-none">
-                {highlightText(user.username, searchQuery)}
-              </span>
-            </div>
-          ))}
-          {filteredUsers.length === 0 && (
-            <div className="p-8 text-center text-text-muted font-roboto text-sm">
-              No users found matching "{searchQuery}"
-            </div>
-          )}
-        </div>
+            ))}
+            {availableUsers.length === 0 && (
+              <div className="p-8 text-center text-text-muted font-roboto text-sm">
+                No users found matching "{searchQuery}"
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Done CTA */}
