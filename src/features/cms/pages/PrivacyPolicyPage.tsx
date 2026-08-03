@@ -7,7 +7,7 @@ import { useGetCMSContentQuery, useUpdateCMSContentMutation } from '../api/cmsAp
 import { deserializeCMSBlocks, serializeCMSBlocks } from '../utils/contentAdapter';
 
 export default function PrivacyPolicyPage() {
-  const { data, isLoading } = useGetCMSContentQuery('privacy');
+  const { data, isLoading } = useGetCMSContentQuery('privacy_policy');
   const [updateCMSContent, { isLoading: isSaving }] = useUpdateCMSContentMutation();
 
   const blocks: CMSBlock[] = useMemo(() => {
@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
     try {
       const serialized = serializeCMSBlocks(updatedBlocks);
       await updateCMSContent({
-        type: 'privacy',
+        type: 'privacy_policy',
         content: serialized,
       }).unwrap();
     } catch (err) {

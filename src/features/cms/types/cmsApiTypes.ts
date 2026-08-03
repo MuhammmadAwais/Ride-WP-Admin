@@ -3,7 +3,7 @@
  * Mirrors the GET and PUT /admin/content/:type schemas from Admin.postman_collection (1).json.
  */
 
-export type CMSContentType = 'about' | 'privacy' | 'terms' | 'faq';
+export type CMSContentType = 'about' | 'privacy_policy' | 'terms_conditions' | 'privacy' | 'terms' | 'faq';
 
 export interface CMSContentResponse {
   id?: number;

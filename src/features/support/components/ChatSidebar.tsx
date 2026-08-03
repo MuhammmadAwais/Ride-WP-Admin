@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { type ChatUser } from '../utils/constants';
+import { SafeImage } from '@/Components/common/SafeImage';
 
 interface ChatSidebarProps {
   users: ChatUser[];
@@ -85,7 +86,12 @@ export function ChatSidebar({ users, activeUserId, onSelectUser, isHiddenOnMobil
             >
               {/* Avatar & Online Indicator */}
               <div className="relative flex-shrink-0">
-                <img src={user.avatar} alt={user.name} className="w-12 h-12 rounded-full object-cover bg-surface" />
+                <SafeImage 
+                  src={user.avatar} 
+                  alt={user.name} 
+                  className="w-12 h-12 rounded-full object-cover bg-surface" 
+                  fallback={<div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">{user.name?.charAt(0)}</div>}
+                />
                 {user.isOnline && (
                   <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-main-bg" />
                 )}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { type ChatMessage } from '../utils/constants';
 import { CustomAudioPlayer } from './CustomAudioPlayer';
 import { Check, CheckCheck, PlayCircle } from 'lucide-react';
+import { SafeImage } from '@/Components/common/SafeImage';
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -30,11 +31,12 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       case 'image':
         return (
           <div className="relative rounded-xl overflow-hidden group cursor-pointer border border-white/10 mt-1 max-w-sm">
-            <img 
+            <SafeImage 
               src={message.content} 
               alt="Sent image" 
               className="w-full h-auto aspect-video object-cover transition-transform duration-500 group-hover:scale-[1.03]"
               loading="lazy"
+              fallback={<div className="w-full h-32 bg-surface/20 flex items-center justify-center text-xs">Image unavailable</div>}
             />
           </div>
         );

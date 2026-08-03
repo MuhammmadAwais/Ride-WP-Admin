@@ -66,7 +66,6 @@ export const DASHBOARD_COPY = {
   EARNINGS: "Earnings till Now",
   BALANCE: "Balance",
 } as const;
-
 // ─── Local Storage Keys ──────────────────────────────────────────────────────
 export const STORAGE_KEYS = {
   THEME: "rwp-theme",

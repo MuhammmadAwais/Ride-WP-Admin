@@ -4,6 +4,7 @@ import { type ChatUser, type ChatMessage } from '../utils/constants';
 import { MessageBubble } from './MessageBubble';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { SafeImage } from '@/Components/common/SafeImage';
 
 interface ChatWindowProps {
   activeUser: ChatUser | null;
@@ -93,7 +94,12 @@ export function ChatWindow({ activeUser, messages, onBack, isHiddenOnMobile }: C
           </button>
           
           <div className="relative">
-            <img src={activeUser.avatar} alt={activeUser.name} className="w-10 h-10 rounded-full object-cover bg-main-bg" />
+            <SafeImage 
+              src={activeUser.avatar} 
+              alt={activeUser.name} 
+              className="w-10 h-10 rounded-full object-cover bg-main-bg" 
+              fallback={<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">{activeUser.name?.charAt(0)}</div>}
+            />
             {activeUser.isOnline && (
               <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-surface" />
             )}

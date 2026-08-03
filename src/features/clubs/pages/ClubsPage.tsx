@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Shield, X, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/Constants';
@@ -7,30 +7,39 @@ import { ClubActionsMenu } from '../components/ClubActionsMenu';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useGetClubsListQuery } from '../api/clubApi';
 import type { ClubListItem } from '../types/clubTypes';
+import { SafeImage } from '@/Components/common/SafeImage';
 
 export default function ClubsPage() {
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearchTerm = useDebounce(searchInput, 300);
   const navigate = useNavigate();
+  const [offset, setOffset] = useState(0);
+  const [limit, setLimit] = useState(20);
+
+  useEffect(() => {
+    setOffset(0);
+  }, [debouncedSearchTerm]);
 
   const { data, isLoading, isError, refetch, isFetching } = useGetClubsListQuery({
     search: debouncedSearchTerm || undefined,
-    offset: 0,
-    limit: 20,
+    offset,
+    limit,
   });
 
   const clubs = data?.clubs ?? [];
+  const total = data?.pagination?.total ?? clubs.length;
 
   const columns: ColumnDef<ClubListItem>[] = [
     {
       header: 'Club Logo',
       accessorKey: (row) => (
         <div className="w-10 h-10 rounded-xl bg-accent/5 flex items-center justify-center shrink-0 border border-border overflow-hidden">
-          {row.logo ? (
-            <img src={row.logo} alt={row.clubName} className="w-full h-full object-cover" />
-          ) : (
-            <Shield size={20} className="text-accent/40" />
-          )}
+          <SafeImage
+            src={row.logo}
+            alt={row.clubName}
+            className="w-full h-full object-cover"
+            fallback={<Shield size={20} className="text-accent/40" />}
+          />
         </div>
       ),
       sortable: false,
@@ -149,6 +158,20 @@ export default function ClubsPage() {
             columns={columns}
             searchTerm={debouncedSearchTerm}
             keyExtractor={(item) => String(item.id)}
+            pagination={{
+              total,
+              offset,
+              limit,
+              onPageChange: (newOffset) => {
+                setOffset(newOffset);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              },
+              onLimitChange: (newLimit) => {
+                setLimit(newLimit);
+                setOffset(0);
+              },
+              isFetching,
+            }}
           />
         </div>
       )}

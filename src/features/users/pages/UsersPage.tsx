@@ -1,33 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, User, X, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { UserActionsMenu } from '../components/UserActionsMenu';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useGetUsersListQuery } from '../api/userApi';
 import type { UserListItem } from '../types/userTypes';
+import { SafeImage } from '@/Components/common/SafeImage';
 
 export default function UsersPage() {
   const [searchInput, setSearchInput] = useState('');
   const debouncedSearchTerm = useDebounce(searchInput, 300);
+  const [offset, setOffset] = useState(0);
+  const [limit, setLimit] = useState(20);
+
+  useEffect(() => {
+    setOffset(0);
+  }, [debouncedSearchTerm]);
 
   const { data, isLoading, isError, refetch, isFetching } = useGetUsersListQuery({
     search: debouncedSearchTerm || undefined,
-    offset: 0,
-    limit: 20,
+    offset,
+    limit,
   });
 
   const users = data?.users ?? [];
+  const total = data?.pagination?.total ?? users.length;
 
   const columns: ColumnDef<UserListItem>[] = [
     {
       header: 'Profile Photo',
       accessorKey: (row) => (
         <div className="w-10 h-10 rounded-full bg-accent/5 flex items-center justify-center flex-shrink-0 border border-border overflow-hidden">
-          {row.profileImage ? (
-            <img src={row.profileImage} alt={row.fullName} className="w-full h-full object-cover" />
-          ) : (
-            <User size={20} className="text-accent/30" />
-          )}
+          <SafeImage
+            src={row.profileImage}
+            alt={row.fullName}
+            className="w-full h-full object-cover"
+            fallback={<User size={20} className="text-accent/30" />}
+          />
         </div>
       ),
       sortable: false,
@@ -123,6 +132,20 @@ export default function UsersPage() {
             columns={columns}
             searchTerm={debouncedSearchTerm}
             keyExtractor={(item) => String(item.id)}
+            pagination={{
+              total,
+              offset,
+              limit,
+              onPageChange: (newOffset) => {
+                setOffset(newOffset);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              },
+              onLimitChange: (newLimit) => {
+                setLimit(newLimit);
+                setOffset(0);
+              },
+              isFetching,
+            }}
           />
         </div>
       )}

@@ -7,7 +7,7 @@ import { useGetCMSContentQuery, useUpdateCMSContentMutation } from '../api/cmsAp
 import { deserializeCMSBlocks, serializeCMSBlocks } from '../utils/contentAdapter';
 
 export default function TermsConditionsPage() {
-  const { data, isLoading } = useGetCMSContentQuery('terms');
+  const { data, isLoading } = useGetCMSContentQuery('terms_conditions');
   const [updateCMSContent, { isLoading: isSaving }] = useUpdateCMSContentMutation();
 
   const blocks: CMSBlock[] = useMemo(() => {
@@ -18,7 +18,7 @@ export default function TermsConditionsPage() {
     try {
       const serialized = serializeCMSBlocks(updatedBlocks);
       await updateCMSContent({
-        type: 'terms',
+        type: 'terms_conditions',
         content: serialized,
       }).unwrap();
     } catch (err) {

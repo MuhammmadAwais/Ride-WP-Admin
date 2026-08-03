@@ -6,6 +6,7 @@ import DashboardMap from '../components/DashboardMap';
 import { MOCK_FEEDBACK, MOCK_LIVE_RIDES } from '../utils/constants';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { type LiveRideLog } from '../types';
+import { SafeImage } from '@/Components/common/SafeImage';
 
 const columns: ColumnDef<LiveRideLog>[] = [
   {
@@ -50,33 +51,35 @@ export default function DashboardPage() {
   return (
     <>
       <Helmet>
-        <title>Dashboard Overview | Ride With Pals</title>
+        <title>Mission Control | Integri-AI Admin</title>
       </Helmet>
 
-      <div className="min-h-screen pt-4 pb-20 px-2 sm:px-8 max-w-7xl mx-auto space-y-6">
+      <div className="space-y-8 pb-12">
         
-        {/* Welcome Header */}
-        <div>
-          <h1 className="font-poppins font-extrabold text-2xl sm:text-[28px] text-text-main tracking-tight leading-none">
-            Dashboard Overview
-          </h1>
-          <p className="font-roboto text-xs text-text-muted mt-1.5">
-            Welcome back, Administrator. Realtime tracking hubs and coordination servers are active.
-          </p>
+        {/* Top Banner / Welcome */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface border border-border rounded-3xl p-6 shadow-sm">
+          <div>
+            <h1 className="font-poppins font-bold text-text-main text-2xl tracking-tight">Mission Control</h1>
+            <p className="font-roboto text-text-muted text-sm mt-1">Real-time surveillance & telemetry across the Integri-AI transportation network</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-green-500/10 text-green-500 border border-green-500/20">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-ping" />
+              SYSTEMS OPTIMAL
+            </span>
+          </div>
         </div>
 
-        {/* Top Summary Zone: 4-Column Rolling Summary Cards */}
+        {/* Core Metrics Grid */}
         <MetricCards />
 
-        {/* Middle Zone: 65% Vector World Map Left, 35% Ratings Terminal Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        {/* Live Surveillance Map + User Feedback Stream */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* Interactive World Map (2/3 width on large screens) */}
-          <div className="lg:col-span-2 flex flex-col">
+          <div className="lg:col-span-2">
             <DashboardMap />
           </div>
 
-          {/* User Feedback Ratings terminal (1/3 width) */}
           <div className="bg-surface border border-border rounded-3xl p-6 flex flex-col justify-between h-[400px]">
             <div>
               <h3 className="font-poppins font-bold text-text-main text-[16px] tracking-tight">User Ratings Terminal</h3>
@@ -88,10 +91,11 @@ export default function DashboardPage() {
               {MOCK_FEEDBACK.map(fb => (
                 <div key={fb.id} className="bg-main-bg/30 border border-border/50 rounded-2xl p-4 space-y-2">
                   <div className="flex items-center gap-3">
-                    <img 
+                    <SafeImage 
                       src={fb.avatar} 
                       alt={fb.username} 
                       className="w-8 h-8 rounded-full object-cover border border-border"
+                      fallback={<div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">{fb.username?.charAt(0)}</div>}
                     />
                     <div className="flex-1 min-w-0">
                       <h4 className="font-roboto text-[13px] font-bold text-text-main truncate">{fb.username}</h4>

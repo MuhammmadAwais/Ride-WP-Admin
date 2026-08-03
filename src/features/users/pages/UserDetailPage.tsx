@@ -7,6 +7,7 @@ import { DetailTabs, type TabId } from '../components/DetailTabs';
 import { MOCK_USERS, MOCK_RIDES, MOCK_JOINED_CLUBS, MOCK_VEHICLES, MOCK_PURCHASES, type ParticipatedRide } from '../utils/constants';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { useGetUserByIdQuery } from '../api/userApi';
+import { SafeImage } from '@/Components/common/SafeImage';
 
 export default function UserDetailPage() {
   const { id } = useParams();
@@ -69,11 +70,12 @@ export default function UserDetailPage() {
       {/* Profile Header Card */}
       <div className="rounded-2xl border border-border bg-surface shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row gap-8 items-start sm:items-center">
         <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full shrink-0 bg-accent/5 flex items-center justify-center border-4 border-border overflow-hidden">
-          {user.profileImage ? (
-            <img src={user.profileImage} alt={user.fullName} className="w-full h-full object-cover" />
-          ) : (
-            <User size={48} className="text-accent/30" />
-          )}
+          <SafeImage
+            src={user.profileImage}
+            alt={user.fullName}
+            className="w-full h-full object-cover"
+            fallback={<User size={48} className="text-accent/30" />}
+          />
         </div>
         
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -277,7 +279,12 @@ function ClubsTabContent() {
           </div>
           <div className="px-5 pb-5 relative -mt-8">
             <div className="w-16 h-16 rounded-xl bg-surface border-4 border-surface flex items-center justify-center mb-3 shadow-lg overflow-hidden">
-              {club.image ? <img src={club.image} alt={club.name} className="w-full h-full object-cover" /> : <Shield size={24} className="text-accent" />}
+              <SafeImage
+                src={club.image}
+                alt={club.name}
+                className="w-full h-full object-cover"
+                fallback={<Shield size={24} className="text-accent" />}
+              />
             </div>
             <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">{club.name}</h3>
             <p className="font-roboto text-sm text-text-muted mb-4">{club.members} Members</p>
@@ -340,11 +347,12 @@ function PurchasesTabContent() {
       accessorKey: (r) => (
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-accent/5 border border-border overflow-hidden shrink-0">
-            {r.itemImage ? (
-              <img src={r.itemImage} alt={r.type} className="w-full h-full object-cover" />
-            ) : (
-              <TrendingUp size={18} className="m-auto text-accent/30" />
-            )}
+            <SafeImage
+              src={r.itemImage}
+              alt={r.type}
+              className="w-full h-full object-cover"
+              fallback={<TrendingUp size={18} className="m-auto text-accent/30" />}
+            />
           </div>
           <span className="font-medium text-text-main">{r.type}</span>
         </div>

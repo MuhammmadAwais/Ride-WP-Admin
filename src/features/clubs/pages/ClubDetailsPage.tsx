@@ -16,6 +16,7 @@ import {
 } from '../utils/constants';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { useGetClubByIdQuery } from '../api/clubApi';
+import { SafeImage } from '@/Components/common/SafeImage';
 
 export default function ClubDetailsPage() {
   const { id } = useParams();
@@ -84,10 +85,11 @@ export default function ClubDetailsPage() {
       <div className="relative rounded-[32px] overflow-hidden border border-white/10 shadow-2xl bg-surface">
         {/* Banner */}
         <div className="h-48 sm:h-64 relative w-full overflow-hidden bg-surface">
-          <img 
+          <SafeImage 
             src={bannerImage} 
             alt="Cover" 
-            className="w-full h-full object-cover opacity-90" 
+            className="w-full h-full object-cover opacity-90"
+            fallback={<div className="w-full h-full bg-accent/20" />}
           />
           {/* Flat Minimalist Tint Overlay */}
           <div className="absolute inset-0 bg-black/25 z-10" />
@@ -97,7 +99,12 @@ export default function ClubDetailsPage() {
         <div className="relative z-30 px-6 sm:px-10 pb-8 -mt-20 flex flex-col xl:flex-row gap-8 items-start xl:items-end justify-between">
           <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-end w-full xl:w-auto">
             <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-surface bg-surface overflow-hidden shadow-2xl relative shrink-0">
-              <img src={avatarImage} alt="Avatar" className="w-full h-full object-cover" />
+              <SafeImage
+                src={avatarImage}
+                alt="Avatar"
+                className="w-full h-full object-cover"
+                fallback={<Shield size={40} className="m-auto text-accent/30" />}
+              />
               <div className="absolute bottom-2 right-2 bg-blue-500 rounded-full p-1 border-2 border-surface shadow-md">
                 <CheckCircle2 size={16} className="text-white" />
               </div>
@@ -253,7 +260,12 @@ function NewsTab() {
 
           {news.image && (
             <div className="w-full h-64 rounded-2xl overflow-hidden border border-border/50">
-              <img src={news.image} alt={news.heading} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+              <SafeImage
+                src={news.image}
+                alt={news.heading}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                fallback={<div className="w-full h-full bg-accent/10" />}
+              />
             </div>
           )}
         </div>
@@ -276,7 +288,12 @@ function LeaderboardTab() {
     }, sortKey: 'rank' },
     { header: 'Member Profile', accessorKey: (r) => (
       <div className="flex items-center gap-3">
-        <img src={r.avatar} alt={r.name} className="w-10 h-10 rounded-full object-cover border border-border" />
+        <SafeImage
+          src={r.avatar}
+          alt={r.name}
+          className="w-10 h-10 rounded-full object-cover border border-border"
+          fallback={<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">{r.name?.charAt(0)}</div>}
+        />
         <span className="font-semibold text-text-main">{r.name}</span>
       </div>
     ) },
@@ -302,7 +319,12 @@ function ShopTab() {
       {MOCK_CLUB_INVENTORY.map(item => (
         <div key={item.id} className="bg-surface border border-border rounded-3xl overflow-hidden group hover:border-accent/40 transition-all shadow-sm flex flex-col">
           <div className="h-48 relative overflow-hidden bg-text-muted/5">
-            <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <SafeImage
+              src={item.image}
+              alt={item.name}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              fallback={<div className="w-full h-full bg-accent/10" />}
+            />
             <button className="absolute top-3 right-3 p-2 bg-surface/80 backdrop-blur-md rounded-xl hover:bg-accent hover:text-white transition-colors opacity-0 group-hover:opacity-100">
               <Edit2 size={16} />
             </button>
@@ -337,7 +359,12 @@ function DiscountTab() {
         <div key={discount.id} className="bg-surface border border-border rounded-3xl p-5 shadow-sm hover:-translate-y-1 transition-transform relative overflow-hidden">
           <div className="flex items-center gap-4 mb-5">
             <div className="w-16 h-16 rounded-2xl overflow-hidden border border-border shadow-sm shrink-0">
-              <img src={discount.logo} alt={discount.brand} className="w-full h-full object-cover" />
+              <SafeImage
+                src={discount.logo}
+                alt={discount.brand}
+                className="w-full h-full object-cover"
+                fallback={<Tag size={20} className="m-auto text-accent/30" />}
+              />
             </div>
             <div>
               <h4 className="font-poppins font-bold text-text-main leading-tight mb-1">{discount.brand}</h4>
@@ -367,7 +394,12 @@ function MarketplaceTab() {
       {MOCK_CLUB_MARKETPLACE.map(item => (
         <div key={item.id} className="bg-surface border border-border rounded-3xl overflow-hidden group hover:border-accent/40 transition-all shadow-sm">
           <div className="h-48 relative overflow-hidden bg-text-muted/5">
-            <img src={item.image} alt={item.product} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <SafeImage
+              src={item.image}
+              alt={item.product}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              fallback={<div className="w-full h-full bg-accent/10" />}
+            />
             <div className="absolute top-3 left-3">
               <span className={`px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md shadow-lg ${item.status === 'Available' ? 'bg-green-500/80 text-white' : 'bg-red-500/80 text-white'}`}>
                 {item.status}
@@ -380,7 +412,12 @@ function MarketplaceTab() {
               <ShoppingCart size={18} /> Rs. {item.price}
             </p>
             <div className="flex items-center gap-3 pt-4 border-t border-border">
-              <img src={item.sellerAvatar} alt={item.seller} className="w-8 h-8 rounded-full object-cover" />
+              <SafeImage
+                src={item.sellerAvatar}
+                alt={item.seller}
+                className="w-8 h-8 rounded-full object-cover"
+                fallback={<div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">{item.seller?.charAt(0)}</div>}
+              />
               <div>
                 <p className="text-[10px] font-semibold text-text-muted uppercase">Seller</p>
                 <p className="text-sm font-medium text-text-main">{item.seller}</p>
@@ -397,7 +434,12 @@ function MembersTab() {
   const columns: ColumnDef<any>[] = [
     { header: 'Profile', accessorKey: (r) => (
       <div className="flex items-center gap-3">
-        <img src={r.avatar} alt={r.name} className="w-10 h-10 rounded-full object-cover border border-border" />
+        <SafeImage
+          src={r.avatar}
+          alt={r.name}
+          className="w-10 h-10 rounded-full object-cover border border-border"
+          fallback={<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">{r.name?.charAt(0)}</div>}
+        />
         <span className="font-semibold text-text-main">{r.name}</span>
       </div>
     ) },
