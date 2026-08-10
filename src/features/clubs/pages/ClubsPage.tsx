@@ -17,6 +17,7 @@ export default function ClubsPage() {
   const [limit, setLimit] = useState(20);
 
   useEffect(() => {
+    // eslint-disable-next-line
     setOffset(0);
   }, [debouncedSearchTerm]);
 

@@ -3,29 +3,27 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { 
-  ChevronLeft, CheckCircle2, ShieldCheck, MapPin, 
-  Users, Activity, DollarSign, Calendar, Edit2, Trash2, Pin,
-  Clock, Star, Tag, ShoppingCart, UserCheck, Shield, Loader2
+  ChevronLeft, CheckCircle2, ShieldCheck, 
+  Users, Activity, DollarSign, Calendar,
+  UserCheck, Shield, Loader2, Trophy, Store, ShoppingBag, FileText, Tag, User, Navigation
 } from 'lucide-react';
 
 import { ClubDetailTabs } from '../components/ClubDetailTabs';
-import { 
-  type TabId, MOCK_CLUB_DETAILS, MOCK_CLUB_RIDES, MOCK_CLUB_NEWS,
-  MOCK_CLUB_LEADERBOARD, MOCK_CLUB_INVENTORY, MOCK_CLUB_DISCOUNTS,
-  MOCK_CLUB_MARKETPLACE, MOCK_CLUB_MEMBERS
-} from '../utils/constants';
+import { type TabId } from '../utils/constants';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { useGetClubByIdQuery, useGetClubsListQuery } from '../api/clubApi';
+import type { ClubRide, ClubMember } from '../types/clubTypes';
 import { SafeImage } from '@/Components/common/SafeImage';
 
 export default function ClubDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const clubId = Number(id) || 1;
-  const { data, isLoading, isError } = useGetClubByIdQuery({ clubId });
-  const { data: clubsListData } = useGetClubsListQuery();
-
   const [activeTab, setActiveTab] = useState<TabId>('rides');
+
+  const { data: profileData, isLoading: profileLoading, isError: profileError } = useGetClubByIdQuery({ clubId });
+  const { data: tabData, isFetching: tabFetching } = useGetClubByIdQuery({ clubId, tab: activeTab });
+  const { data: clubsListData } = useGetClubsListQuery();
   const contentRef = useRef<HTMLDivElement>(null);
 
   // GSAP Animation for smooth content entry transitions
@@ -40,7 +38,7 @@ export default function ClubDetailsPage() {
     return () => ctx.revert();
   }, [activeTab]);
 
-  if (isLoading) {
+  if (profileLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] bg-surface/50 border border-border rounded-2xl">
         <Loader2 size={36} className="animate-spin text-accent mb-3" />
@@ -52,8 +50,8 @@ export default function ClubDetailsPage() {
   const clubFromList = clubsListData?.clubs?.find((c) => c.id === clubId);
 
   const profile =
-    data?.profile ??
-    ((data as any)?.clubName ? (data as any) : undefined) ??
+    profileData?.profile ??
+    ((profileData as any)?.clubName ? (profileData as any) : undefined) ??
     (clubFromList
       ? {
           id: clubFromList.id,
@@ -68,7 +66,7 @@ export default function ClubDetailsPage() {
           owner: clubFromList.owner,
         }
       : undefined) ??
-    (data
+    (profileData
       ? {
           id: clubId,
           clubName: `Club #${clubId}`,
@@ -83,13 +81,13 @@ export default function ClubDetailsPage() {
         }
       : undefined);
 
-  const stats = data?.stats ?? {
-    activeMembers: (data as any)?.members?.length ?? clubFromList?.participantCount ?? 0,
+  const stats = profileData?.stats ?? {
+    activeMembers: (profileData as any)?.members?.length ?? clubFromList?.participantCount ?? 0,
     groupRuns: 0,
     revenue: 0,
   };
 
-  if (isError || (!data && !clubFromList) || !profile) {
+  if (profileError || (!profileData && !clubFromList) || !profile) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] bg-red-500/5 border border-red-500/20 rounded-2xl text-center p-8">
         <h3 className="text-text-main font-poppins font-semibold text-lg mb-1">Failed to load club details</h3>
@@ -104,8 +102,8 @@ export default function ClubDetailsPage() {
     );
   }
 
-  const bannerImage = profile?.coverImage || MOCK_CLUB_DETAILS.bannerImage;
-  const avatarImage = profile?.logo || MOCK_CLUB_DETAILS.avatarImage;
+  const bannerImage = profile?.coverImage;
+  const avatarImage = profile?.logo;
 
   return (
     <div className="flex flex-col space-y-8 pb-12 min-h-full">
@@ -199,313 +197,298 @@ export default function ClubDetailsPage() {
       <ClubDetailTabs activeTab={activeTab} onChange={setActiveTab} />
 
       {/* Functional Sub-Suites (Lower Zone) */}
-      <div ref={contentRef} className="min-h-[500px]">
-        {activeTab === 'rides' && <RidesTab />}
-        {activeTab === 'news' && <NewsTab />}
-        {activeTab === 'leaderboard' && <LeaderboardTab />}
-        {activeTab === 'shop' && <ShopTab />}
-        {activeTab === 'discount' && <DiscountTab />}
-        {activeTab === 'marketplace' && <MarketplaceTab />}
-        {activeTab === 'members' && <MembersTab />}
+      <div ref={contentRef} className="min-h-[500px] relative">
+        {tabFetching && (
+          <div className="absolute inset-0 z-10 bg-surface/50 backdrop-blur-sm rounded-3xl flex items-center justify-center">
+            <Loader2 size={32} className="animate-spin text-accent" />
+          </div>
+        )}
+        {activeTab === 'rides' && <RidesTab rides={tabData?.rides || []} />}
+        {activeTab === 'news' && <NewsTab news={tabData?.news || []} />}
+        {activeTab === 'leaderboard' && <LeaderboardTab leaderboard={tabData?.leaderboard || []} />}
+        {activeTab === 'shop' && <ShopTab shop={tabData?.shop || []} />}
+        {activeTab === 'discount' && <DiscountTab discounts={tabData?.discounts || []} />}
+        {activeTab === 'marketplace' && <MarketplaceTab marketplace={tabData?.marketplace || []} />}
+        {activeTab === 'members' && <MembersTab members={tabData?.members || []} />}
       </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ─── TAB SUB-SUITES ────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────────────────────────
-
-function RidesTab() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-8">
-      {MOCK_CLUB_RIDES.map((ride) => (
-        <div 
-          key={ride.id} 
-          className="bg-surface border border-border p-6 rounded-[28px] relative flex flex-col justify-between hover:border-accent/30 transition-all duration-300 shadow-sm"
-        >
-          {/* Top Row: Info + GPX Badge */}
-          <div className="flex justify-between items-start gap-4">
-            <div>
-              <h4 className="font-poppins font-bold text-[18px] text-text-main leading-tight mb-1">{ride.name}</h4>
-              <p className="font-roboto text-[13px] text-text-muted flex items-center gap-1.5 mb-1">
-                <Calendar size={14} className="opacity-70" /> {ride.date} • {ride.time}
-              </p>
-              <p className="font-roboto text-[13px] text-text-muted flex items-center gap-1.5">
-                <MapPin size={14} className="text-accent" /> {ride.route}
-              </p>
-            </div>
-            
-            {ride.hasGpx && (
-              <span className="bg-[#EB712B]/10 text-[#EB712B] border border-[#EB712B]/20 px-3.5 py-1 rounded-xl font-poppins font-bold text-[11px] tracking-wider uppercase select-none">
-                GPX
-              </span>
-            )}
-          </div>
-
-          {/* Bottom Row: 3 Highlight Boxes (Pace, Distance, Participants) */}
-          <div className="grid grid-cols-3 gap-3 mt-6">
-            <div className="bg-main-bg/50 border border-border/40 p-3.5 rounded-2xl flex flex-col items-center justify-center text-center">
-              <span className="font-poppins font-extrabold text-[15px] sm:text-[16px] text-text-main mb-0.5">{ride.pace}</span>
-              <span className="font-roboto font-bold text-[9px] text-text-muted uppercase tracking-wider">Pace</span>
-            </div>
-            
-            <div className="bg-main-bg/50 border border-border/40 p-3.5 rounded-2xl flex flex-col items-center justify-center text-center">
-              <span className="font-poppins font-extrabold text-[15px] sm:text-[16px] text-text-main mb-0.5">{ride.distance}</span>
-              <span className="font-roboto font-bold text-[9px] text-text-muted uppercase tracking-wider">Distance</span>
-            </div>
-
-            <div className="bg-main-bg/50 border border-border/40 p-3.5 rounded-2xl flex flex-col items-center justify-center text-center">
-              <span className="font-poppins font-extrabold text-[15px] sm:text-[16px] text-text-main mb-0.5">{ride.participants}</span>
-              <span className="font-roboto font-bold text-[9px] text-text-muted uppercase tracking-wider">Participants</span>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function NewsTab() {
-  return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      {MOCK_CLUB_NEWS.map(news => (
-        <div key={news.id} className="bg-surface border border-border p-6 rounded-3xl shadow-sm relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button className="p-2 bg-text-muted/10 hover:bg-accent/20 hover:text-accent rounded-lg transition-colors"><Pin size={16} /></button>
-            <button className="p-2 bg-text-muted/10 hover:bg-blue-500/20 hover:text-blue-500 rounded-lg transition-colors"><Edit2 size={16} /></button>
-            <button className="p-2 bg-text-muted/10 hover:bg-red-500/20 hover:text-red-500 rounded-lg transition-colors"><Trash2 size={16} /></button>
-          </div>
-          
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
-              <Clock size={18} />
-            </div>
-            <div>
-              <h3 className="font-poppins font-bold text-lg text-text-main">{news.heading}</h3>
-              <p className="text-xs text-text-muted font-roboto">{news.date}</p>
-            </div>
-          </div>
-          
-          {/* Mock Markdown Rendering */}
-          <div className="prose prose-sm dark:prose-invert max-w-none font-roboto text-[15px] text-text-muted/90 leading-relaxed mb-4">
-            {news.content.split('\n').map((line, i) => {
-              // Basic bold/italic mock parsing
-              let parsedLine = line.replace(/\*\*(.*?)\*\*/g, '<strong class="text-text-main font-semibold">$1</strong>');
-              parsedLine = parsedLine.replace(/\*(.*?)\*/g, '<em class="text-text-main italic">$1</em>');
-              return <p key={i} dangerouslySetInnerHTML={{ __html: parsedLine }} />;
-            })}
-          </div>
-
-          {news.image && (
-            <div className="w-full h-64 rounded-2xl overflow-hidden border border-border/50">
-              <SafeImage
-                src={news.image}
-                alt={news.heading}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                fallback={<div className="w-full h-full bg-accent/10" />}
-              />
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function LeaderboardTab() {
-  const columns: ColumnDef<any>[] = [
-    { header: 'Rank', accessorKey: (r) => {
-      let colorClass = 'text-text-muted';
-      if (r.rank === 1) { colorClass = 'text-yellow-400'; }
-      if (r.rank === 2) { colorClass = 'text-gray-300'; }
-      if (r.rank === 3) { colorClass = 'text-orange-400'; }
-      
-      return (
-        <span className={`font-poppins font-black text-xl ${colorClass}`}>#{r.rank}</span>
-      );
-    }, sortKey: 'rank' },
-    { header: 'Member Profile', accessorKey: (r) => (
-      <div className="flex items-center gap-3">
-        <SafeImage
-          src={r.avatar}
-          alt={r.name}
-          className="w-10 h-10 rounded-full object-cover border border-border"
-          fallback={<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">{r.name?.charAt(0)}</div>}
-        />
-        <span className="font-semibold text-text-main">{r.name}</span>
+function RidesTab({ rides }: { rides: ClubRide[] }) {
+  if (rides.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center mt-6">
+        <Navigation size={48} className="text-text-muted/30 mb-4" />
+        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">No Rides Scheduled</h3>
+        <p className="text-text-muted font-roboto text-sm">This club hasn't hosted any rides yet.</p>
       </div>
-    ) },
-    { header: 'Total Distance', accessorKey: (r) => (
-      <span className="font-mono text-[15px]">{r.distance.toLocaleString()} km</span>
-    ), sortKey: 'distance' },
-    { header: 'Pool Journeys', accessorKey: (r) => <span className="font-bold">{r.journeys}</span>, sortKey: 'journeys' },
-    { header: 'Score Points', accessorKey: (r) => (
-      <span className="flex items-center gap-1 text-accent font-bold"><Star size={14} fill="currentColor" /> {r.points.toLocaleString()}</span>
-    ), sortKey: 'points' },
+    );
+  }
+
+  const columns: ColumnDef<ClubRide>[] = [
+    { header: 'Ride Name', accessorKey: 'rideName' },
+    { header: 'Route', accessorKey: (r) => `${r.meetingPoint} → ${r.endingPoint || 'TBD'}` },
+    { header: 'Date & Time', accessorKey: (r) => `${new Date(r.date).toLocaleDateString()} ${new Date(`1970-01-01T${r.time}`).toLocaleTimeString()}`, sortKey: 'date' },
+    { header: 'Participants', accessorKey: 'participantsCount' },
+    { header: 'Pace', accessorKey: 'pace' },
+    { header: 'Distance', accessorKey: 'distance' },
   ];
 
   return (
-    <div>
-      <DataTable data={MOCK_CLUB_LEADERBOARD} columns={columns} keyExtractor={(r) => r.rank.toString()} />
-    </div>
-  );
-}
-
-function ShopTab() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {MOCK_CLUB_INVENTORY.map(item => (
-        <div key={item.id} className="bg-surface border border-border rounded-3xl overflow-hidden group hover:border-accent/40 transition-all shadow-sm flex flex-col">
-          <div className="h-48 relative overflow-hidden bg-text-muted/5">
-            <SafeImage
-              src={item.image}
-              alt={item.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              fallback={<div className="w-full h-full bg-accent/10" />}
-            />
-            <button className="absolute top-3 right-3 p-2 bg-surface/80 backdrop-blur-md rounded-xl hover:bg-accent hover:text-white transition-colors opacity-0 group-hover:opacity-100">
-              <Edit2 size={16} />
-            </button>
-          </div>
-          <div className="p-5 flex-1 flex flex-col">
-            <h4 className="font-poppins font-semibold text-text-main line-clamp-1 mb-1">{item.name}</h4>
-            <p className="text-xl font-bold text-accent font-mono mb-4">Rs. {item.price}</p>
-            
-            <div className="mt-auto">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">Stock Level</span>
-                <span className="text-[11px] font-bold text-text-main">{item.stock} left</span>
-              </div>
-              <div className="h-2 w-full bg-text-muted/10 rounded-full overflow-hidden">
-                <div 
-                  className={`h-full rounded-full ${item.stock > 20 ? 'bg-green-500' : 'bg-red-500'}`} 
-                  style={{ width: `${Math.min(item.stock, 100)}%` }} 
-                />
-              </div>
-            </div>
-          </div>
+    <div className="flex flex-col gap-6 animate-in slide-in-from-bottom-4 duration-500 pb-12 mt-6">
+      <div className="flex justify-between items-end">
+        <div>
+          <h3 className="text-xl font-poppins font-bold text-text-main">Club Rides</h3>
+          <p className="text-sm font-roboto text-text-muted mt-1">Manage and monitor all official club events.</p>
         </div>
-      ))}
-    </div>
-  );
-}
-
-function DiscountTab() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-      {MOCK_CLUB_DISCOUNTS.map(discount => (
-        <div key={discount.id} className="bg-surface border border-border rounded-3xl p-5 shadow-sm hover:-translate-y-1 transition-transform relative overflow-hidden">
-          <div className="flex items-center gap-4 mb-5">
-            <div className="w-16 h-16 rounded-2xl overflow-hidden border border-border shadow-sm shrink-0">
-              <SafeImage
-                src={discount.logo}
-                alt={discount.brand}
-                className="w-full h-full object-cover"
-                fallback={<Tag size={20} className="m-auto text-accent/30" />}
-              />
-            </div>
-            <div>
-              <h4 className="font-poppins font-bold text-text-main leading-tight mb-1">{discount.brand}</h4>
-              <p className="text-xs font-semibold text-text-muted flex items-center gap-1">
-                <Clock size={12} /> {discount.expiry}
-              </p>
-            </div>
-          </div>
-          <div className="bg-[#EB712B]/10 border border-[#EB712B]/20 rounded-xl p-3 text-center mb-4 border-dashed">
-            <span className="font-black text-[#EB712B] text-lg tracking-tight"><Tag size={16} className="inline mr-1" /> {discount.deal}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-text-muted">Status</span>
-            <span className={`px-3 py-1 rounded-lg text-xs font-bold ${discount.isActive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-              {discount.isActive ? 'Active Voucher' : 'Expired'}
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function MarketplaceTab() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {MOCK_CLUB_MARKETPLACE.map(item => (
-        <div key={item.id} className="bg-surface border border-border rounded-3xl overflow-hidden group hover:border-accent/40 transition-all shadow-sm">
-          <div className="h-48 relative overflow-hidden bg-text-muted/5">
-            <SafeImage
-              src={item.image}
-              alt={item.product}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              fallback={<div className="w-full h-full bg-accent/10" />}
-            />
-            <div className="absolute top-3 left-3">
-              <span className={`px-3 py-1 rounded-full text-xs font-bold backdrop-blur-md shadow-lg ${item.status === 'Available' ? 'bg-green-500/80 text-white' : 'bg-red-500/80 text-white'}`}>
-                {item.status}
-              </span>
-            </div>
-          </div>
-          <div className="p-5">
-            <h4 className="font-poppins font-semibold text-text-main line-clamp-2 mb-2 min-h-[44px]">{item.product}</h4>
-            <p className="text-xl font-bold text-accent font-mono mb-4 flex items-center gap-1">
-              <ShoppingCart size={18} /> Rs. {item.price}
-            </p>
-            <div className="flex items-center gap-3 pt-4 border-t border-border">
-              <SafeImage
-                src={item.sellerAvatar}
-                alt={item.seller}
-                className="w-8 h-8 rounded-full object-cover"
-                fallback={<div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">{item.seller?.charAt(0)}</div>}
-              />
-              <div>
-                <p className="text-[10px] font-semibold text-text-muted uppercase">Seller</p>
-                <p className="text-sm font-medium text-text-main">{item.seller}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function MembersTab() {
-  const columns: ColumnDef<any>[] = [
-    { header: 'Profile', accessorKey: (r) => (
-      <div className="flex items-center gap-3">
-        <SafeImage
-          src={r.avatar}
-          alt={r.name}
-          className="w-10 h-10 rounded-full object-cover border border-border"
-          fallback={<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">{r.name?.charAt(0)}</div>}
-        />
-        <span className="font-semibold text-text-main">{r.name}</span>
       </div>
-    ) },
-    { header: 'Email', accessorKey: 'email' },
-    { header: 'Role', accessorKey: (r) => {
-      let bg = 'bg-text-muted/10 text-text-muted';
-      if (r.role === 'Owner') bg = 'bg-accent/20 text-accent border border-accent/20';
-      if (r.role === 'Mod') bg = 'bg-blue-500/20 text-blue-500 border border-blue-500/20';
-      
-      return (
-        <span className={`px-2.5 py-1 rounded-md text-xs font-bold tracking-wide flex items-center gap-1 w-fit ${bg}`}>
-          {r.role === 'Owner' && <Shield size={12} />}
-          {r.role}
+      <DataTable data={rides} columns={columns} keyExtractor={(r) => r.id.toString()} />
+    </div>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function NewsTab({ news }: { news: any[] }) {
+  if (news.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center mt-6">
+        <FileText size={48} className="text-text-muted/30 mb-4" />
+        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">No News Available</h3>
+        <p className="text-text-muted font-roboto text-sm">There are no news updates from this club.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-6 animate-in slide-in-from-bottom-4 duration-500 pb-12 mt-6">
+      <div className="flex justify-between items-end">
+        <div>
+          <h3 className="text-xl font-poppins font-bold text-text-main">Club News & Updates</h3>
+          <p className="text-sm font-roboto text-text-muted mt-1">Latest announcements broadcasted to members.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function LeaderboardTab({ leaderboard }: { leaderboard: any[] }) {
+  if (leaderboard.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center mt-6">
+        <Trophy size={48} className="text-text-muted/30 mb-4" />
+        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">No Leaderboard Data</h3>
+        <p className="text-text-muted font-roboto text-sm">Leaderboard data is currently unavailable.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-6 animate-in slide-in-from-bottom-4 duration-500 pb-12 mt-6">
+      <div className="flex justify-between items-end">
+        <div>
+          <h3 className="text-xl font-poppins font-bold text-text-main">Leaderboard</h3>
+          <p className="text-sm font-roboto text-text-muted mt-1">Top performing members of the club.</p>
+        </div>
+      </div>
+      <div className="bg-surface rounded-2xl border border-border overflow-hidden">
+        {leaderboard.map((user, i) => (
+          <div key={i} className={`flex items-center gap-4 p-5 ${i !== leaderboard.length - 1 ? 'border-b border-border' : ''} hover:bg-text-muted/5 transition-colors`}>
+            <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent font-bold text-sm shrink-0">
+              #{user.rank || i + 1}
+            </div>
+            <div className="w-12 h-12 rounded-full overflow-hidden bg-accent/10 border-2 border-surface shadow-sm shrink-0">
+               <SafeImage src={user.avatar} alt={user.name} className="w-full h-full object-cover" fallback={<Users size={20} className="text-accent m-auto mt-3" />} />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-poppins font-bold text-text-main">{user.name || 'Unknown'}</h4>
+              <p className="text-xs font-roboto text-text-muted">{user.distance || 0} km driven • {user.journeys || 0} journeys</p>
+            </div>
+            <div className="text-right">
+              <span className="font-mono text-lg font-bold text-accent">{user.points || 0}</span>
+              <span className="text-xs text-text-muted ml-1 uppercase font-bold">PTS</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ShopTab({ shop }: { shop: any[] }) {
+  if (shop.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center mt-6">
+        <ShoppingBag size={48} className="text-text-muted/30 mb-4" />
+        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">Shop is Empty</h3>
+        <p className="text-text-muted font-roboto text-sm">No items are available in the club shop.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-6 animate-in slide-in-from-bottom-4 duration-500 pb-12 mt-6">
+      <div className="flex justify-between items-end">
+        <div>
+          <h3 className="text-xl font-poppins font-bold text-text-main">Club Merch & Shop</h3>
+          <p className="text-sm font-roboto text-text-muted mt-1">Official merchandise and equipment.</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        {shop.map((item, i) => (
+          <div key={i} className="bg-surface rounded-2xl border border-border p-4 shadow-sm hover:border-accent/30 transition-all group">
+            <div className="aspect-square rounded-xl bg-accent/5 overflow-hidden mb-4 relative">
+              <SafeImage src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" fallback={<ShoppingBag size={32} className="m-auto mt-[40%] text-accent/30" />} />
+              <div className="absolute top-2 right-2 px-2 py-1 bg-surface/90 backdrop-blur-sm rounded text-[10px] font-bold text-text-main shadow-sm border border-border">
+                {item.stock || 0} in stock
+              </div>
+            </div>
+            <h4 className="font-poppins font-bold text-text-main text-sm mb-1 leading-tight">{item.name || 'Unknown Item'}</h4>
+            <p className="font-mono text-accent font-bold text-sm">Rs. {item.price || 0}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function DiscountTab({ discounts }: { discounts: any[] }) {
+  if (discounts.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center mt-6">
+        <Tag size={48} className="text-text-muted/30 mb-4" />
+        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">No Active Discounts</h3>
+        <p className="text-text-muted font-roboto text-sm">There are no discount offers available for this club.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-6 animate-in slide-in-from-bottom-4 duration-500 pb-12 mt-6">
+      <div className="flex justify-between items-end">
+        <div>
+          <h3 className="text-xl font-poppins font-bold text-text-main">Partner Discounts</h3>
+          <p className="text-sm font-roboto text-text-muted mt-1">Exclusive perks for club members.</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {discounts.map((discount, i) => (
+          <div key={i} className={`rounded-2xl p-5 border ${discount.isActive ? 'border-border bg-surface hover:border-accent/40 shadow-sm' : 'border-border/50 bg-surface/40 opacity-70'} transition-colors relative overflow-hidden group`}>
+            {discount.isActive && <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-accent/20 to-transparent rounded-bl-full pointer-events-none" />}
+            <div className="w-12 h-12 rounded-xl bg-text-muted/5 flex items-center justify-center mb-4 overflow-hidden shadow-sm">
+               <SafeImage src={discount.logo} alt={discount.brand} className="w-full h-full object-cover" fallback={<Tag size={20} className="text-text-muted" />} />
+            </div>
+            <h4 className="font-poppins font-bold text-text-main text-sm mb-1 line-clamp-1">{discount.brand || 'Partner'}</h4>
+            <p className="font-mono font-bold text-accent text-[13px] mb-3">{discount.deal || 'Discount Available'}</p>
+            <div className="flex justify-between items-center mt-auto">
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">{discount.expiry || ''}</span>
+              {!discount.isActive && <span className="px-2 py-0.5 rounded bg-text-muted/10 text-text-muted text-[10px] font-bold">EXPIRED</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function MarketplaceTab({ marketplace }: { marketplace: any[] }) {
+  if (marketplace.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center mt-6">
+        <Store size={48} className="text-text-muted/30 mb-4" />
+        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">Marketplace Empty</h3>
+        <p className="text-text-muted font-roboto text-sm">No P2P items are currently listed by members.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-6 animate-in slide-in-from-bottom-4 duration-500 pb-12 mt-6">
+      <div className="flex justify-between items-end">
+        <div>
+          <h3 className="text-xl font-poppins font-bold text-text-main">P2P Marketplace</h3>
+          <p className="text-sm font-roboto text-text-muted mt-1">Items listed by members for sale/trade.</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {marketplace.map((item, i) => (
+          <div key={i} className="flex gap-4 p-4 rounded-2xl bg-surface border border-border hover:border-accent/30 transition-all shadow-sm">
+            <div className="w-24 h-24 rounded-xl bg-accent/5 overflow-hidden shrink-0 border border-border/50">
+              <SafeImage src={item.image} alt={item.product} className="w-full h-full object-cover" fallback={<Store size={24} className="m-auto mt-8 text-accent/30" />} />
+            </div>
+            <div className="flex flex-col flex-1 py-1">
+              <div className="flex justify-between items-start mb-1">
+                <h4 className="font-poppins font-bold text-text-main text-sm line-clamp-1">{item.product || 'Unknown Product'}</h4>
+                <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider ${item.status === 'Available' ? 'bg-green-500/10 text-green-500' : 'bg-text-muted/10 text-text-muted'}`}>
+                  {item.status || 'Available'}
+                </span>
+              </div>
+              <p className="font-mono text-accent font-bold text-sm mb-3">Rs. {item.price || 0}</p>
+              
+              <div className="flex items-center gap-2 mt-auto">
+                <div className="w-5 h-5 rounded-full overflow-hidden bg-text-muted/10">
+                  <SafeImage src={item.sellerAvatar} alt={item.seller} className="w-full h-full object-cover" fallback={<User size={12} className="m-auto text-text-muted" />} />
+                </div>
+                <span className="text-xs font-roboto text-text-muted">Listed by <span className="font-medium text-text-main">{item.seller || 'Unknown'}</span></span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MembersTab({ members }: { members: ClubMember[] }) {
+  if (members.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center mt-6">
+        <Users size={48} className="text-text-muted/30 mb-4" />
+        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">No Members Found</h3>
+        <p className="text-text-muted font-roboto text-sm">There are no members listed in this club.</p>
+      </div>
+    );
+  }
+  const columns: ColumnDef<ClubMember>[] = [
+    { 
+      header: 'Member', 
+      accessorKey: (m) => (
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center overflow-hidden border border-border shrink-0">
+             <SafeImage src={m.avatar || ''} alt={m.name || 'Member'} className="w-full h-full object-cover" fallback={<User size={14} className="text-accent" />} />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-text-main text-sm">{m.name || 'Unknown User'}</span>
+            <span className="text-[11px] text-text-muted">{m.email || 'No email provided'}</span>
+          </div>
+        </div>
+      ),
+      sortKey: 'name'
+    },
+    { 
+      header: 'Role', 
+      accessorKey: (m) => (
+        <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${
+          m.role === 'Owner' || m.role === 'Admin' ? 'bg-accent/10 text-accent border border-accent/20' : 
+          m.role === 'Mod' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
+          'bg-surface border border-border text-text-muted'
+        }`}>
+          {m.role || 'Member'}
         </span>
-      );
-    }, sortKey: 'role' },
-    { header: 'Joined', accessorKey: 'joined' },
-    { header: 'Actions', accessorKey: () => (
-      <button className="text-sm font-semibold text-accent hover:text-accent/80 transition-colors">
-        Manage Role
-      </button>
-    ) }
+      ),
+      sortKey: 'role'
+    },
+    { header: 'Joined', accessorKey: 'joinedDate' }
   ];
 
   return (
-    <div>
-      <DataTable data={MOCK_CLUB_MEMBERS} columns={columns} keyExtractor={(r) => r.id} />
+    <div className="flex flex-col gap-6 animate-in slide-in-from-bottom-4 duration-500 pb-12 mt-6">
+      <div className="flex justify-between items-end">
+        <div>
+          <h3 className="text-xl font-poppins font-bold text-text-main">Club Members</h3>
+          <p className="text-sm font-roboto text-text-muted mt-1">Manage and view all enrolled members.</p>
+        </div>
+      </div>
+      <DataTable data={members} columns={columns} keyExtractor={(m) => m.id.toString()} />
     </div>
   );
 }

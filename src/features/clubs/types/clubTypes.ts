@@ -51,11 +51,41 @@ export interface ClubStats {
   revenue: number;
 }
 
+export interface ClubRide {
+  id: number;
+  rideName: string;
+  date: string;
+  time: string;
+  meetingPoint: string;
+  endingPoint: string | null;
+  pace: string | null;
+  distance: string | null;
+  participantsCount: number;
+}
+
+export interface ClubMember {
+  id: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
 export interface ClubDetailResponse {
-  profile: ClubProfile;
-  stats: ClubStats;
-  members?: unknown[];
-  activities?: unknown[];
+  profile?: ClubProfile;
+  stats?: ClubStats;
+  rides?: ClubRide[];
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  news?: any[];
+  leaderboard?: any[];
+  shop?: any[];
+  discounts?: any[];
+  marketplace?: any[];
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+  members?: ClubMember[];
+  pagination?: {
+    total: number;
+    offset: number;
+    limit: number;
+  };
 }
 
 export interface GetClubsListRequest {

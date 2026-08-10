@@ -14,6 +14,7 @@ export default function UsersPage() {
   const [limit, setLimit] = useState(20);
 
   useEffect(() => {
+    // eslint-disable-next-line
     setOffset(0);
   }, [debouncedSearchTerm]);
 

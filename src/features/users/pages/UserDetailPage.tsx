@@ -4,9 +4,9 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ChevronLeft, User, TrendingUp, Star, Shield, Car, CheckCircle2, Clock, XCircle, Loader2 } from 'lucide-react';
 import { DetailTabs, type TabId } from '../components/DetailTabs';
-import { MOCK_USERS, MOCK_RIDES, MOCK_JOINED_CLUBS, MOCK_VEHICLES, MOCK_PURCHASES, type ParticipatedRide } from '../utils/constants';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { useGetUserByIdQuery } from '../api/userApi';
+import type { UserRide, UserClub, UserListing, UserPurchase } from '../types/userTypes';
 import { SafeImage } from '@/Components/common/SafeImage';
 
 export default function UserDetailPage() {
@@ -37,6 +37,7 @@ export default function UserDetailPage() {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const user = data?.profile ?? ((data as any)?.fullName ? (data as any) : undefined);
 
   if (isError || !data || !user) {
@@ -152,10 +153,10 @@ export default function UserDetailPage() {
         <DetailTabs activeTab={activeTab} onChange={setActiveTab} />
 
         <div ref={tabContentRef} className="min-h-[400px]">
-          {activeTab === 'rides' && <RidesTabContent />}
-          {activeTab === 'clubs' && <ClubsTabContent />}
-          {activeTab === 'listings' && <ListingsTabContent />}
-          {activeTab === 'purchases' && <PurchasesTabContent />}
+          {activeTab === 'rides' && <RidesTabContent rides={data.rides || []} />}
+          {activeTab === 'clubs' && <ClubsTabContent clubs={data.clubs || []} />}
+          {activeTab === 'listings' && <ListingsTabContent listings={data.listings || []} />}
+          {activeTab === 'purchases' && <PurchasesTabContent purchases={data.purchases || []} />}
         </div>
       </div>
     </div>
@@ -164,17 +165,13 @@ export default function UserDetailPage() {
 
 // ─── Tab Contents ────────────────────────────────────────────────────────────
 
-function RidesTabContent() {
-  const columns: ColumnDef<ParticipatedRide>[] = [
-    { header: 'Date & Time', accessorKey: (r) => `${r.date} ${r.time}`, sortKey: 'date' },
+function RidesTabContent({ rides }: { rides: UserRide[] }) {
+  const columns: ColumnDef<UserRide>[] = [
+    { header: 'Date & Time', accessorKey: (r) => `${new Date(r.dateTime).toLocaleDateString()} ${new Date(r.dateTime).toLocaleTimeString()}`, sortKey: 'dateTime' },
     { header: 'Route', accessorKey: 'route' },
-    { header: 'Club/Host Name', accessorKey: 'clubName' },
-    { header: 'Role', accessorKey: (r) => (
-      <span className={`px-2.5 py-1 rounded-md text-xs font-medium ${r.role === 'Driver' ? 'bg-accent/20 text-accent border border-accent/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'}`}>
-        {r.role}
-      </span>
-    ), sortKey: 'role' },
-    { header: 'Fare Paid', accessorKey: 'fare' },
+    { header: 'Club/Host Name', accessorKey: 'hostName' },
+    { header: 'Pace', accessorKey: 'pace' },
+    { header: 'Distance', accessorKey: 'distance' },
     { header: 'Status', accessorKey: (r) => (
       <div className="flex items-center gap-1.5">
         {r.status === 'Completed' && <CheckCircle2 size={14} className="text-green-400" />}
@@ -192,21 +189,21 @@ function RidesTabContent() {
     <div className="flex flex-col space-y-8 pb-10">
       {/* Ride Participation Summary Card (from Image 2) */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {MOCK_RIDES.slice(0, 1).map((ride) => (
+        {rides.slice(0, 1).map((ride) => (
           <div key={ride.id} className="rounded-[32px] p-6 sm:p-8 bg-surface border border-border shadow-md relative overflow-hidden group">
             <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
               <div>
-                <h3 className="text-xl sm:text-2xl font-poppins font-bold text-text-main mb-2">{ride.route.split('→')[0].trim()} Ride</h3>
+                <h3 className="text-xl sm:text-2xl font-poppins font-bold text-text-main mb-2">{ride.route?.split('→')[0].trim() || 'Unknown'} Ride</h3>
                 <div className="space-y-1">
                   <p className="text-sm sm:text-[15px] text-text-muted font-roboto flex items-center gap-2">
-                    <Clock size={16} className="text-accent/60" /> {ride.date} • {ride.time}
+                    <Clock size={16} className="text-accent/60" /> {new Date(ride.dateTime).toLocaleString()}
                   </p>
                   <p className="text-sm sm:text-[15px] text-text-muted font-roboto flex items-center gap-2">
-                    <Star size={16} className="text-accent/60" /> {ride.clubName}
+                    <Star size={16} className="text-accent/60" /> {ride.hostName}
                   </p>
                 </div>
               </div>
-              {ride.hasGpx && (
+              {ride.gpxFile && (
                 <div className="px-5 py-2.5 rounded-full bg-blue-600 text-white text-xs sm:text-sm font-bold tracking-wide shadow-lg shadow-blue-600/20">
                   GPX
                 </div>
@@ -215,15 +212,15 @@ function RidesTabContent() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
               <div className="bg-text-muted/5 dark:bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center group-hover:bg-accent/5 transition-colors border border-border/50 sm:border-0">
-                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.pace}</p>
+                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.pace || 'N/A'}</p>
                 <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Pace</p>
               </div>
               <div className="bg-text-muted/5 dark:bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center group-hover:bg-accent/5 transition-colors border border-border/50 sm:border-0">
-                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.distance}</p>
+                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.distance || 'N/A'}</p>
                 <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Distance</p>
               </div>
               <div className="bg-text-muted/5 dark:bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center group-hover:bg-accent/5 transition-colors border border-border/50 sm:border-0">
-                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.participants}</p>
+                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.participantsCount || 0}</p>
                 <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Participants</p>
               </div>
             </div>
@@ -264,15 +261,25 @@ function RidesTabContent() {
         </div>
       </div>
       
-      <DataTable data={MOCK_RIDES} columns={columns} keyExtractor={(r) => r.id} />
+      <DataTable data={rides} columns={columns} keyExtractor={(r) => r.id.toString()} />
     </div>
   );
 }
 
-function ClubsTabContent() {
+function ClubsTabContent({ clubs }: { clubs: UserClub[] }) {
+  if (clubs.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center">
+        <Shield size={48} className="text-text-muted/30 mb-4" />
+        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">No Clubs Joined</h3>
+        <p className="text-text-muted font-roboto text-sm">This user hasn't joined any clubs yet.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {MOCK_JOINED_CLUBS.map((club) => (
+      {clubs.map((club) => (
         <div key={club.id} className="relative rounded-2xl overflow-hidden bg-surface border border-border group hover:border-accent/30 transition-all shadow-sm">
           <div className="h-24 bg-accent/10 relative">
              <div className="absolute inset-0 backdrop-blur-sm bg-white/5"></div>
@@ -280,20 +287,20 @@ function ClubsTabContent() {
           <div className="px-5 pb-5 relative -mt-8">
             <div className="w-16 h-16 rounded-xl bg-surface border-4 border-surface flex items-center justify-center mb-3 shadow-lg overflow-hidden">
               <SafeImage
-                src={club.image}
-                alt={club.name}
+                src={null} // No image field in UserClub yet based on current API return
+                alt={club.clubName}
                 className="w-full h-full object-cover"
                 fallback={<Shield size={24} className="text-accent" />}
               />
             </div>
-            <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">{club.name}</h3>
-            <p className="font-roboto text-sm text-text-muted mb-4">{club.members} Members</p>
+            <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">{club.clubName}</h3>
+            <p className="font-roboto text-sm text-text-muted mb-4">{club.memberCount}</p>
             
             <div className="flex items-center justify-between border-t border-border pt-4">
-              <span className={`px-2 py-1 rounded text-xs font-bold ${club.role === 'Admin' ? 'bg-accent/10 text-accent' : 'bg-text-muted/10 text-text-muted'}`}>
+              <span className={`px-2 py-1 rounded text-xs font-bold ${club.role === 'Admin' || club.role === 'Owner' ? 'bg-accent/10 text-accent' : 'bg-text-muted/10 text-text-muted'}`}>
                 {club.role}
               </span>
-              <span className="font-roboto text-xs text-text-muted/60 tracking-tight">Joined {club.dateJoined}</span>
+              <span className="font-roboto text-xs text-text-muted/60 tracking-tight">Joined {new Date(club.joinedDate).toLocaleDateString()}</span>
             </div>
           </div>
         </div>
@@ -302,45 +309,62 @@ function ClubsTabContent() {
   );
 }
 
-function ListingsTabContent() {
+function ListingsTabContent({ listings }: { listings: UserListing[] }) {
+  if (listings.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center mt-6">
+        <Car size={48} className="text-text-muted/30 mb-4" />
+        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">No Active Listings</h3>
+        <p className="text-text-muted font-roboto text-sm">This user hasn't posted any listings.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
-        <h3 className="font-poppins font-semibold text-lg text-text-main mb-6">Registered Vehicles</h3>
-        <div className="space-y-4">
-          {MOCK_VEHICLES.map((v) => (
+      <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm lg:col-span-2">
+        <h3 className="font-poppins font-semibold text-lg text-text-main mb-6">User Listings</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {listings.map((v) => (
             <div key={v.id} className="flex items-center gap-4 p-4 rounded-2xl bg-text-muted/5 border border-border group hover:border-accent/30 transition-all">
-              <div className="w-16 h-12 bg-accent/10 rounded-xl flex items-center justify-center shrink-0">
-                <Car size={24} className="text-accent" />
+              <div className="w-16 h-16 bg-accent/10 rounded-xl flex items-center justify-center shrink-0 overflow-hidden border border-border/50">
+                <SafeImage src={v.image} alt={v.productName} fallback={<Car size={24} className="text-accent" />} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1">
-                <h4 className="font-poppins font-semibold text-text-main">{v.make} {v.model}</h4>
-                <p className="font-roboto text-sm text-text-muted">{v.year} • {v.condition}</p>
+                <h4 className="font-poppins font-semibold text-text-main line-clamp-1">{v.productName}</h4>
+                <p className="font-roboto text-sm text-text-muted capitalize">{v.condition}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`text-[10px] px-2 py-0.5 rounded font-semibold ${v.isActive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                    {v.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                  {v.isSoldOut && <span className="text-[10px] px-2 py-0.5 rounded font-semibold bg-text-muted/10 text-text-muted">Sold Out</span>}
+                </div>
               </div>
               <div className="text-right">
-                <div className="px-3 py-1.5 bg-surface rounded-lg border border-border font-mono text-[13px] font-bold text-text-main shadow-sm">
-                  {v.licensePlate}
+                <div className="px-3 py-1.5 bg-surface rounded-lg border border-border font-mono text-[13px] font-bold text-accent shadow-sm">
+                  Rs. {v.price}
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-      
-      <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
-        <h3 className="font-poppins font-semibold text-lg text-text-main mb-6">Scheduled Offers</h3>
-        <div className="flex items-center justify-center h-[300px] bg-text-muted/5 rounded-2xl border-2 border-border border-dashed">
-          <div className="text-center">
-            <Car size={32} className="mx-auto text-text-muted/20 mb-3" />
-            <p className="font-poppins text-text-muted font-medium">No active offers scheduled</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
 
-function PurchasesTabContent() {
+function PurchasesTabContent({ purchases }: { purchases: UserPurchase[] }) {
+  if (purchases.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center mt-6">
+        <TrendingUp size={48} className="text-text-muted/30 mb-4" />
+        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">No Purchases Found</h3>
+        <p className="text-text-muted font-roboto text-sm">This user hasn't made any transactions yet.</p>
+      </div>
+    );
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const columns: ColumnDef<any>[] = [
     {
       header: 'Item',
@@ -349,19 +373,19 @@ function PurchasesTabContent() {
           <div className="w-10 h-10 rounded-lg bg-accent/5 border border-border overflow-hidden shrink-0">
             <SafeImage
               src={r.itemImage}
-              alt={r.type}
+              alt={r.type || 'Item'}
               className="w-full h-full object-cover"
               fallback={<TrendingUp size={18} className="m-auto text-accent/30" />}
             />
           </div>
-          <span className="font-medium text-text-main">{r.type}</span>
+          <span className="font-medium text-text-main">{r.type || 'Unknown Type'}</span>
         </div>
       ),
       sortable: false,
     },
     { header: 'Transaction ID', accessorKey: 'id' },
     { header: 'Date/Time', accessorKey: 'dateTime' },
-    { header: 'Amount', accessorKey: (r) => <span className="font-bold text-accent">{r.amount}</span>, sortKey: 'amount' },
+    { header: 'Amount', accessorKey: (r) => <span className="font-bold text-accent">{r.amount || 'N/A'}</span>, sortKey: 'amount' },
     { header: 'Method', accessorKey: 'method' },
     { header: 'Status', accessorKey: (r) => (
       <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-tight ${
@@ -369,14 +393,14 @@ function PurchasesTabContent() {
         r.status === 'Pending' ? 'bg-yellow-500/10 text-yellow-600 border border-yellow-500/20' :
         'bg-red-500/10 text-red-600 border border-red-500/20'
       }`}>
-        {r.status}
+        {r.status || 'Pending'}
       </span>
     ), sortKey: 'status' }
   ];
 
   return (
     <div className="pb-12">
-      <DataTable data={MOCK_PURCHASES} columns={columns} keyExtractor={(r) => r.id} />
+      <DataTable data={purchases} columns={columns} keyExtractor={(r) => r.id.toString()} />
     </div>
   );
 }

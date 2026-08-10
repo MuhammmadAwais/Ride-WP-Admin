@@ -47,13 +47,53 @@ export interface UserStats {
   userReputation: string;
 }
 
+export interface UserRide {
+  id: number;
+  dateTime: string;
+  route: string;
+  hostName: string;
+  status: string;
+  distance: string | null;
+  pace: string | null;
+  participantsCount: number;
+  rideName: string;
+  gpxFile: string | null;
+}
+
+export interface UserClub {
+  id: number;
+  clubName: string;
+  memberCount: string;
+  role: string;
+  joinedDate: string;
+}
+
+export interface UserListing {
+  id: number;
+  productName: string;
+  price: string;
+  condition: string;
+  image: string | null;
+  description: string;
+  isActive: boolean;
+  isSoldOut: boolean;
+  quantity: number | null;
+  createdAt: string;
+}
+
+export interface UserPurchase {
+  id: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
 export interface UserDetailResponse {
   profile: UserProfile;
   stats: UserStats;
-  rides?: unknown[];
-  clubs?: unknown[];
-  listings?: unknown[];
-  purchases?: unknown[];
+  rides?: UserRide[];
+  clubs?: UserClub[];
+  listings?: UserListing[];
+  purchases?: UserPurchase[];
 }
 
 export interface GetUsersListRequest {
