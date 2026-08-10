@@ -90,7 +90,9 @@ export default function DashboardMap() {
   };
 
   const handleMoveEnd = (newPosition: { coordinates: [number, number]; zoom: number }) => {
-    setPosition(newPosition);
+    setTimeout(() => {
+      setPosition(newPosition);
+    }, 0);
   };
 
   return (

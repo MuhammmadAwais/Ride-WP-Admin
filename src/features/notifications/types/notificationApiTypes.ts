@@ -45,3 +45,22 @@ export interface NotificationApiResponse<T> {
   message: string;
   response: T;
 }
+
+export interface GetUsersPickerRequest {
+  offset?: number;
+  limit?: number;
+  search?: string;
+}
+
+export interface UsersPickerResponse {
+  users: Array<{
+    id: number;
+    fullName: string;
+    profileImage: string | null;
+  }>;
+  pagination?: {
+    offset: number;
+    limit: number;
+    total?: number;
+  };
+}

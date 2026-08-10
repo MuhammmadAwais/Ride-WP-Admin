@@ -1,51 +1,54 @@
-import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { APP_NAME } from '@/Constants';
 import { ChatSidebar } from '../components/ChatSidebar';
 import { ChatWindow } from '../components/ChatWindow';
-import { MOCK_CHAT_USERS, MOCK_MESSAGES } from '../utils/constants';
+import { ChatProvider, useChat } from '../context/ChatContext';
 
-export default function SupportPage() {
-  const [activeUserId, setActiveUserId] = useState<string | null>(null);
-
-  const handleSelectUser = (id: string | null) => {
-    setActiveUserId(id);
+function SupportChatContent() {
+  const { threads, activeThreadId, setActiveThreadId } = useChat();
+  
+  const handleSelectThread = (id: number | null) => {
+    setActiveThreadId(id);
   };
 
   const handleBackToSidebar = () => {
-    setActiveUserId(null);
+    setActiveThreadId(null);
   };
 
   // Mobile layout state flags
-  // isChatActive determines if the chat window should take full width on mobile
-  const isChatActive = activeUserId !== null;
+  const isChatActive = activeThreadId !== null;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-130px)] md:h-[calc(100vh-160px)] min-h-[500px]">
-      <Helmet>
-        <title>App Support — {APP_NAME} Admin</title>
-      </Helmet>
+    <div className="flex-1 bg-surface border border-border dark:border-white/5 rounded-2xl sm:rounded-3xl shadow-sm overflow-hidden flex relative">
+      
+      {/* Left Panel: Chat List */}
+      <ChatSidebar 
+        threads={threads}
+        activeThreadId={activeThreadId}
+        onSelectThread={handleSelectThread}
+        isHiddenOnMobile={isChatActive}
+      />
 
-      {/* Main Container: Dual-Pane Grid architecture */}
-      <div className="flex-1 bg-surface border border-border dark:border-white/5 rounded-2xl sm:rounded-3xl shadow-sm overflow-hidden flex relative">
-        
-        {/* Left Panel: Chat List */}
-        <ChatSidebar 
-          users={MOCK_CHAT_USERS}
-          activeUserId={activeUserId}
-          onSelectUser={handleSelectUser}
-          isHiddenOnMobile={isChatActive}
-        />
+      {/* Right Panel: Chat Window */}
+      <ChatWindow 
+        activeThread={activeThreadId ? threads.find(t => t.id === activeThreadId) || null : null}
+        onBack={handleBackToSidebar}
+        isHiddenOnMobile={!isChatActive}
+      />
 
-        {/* Right Panel: Chat Window */}
-        <ChatWindow 
-          activeUser={activeUserId ? MOCK_CHAT_USERS.find(u => u.id === activeUserId) || null : null}
-          messages={activeUserId && MOCK_MESSAGES[activeUserId] ? MOCK_MESSAGES[activeUserId] : []}
-          onBack={handleBackToSidebar}
-          isHiddenOnMobile={!isChatActive}
-        />
-
-      </div>
     </div>
+  );
+}
+
+export default function SupportPage() {
+  return (
+    <ChatProvider>
+      <div className="flex flex-col h-[calc(100vh-130px)] md:h-[calc(100vh-160px)] min-h-[500px]">
+        <Helmet>
+          <title>App Support — {APP_NAME} Admin</title>
+        </Helmet>
+        <SupportChatContent />
+      </div>
+    </ChatProvider>
   );
 }

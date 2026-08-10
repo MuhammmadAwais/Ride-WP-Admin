@@ -15,7 +15,7 @@ import {
   MOCK_CLUB_MARKETPLACE, MOCK_CLUB_MEMBERS
 } from '../utils/constants';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
-import { useGetClubByIdQuery } from '../api/clubApi';
+import { useGetClubByIdQuery, useGetClubsListQuery } from '../api/clubApi';
 import { SafeImage } from '@/Components/common/SafeImage';
 
 export default function ClubDetailsPage() {
@@ -23,6 +23,7 @@ export default function ClubDetailsPage() {
   const navigate = useNavigate();
   const clubId = Number(id) || 1;
   const { data, isLoading, isError } = useGetClubByIdQuery({ clubId });
+  const { data: clubsListData } = useGetClubsListQuery();
 
   const [activeTab, setActiveTab] = useState<TabId>('rides');
   const contentRef = useRef<HTMLDivElement>(null);
@@ -48,7 +49,47 @@ export default function ClubDetailsPage() {
     );
   }
 
-  if (isError || !data) {
+  const clubFromList = clubsListData?.clubs?.find((c) => c.id === clubId);
+
+  const profile =
+    data?.profile ??
+    ((data as any)?.clubName ? (data as any) : undefined) ??
+    (clubFromList
+      ? {
+          id: clubFromList.id,
+          clubName: clubFromList.clubName,
+          logo: clubFromList.logo,
+          coverImage: clubFromList.coverImage,
+          location: clubFromList.location,
+          description: 'Active Riding Club',
+          clubPrivacyName: clubFromList.clubPrivacyName,
+          clubTypeName: clubFromList.clubTypeName,
+          createdAt: clubFromList.createdAt,
+          owner: clubFromList.owner,
+        }
+      : undefined) ??
+    (data
+      ? {
+          id: clubId,
+          clubName: `Club #${clubId}`,
+          logo: null,
+          coverImage: null,
+          location: 'N/A',
+          description: 'Active Riding Club',
+          clubPrivacyName: 'Public',
+          clubTypeName: 'Cycling',
+          createdAt: new Date().toISOString(),
+          owner: { id: 0, fullName: 'Unknown Owner', email: '' },
+        }
+      : undefined);
+
+  const stats = data?.stats ?? {
+    activeMembers: (data as any)?.members?.length ?? clubFromList?.participantCount ?? 0,
+    groupRuns: 0,
+    revenue: 0,
+  };
+
+  if (isError || (!data && !clubFromList) || !profile) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] bg-red-500/5 border border-red-500/20 rounded-2xl text-center p-8">
         <h3 className="text-text-main font-poppins font-semibold text-lg mb-1">Failed to load club details</h3>
@@ -63,10 +104,8 @@ export default function ClubDetailsPage() {
     );
   }
 
-  const profile = data.profile;
-  const stats = data.stats || { activeMembers: 0, groupRuns: 0, revenue: 0 };
-  const bannerImage = profile.coverImage || MOCK_CLUB_DETAILS.bannerImage;
-  const avatarImage = profile.logo || MOCK_CLUB_DETAILS.avatarImage;
+  const bannerImage = profile?.coverImage || MOCK_CLUB_DETAILS.bannerImage;
+  const avatarImage = profile?.logo || MOCK_CLUB_DETAILS.avatarImage;
 
   return (
     <div className="flex flex-col space-y-8 pb-12 min-h-full">
@@ -111,12 +150,12 @@ export default function ClubDetailsPage() {
             </div>
             <div className="mb-2 w-full">
               <div className="flex flex-wrap items-center gap-3 mb-1">
-                <h2 className="font-poppins font-bold text-3xl sm:text-4xl text-text-main tracking-tight leading-tight">{profile.clubName}</h2>
+                <h2 className="font-poppins font-bold text-3xl sm:text-4xl text-text-main tracking-tight leading-tight">{profile?.clubName || 'Club Details'}</h2>
                 <ShieldCheck size={28} className="text-blue-500 shrink-0" />
               </div>
               <p className="font-roboto text-text-muted text-sm flex flex-wrap items-center gap-x-4 gap-y-1.5">
-                <span className="flex items-center gap-1.5"><UserCheck size={16} /> Created by {profile.owner?.fullName || 'N/A'}</span>
-                <span className="flex items-center gap-1.5"><Calendar size={16} /> {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'N/A'}</span>
+                <span className="flex items-center gap-1.5"><UserCheck size={16} /> Created by {profile?.owner?.fullName || 'N/A'}</span>
+                <span className="flex items-center gap-1.5"><Calendar size={16} /> {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'N/A'}</span>
               </p>
             </div>
           </div>

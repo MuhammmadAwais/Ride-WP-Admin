@@ -20,14 +20,14 @@ export const notificationApi = createApi({
   endpoints: (builder) => ({
     /**
      * Send a broadcast or targeted push notification.
-     * POST /admin/push-notification/send
+     * POST /admin/notifications/send
      */
     sendPushNotification: builder.mutation<
       SendPushNotificationResponse,
       SendPushNotificationRequest
     >({
       query: (body) => ({
-        url: '/admin/push-notification/send',
+        url: '/admin/notifications/send',
         method: 'POST',
         data: body,
       }),
@@ -39,14 +39,14 @@ export const notificationApi = createApi({
 
     /**
      * Fetch paginated notification history.
-     * GET /admin/push-notification/history?offset=0&limit=10
+     * GET /admin/notifications/history?offset=0&limit=10
      */
     getNotificationHistory: builder.query<
       NotificationHistoryResponse,
       GetNotificationHistoryRequest | void
     >({
       query: (params = {}) => ({
-        url: '/admin/push-notification/history',
+        url: '/admin/notifications/history',
         method: 'GET',
         params: {
           offset: params?.offset ?? 0,
@@ -58,10 +58,32 @@ export const notificationApi = createApi({
       },
       providesTags: ['NotificationHistory'],
     }),
+
+    /**
+     * Fetch users for the picker.
+     * GET /admin/users/picker?offset=0&limit=5
+     */
+    getUsersPicker: builder.query<
+      import('../types/notificationApiTypes').UsersPickerResponse,
+      import('../types/notificationApiTypes').GetUsersPickerRequest | void
+    >({
+      query: (params = {}) => ({
+        url: '/admin/users/picker',
+        method: 'GET',
+        params: {
+          offset: params?.offset ?? 0,
+          limit: params?.limit ?? 10,
+        },
+      }),
+      transformResponse: (response: NotificationApiResponse<import('../types/notificationApiTypes').UsersPickerResponse>) => {
+        return response.response;
+      },
+    }),
   }),
 });
 
 export const {
   useSendPushNotificationMutation,
   useGetNotificationHistoryQuery,
+  useGetUsersPickerQuery,
 } = notificationApi;

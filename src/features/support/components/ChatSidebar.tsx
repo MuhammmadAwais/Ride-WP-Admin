@@ -1,29 +1,32 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
-import { type ChatUser } from '../utils/constants';
+import { type ChatThread } from '../types/chatTypes';
 import { SafeImage } from '@/Components/common/SafeImage';
 
 interface ChatSidebarProps {
-  users: ChatUser[];
-  activeUserId: string | null;
-  onSelectUser: (id: string | null) => void;
+  threads: ChatThread[];
+  activeThreadId: number | null;
+  onSelectThread: (id: number | null) => void;
   isHiddenOnMobile: boolean;
 }
 
-export function ChatSidebar({ users, activeUserId, onSelectUser, isHiddenOnMobile }: ChatSidebarProps) {
+export function ChatSidebar({ threads, activeThreadId, onSelectThread, isHiddenOnMobile }: ChatSidebarProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Custom filter using standard substring
-  const filteredUsers = users.filter((u) => 
-    u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    u.lastMessage.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredThreads = threads.filter((t) => {
+    const name = t.isGroup ? t.title || t.ride?.rideName : t.otherUser?.fullName;
+    const msg = t.lastMessage?.message || '';
+    return name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+           msg.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   /**
    * Highlights matches of the search term within the given text.
    * Uses the Red-Highlight utility as requested.
    */
   const renderHighlightedText = (text: string, highlight: string) => {
+    if (!text) return null;
     if (!highlight || !highlight.trim()) {
       return <>{text}</>;
     }
@@ -44,6 +47,12 @@ export function ChatSidebar({ users, activeUserId, onSelectUser, isHiddenOnMobil
     );
   };
 
+  const formatTime = (dateStr: string) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   return (
     <div 
       className={`absolute md:relative z-20 top-0 bottom-0 left-0 w-full md:w-[360px] flex flex-col border-r border-border dark:border-white/5 backdrop-blur-xl bg-white/5 transition-transform duration-300 ${
@@ -53,7 +62,7 @@ export function ChatSidebar({ users, activeUserId, onSelectUser, isHiddenOnMobil
       {/* Header & Search */}
       <div className="p-4 border-b border-border dark:border-white/5">
         <button 
-          onClick={() => onSelectUser(null)}
+          onClick={() => onSelectThread(null)}
           className="w-full text-left font-poppins font-bold text-xl text-text-main mb-4 px-2 hover:text-accent transition-colors"
         >
           Messages
@@ -74,47 +83,48 @@ export function ChatSidebar({ users, activeUserId, onSelectUser, isHiddenOnMobil
 
       {/* User List */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
-        {filteredUsers.map((user) => {
-          const isActive = user.id === activeUserId;
+        {filteredThreads.map((thread) => {
+          const isActive = thread.id === activeThreadId;
+          const name = thread.isGroup ? thread.title || thread.ride?.rideName : thread.otherUser?.fullName;
+          const avatar = thread.otherUser?.profileImage;
+          const msg = thread.lastMessage?.message || '';
+
           return (
             <button
-              key={user.id}
-              onClick={() => onSelectUser(user.id)}
+              key={thread.id}
+              onClick={() => onSelectThread(thread.id)}
               className={`w-full p-4 flex items-center gap-3 transition-colors border-b border-border/50 dark:border-white/[0.02] ${
                 isActive ? 'bg-accent/10 dark:bg-accent/5' : 'hover:bg-surface'
               }`}
             >
-              {/* Avatar & Online Indicator */}
+              {/* Avatar */}
               <div className="relative flex-shrink-0">
                 <SafeImage 
-                  src={user.avatar} 
-                  alt={user.name} 
+                  src={avatar} 
+                  alt={name} 
                   className="w-12 h-12 rounded-full object-cover bg-surface" 
-                  fallback={<div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">{user.name?.charAt(0)}</div>}
+                  fallback={<div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">{name?.charAt(0) || '?'}</div>}
                 />
-                {user.isOnline && (
-                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-main-bg" />
-                )}
               </div>
 
               {/* Text Info */}
               <div className="flex-1 min-w-0 text-left">
                 <div className="flex justify-between items-baseline mb-0.5">
                   <h3 className={`font-poppins font-semibold text-[15px] truncate ${isActive ? 'text-text-main' : 'text-text-main/90'}`}>
-                    {renderHighlightedText(user.name, searchTerm)}
+                    {renderHighlightedText(name || 'Unknown', searchTerm)}
                   </h3>
                   <span className={`text-[11px] font-roboto whitespace-nowrap ml-2 ${isActive ? 'text-accent' : 'text-text-muted'}`}>
-                    {user.lastMessageTime}
+                    {formatTime(thread.lastMessageAt)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center gap-2">
                   <p className="font-roboto text-[13px] text-text-muted truncate">
-                    {renderHighlightedText(user.lastMessage, searchTerm)}
+                    {renderHighlightedText(msg, searchTerm)}
                   </p>
-                  {user.unreadCount > 0 && (
+                  {(thread.unreadCount || 0) > 0 && (
                     <div className="flex-shrink-0 min-w-[20px] h-5 rounded-full bg-accent flex items-center justify-center px-1.5 shadow-sm shadow-accent/20">
                       <span className="text-[10px] font-bold text-white leading-none mt-[1px]">
-                        {user.unreadCount}
+                        {thread.unreadCount}
                       </span>
                     </div>
                   )}
@@ -123,7 +133,7 @@ export function ChatSidebar({ users, activeUserId, onSelectUser, isHiddenOnMobil
             </button>
           );
         })}
-        {filteredUsers.length === 0 && (
+        {filteredThreads.length === 0 && (
           <div className="p-8 text-center text-text-muted font-roboto text-sm">
             No matches found.
           </div>

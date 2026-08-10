@@ -199,8 +199,11 @@ export default function PaymentsPage() {
                     <div>
                       <label className="block font-poppins font-semibold text-sm text-text-main mb-2">Bank Name</label>
                       <div className="relative">
-                        <select className="w-full bg-main-bg border border-border text-text-main text-sm rounded-xl px-4 py-3 outline-none focus:border-accent/50 focus:ring-4 focus:ring-accent/10 transition-all appearance-none">
-                          <option value="" disabled selected>Select Bank</option>
+                        <select 
+                          defaultValue=""
+                          className="w-full bg-main-bg border border-border dark:border-white/5 rounded-xl px-4 py-2.5 text-[14px] font-roboto text-text-main focus:border-accent/40 focus:ring-2 focus:ring-accent/20 outline-none transition-all appearance-none"
+                        >
+                          <option value="" disabled>Select Bank</option>
                           <option value="chase">Chase Bank</option>
                           <option value="bofa">Bank of America</option>
                           <option value="wells">Wells Fargo</option>

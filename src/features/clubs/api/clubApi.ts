@@ -51,10 +51,14 @@ export const clubApi = createApi({
      * GET /admin/clubs/{clubId}?tab=members&limit=5&offset=0
      */
     getClubById: builder.query<ClubDetailResponse, GetClubByIdRequest>({
-      query: ({ clubId, tab = 'members', limit = 10, offset = 0 }) => ({
+      query: ({ clubId, tab, limit, offset }) => ({
         url: `/admin/clubs/${clubId}`,
         method: 'GET',
-        params: { tab, limit, offset },
+        params: {
+          ...(tab ? { tab } : {}),
+          ...(limit !== undefined ? { limit } : {}),
+          ...(offset !== undefined ? { offset } : {}),
+        },
       }),
       transformResponse: (response: ClubApiResponse<ClubDetailResponse>) => {
         return response.response;

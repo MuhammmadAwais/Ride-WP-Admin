@@ -25,6 +25,8 @@ import PrivacyPolicyPage from '@/features/cms/pages/PrivacyPolicyPage';
 import TermsConditionsPage from '@/features/cms/pages/TermsConditionsPage';
 import AboutPage from '@/features/cms/pages/AboutPage';
 
+import RouteErrorBoundary from '@/Components/common/RouteErrorBoundary';
+
 /**
  * Application router instance.
  * Add new protected routes under the `/dashboard` children array.
@@ -33,6 +35,7 @@ export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+    errorElement: <RouteErrorBoundary />,
   },
   {
     path: '/',
@@ -41,6 +44,7 @@ export const router = createBrowserRouter([
         <AppLayout />
       </ProtectedRoute>
     ),
+    errorElement: <RouteErrorBoundary />,
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },

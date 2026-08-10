@@ -1,22 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, MoreVertical, Phone, Video, Paperclip, Smile, Send, Mic } from 'lucide-react';
-import { type ChatUser, type ChatMessage } from '../utils/constants';
+import { type ChatThread, type ChatMessage } from '../types/chatTypes';
 import { MessageBubble } from './MessageBubble';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { SafeImage } from '@/Components/common/SafeImage';
+import { useChat } from '../context/ChatContext';
 
 interface ChatWindowProps {
-  activeUser: ChatUser | null;
-  messages: ChatMessage[];
+  activeThread: ChatThread | null;
   onBack: () => void;
   isHiddenOnMobile: boolean;
 }
 
-export function ChatWindow({ activeUser, messages, onBack, isHiddenOnMobile }: ChatWindowProps) {
+export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindowProps) {
   const [inputText, setInputText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { messages, sendMessage } = useChat();
+  const threadMessages = activeThread ? (messages[activeThread.id] || []) : [];
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {
@@ -25,20 +28,20 @@ export function ChatWindow({ activeUser, messages, onBack, isHiddenOnMobile }: C
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, activeUser]);
+  }, [threadMessages, activeThread]);
 
   // Entrance animation for chat messages when user switches
   useGSAP(() => {
-    if (activeUser && containerRef.current) {
+    if (activeThread && containerRef.current) {
       const bubbles = containerRef.current.querySelectorAll('.message-bubble-wrapper');
       gsap.fromTo(bubbles, 
         { opacity: 0, y: 15 },
         { opacity: 1, y: 0, duration: 0.3, stagger: 0.05, ease: 'power2.out', clearProps: 'all' }
       );
     }
-  }, [activeUser?.id]);
+  }, [activeThread?.id]);
 
-  if (!activeUser) {
+  if (!activeThread) {
     return (
       <div className={`flex-1 hidden md:flex flex-col items-center justify-center relative bg-main-bg`}>
         {/* Custom Geometric Wallpaper */}
@@ -64,6 +67,9 @@ export function ChatWindow({ activeUser, messages, onBack, isHiddenOnMobile }: C
       </div>
     );
   }
+
+  const name = activeThread.isGroup ? activeThread.title || activeThread.ride?.rideName : activeThread.otherUser?.fullName;
+  const avatar = activeThread.otherUser?.profileImage;
 
   return (
     <div 
@@ -95,22 +101,19 @@ export function ChatWindow({ activeUser, messages, onBack, isHiddenOnMobile }: C
           
           <div className="relative">
             <SafeImage 
-              src={activeUser.avatar} 
-              alt={activeUser.name} 
+              src={avatar} 
+              alt={name || 'Unknown'} 
               className="w-10 h-10 rounded-full object-cover bg-main-bg" 
-              fallback={<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">{activeUser.name?.charAt(0)}</div>}
+              fallback={<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">{name?.charAt(0) || '?'}</div>}
             />
-            {activeUser.isOnline && (
-              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-surface" />
-            )}
           </div>
           
           <div className="flex flex-col">
             <h3 className="font-poppins font-bold text-[15px] text-text-main leading-none">
-              {activeUser.name}
+              {name || 'Unknown'}
             </h3>
             <span className="font-roboto text-[12px] text-text-muted mt-1 leading-none">
-              {activeUser.isOnline ? 'Online' : activeUser.lastSeen ? `Last seen ${activeUser.lastSeen}` : 'Offline'}
+              {activeThread.isGroup ? 'Group Chat' : 'Direct Message'}
             </span>
           </div>
         </div>
@@ -136,13 +139,13 @@ export function ChatWindow({ activeUser, messages, onBack, isHiddenOnMobile }: C
       >
         <div className="text-center my-4">
           <span className="inline-block px-3 py-1 bg-surface border border-border dark:border-white/5 rounded-lg text-[11px] font-roboto font-medium text-text-muted shadow-sm">
-            TODAY
+            {new Date(activeThread.createdAt).toLocaleDateString()}
           </span>
         </div>
         
-        {messages.map((msg) => (
+        {threadMessages.map((msg) => (
           <div key={msg.id} className="message-bubble-wrapper">
-            <MessageBubble message={msg} />
+            <MessageBubble message={msg as any} />
           </div>
         ))}
         <div ref={messagesEndRef} />
@@ -168,7 +171,7 @@ export function ChatWindow({ activeUser, messages, onBack, isHiddenOnMobile }: C
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 if (inputText.trim()) {
-                  console.log('Send:', inputText);
+                  sendMessage(activeThread.id, inputText.trim());
                   setInputText('');
                 }
               }
@@ -176,7 +179,13 @@ export function ChatWindow({ activeUser, messages, onBack, isHiddenOnMobile }: C
           />
           
           {inputText.trim() ? (
-            <button className="w-10 h-10 rounded-xl bg-accent text-white flex items-center justify-center flex-shrink-0 hover:bg-accent/90 transition-colors shadow-md shadow-accent/20 mb-0.5 mr-0.5">
+            <button 
+              onClick={() => {
+                sendMessage(activeThread.id, inputText.trim());
+                setInputText('');
+              }}
+              className="w-10 h-10 rounded-xl bg-accent text-white flex items-center justify-center flex-shrink-0 hover:bg-accent/90 transition-colors shadow-md shadow-accent/20 mb-0.5 mr-0.5"
+            >
               <Send size={18} className="ml-1" />
             </button>
           ) : (

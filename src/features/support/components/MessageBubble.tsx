@@ -1,72 +1,37 @@
-import React, { useState } from 'react';
-import { type ChatMessage } from '../utils/constants';
-import { CustomAudioPlayer } from './CustomAudioPlayer';
-import { Check, CheckCheck, PlayCircle } from 'lucide-react';
-import { SafeImage } from '@/Components/common/SafeImage';
+import React from 'react';
+import { type ChatMessage } from '../types/chatTypes';
+import { Check, CheckCheck } from 'lucide-react';
+import { useAppSelector } from '@/hooks/useAppSelector';
 
 interface MessageBubbleProps {
   message: ChatMessage;
 }
 
 export function MessageBubble({ message }: MessageBubbleProps) {
-  const isOutgoing = message.senderId === 'me';
+  const currentUserId = useAppSelector((state: any) => state.auth.user?.id);
+  // Assuming if senderId is the current user (admin), it's outgoing.
+  // Or if it's undefined, we fallback to false.
+  const isOutgoing = message.senderId === currentUserId;
   
   // Status Icon logic
   const renderStatus = () => {
     if (!isOutgoing) return null;
-    if (message.status === 'read') return <CheckCheck size={14} className="text-blue-400 ml-1 inline" />;
-    if (message.status === 'delivered') return <CheckCheck size={14} className="text-white/70 ml-1 inline" />;
+    if (message.isRead) return <CheckCheck size={14} className="text-blue-400 ml-1 inline" />;
     return <Check size={14} className="text-white/70 ml-1 inline" />;
   };
 
   const renderContent = () => {
-    switch (message.type) {
-      case 'text':
-        return (
-          <p className="text-[15px] font-poppins leading-relaxed whitespace-pre-wrap">
-            {message.content}
-          </p>
-        );
-      
-      case 'image':
-        return (
-          <div className="relative rounded-xl overflow-hidden group cursor-pointer border border-white/10 mt-1 max-w-sm">
-            <SafeImage 
-              src={message.content} 
-              alt="Sent image" 
-              className="w-full h-auto aspect-video object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-              loading="lazy"
-              fallback={<div className="w-full h-32 bg-surface/20 flex items-center justify-center text-xs">Image unavailable</div>}
-            />
-          </div>
-        );
+    return (
+      <p className="text-[15px] font-poppins leading-relaxed whitespace-pre-wrap">
+        {message.message}
+      </p>
+    );
+  };
 
-      case 'video':
-        return (
-          <div className="relative rounded-xl overflow-hidden mt-1 max-w-sm bg-black/20 border border-white/10 group cursor-pointer">
-            <video 
-              src={message.content} 
-              className="w-full h-auto aspect-video object-cover"
-              controls
-              controlsList="nodownload"
-            />
-          </div>
-        );
-
-      case 'audio':
-        return (
-          <div className="mt-1">
-            <CustomAudioPlayer 
-              src={message.content} 
-              duration={message.duration} 
-              isOutgoing={isOutgoing} 
-            />
-          </div>
-        );
-
-      default:
-        return null;
-    }
+  const formatTime = (dateStr: string) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -78,8 +43,6 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             : 'bg-surface text-text-main rounded-tl-sm border border-border dark:border-white/5'
         }`}
       >
-        {/* Only show sender name if incoming and in a group chat context, but for support we assume 1-on-1, so omitted */}
-        
         {renderContent()}
 
         {/* Footer (Timestamp + Status) */}
@@ -88,7 +51,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             isOutgoing ? 'text-white/80' : 'text-text-muted'
           }`}
         >
-          <span>{message.timestamp}</span>
+          <span>{formatTime(message.createdAt)}</span>
           {renderStatus()}
         </div>
       </div>

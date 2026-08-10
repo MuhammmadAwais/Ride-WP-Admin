@@ -25,7 +25,8 @@ import { APP_NAME } from '@/Constants';
 
 /** Derive a human-readable page title from the current pathname. */
 function deriveTitle(pathname: string): string {
-  const segment = pathname.split('/').filter(Boolean).at(-1) ?? 'dashboard';
+  const segments = pathname.split('/').filter(Boolean);
+  const segment = segments[segments.length - 1] ?? 'dashboard';
   return segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
 }
 

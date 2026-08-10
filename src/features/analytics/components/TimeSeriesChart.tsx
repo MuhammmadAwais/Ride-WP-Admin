@@ -29,7 +29,7 @@ export function TimeSeriesChart() {
       </div>
       
       <div className="flex-1 min-h-0 w-full">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
           <AreaChart
             data={TIME_SERIES_DATA}
             margin={{ top: 10, right: 10, left: -20, bottom: 0 }}

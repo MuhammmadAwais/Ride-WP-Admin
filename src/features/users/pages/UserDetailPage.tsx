@@ -37,7 +37,9 @@ export default function UserDetailPage() {
     );
   }
 
-  if (isError || !data) {
+  const user = data?.profile ?? ((data as any)?.fullName ? (data as any) : undefined);
+
+  if (isError || !data || !user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] bg-red-500/5 border border-red-500/20 rounded-2xl text-center p-8">
         <h3 className="text-text-main font-poppins font-semibold text-lg mb-1">Failed to load user details</h3>
@@ -51,8 +53,6 @@ export default function UserDetailPage() {
       </div>
     );
   }
-
-  const user = data.profile;
 
   return (
     <div className="flex flex-col space-y-8 pb-8">
@@ -71,8 +71,8 @@ export default function UserDetailPage() {
       <div className="rounded-2xl border border-border bg-surface shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row gap-8 items-start sm:items-center">
         <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full shrink-0 bg-accent/5 flex items-center justify-center border-4 border-border overflow-hidden">
           <SafeImage
-            src={user.profileImage}
-            alt={user.fullName}
+            src={user?.profileImage}
+            alt={user?.fullName || 'User'}
             className="w-full h-full object-cover"
             fallback={<User size={48} className="text-accent/30" />}
           />
@@ -81,35 +81,35 @@ export default function UserDetailPage() {
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Name of User</p>
-            <p className="text-text-main font-semibold font-poppins text-lg">{user.fullName}</p>
+            <p className="text-text-main font-semibold font-poppins text-lg">{user?.fullName || 'N/A'}</p>
           </div>
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Subscription</p>
             <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-              user.subscriptionPlan === 'Diamond' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
-              user.subscriptionPlan === 'Gold' ? 'bg-yellow-500/10 text-yellow-600 border border-yellow-500/20' :
+              user?.subscriptionPlan === 'Diamond' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
+              user?.subscriptionPlan === 'Gold' ? 'bg-yellow-500/10 text-yellow-600 border border-yellow-500/20' :
               'bg-gray-500/10 text-gray-500 border border-gray-500/20'
             }`}>
-              {user.subscriptionPlan}
+              {user?.subscriptionPlan || 'Free'}
             </span>
           </div>
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Phone number</p>
-            <p className="text-text-main font-roboto">{user.phone || 'N/A'}</p>
+            <p className="text-text-main font-roboto">{user?.phone || 'N/A'}</p>
           </div>
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Start/End Date</p>
             <p className="text-text-main font-roboto text-sm">
-              {user.startDate ? new Date(user.startDate).toLocaleDateString() : 'N/A'} — {user.endDate ? new Date(user.endDate).toLocaleDateString() : 'N/A'}
+              {user?.startDate ? new Date(user.startDate).toLocaleDateString() : 'N/A'} — {user?.endDate ? new Date(user.endDate).toLocaleDateString() : 'N/A'}
             </p>
           </div>
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Email</p>
-            <p className="text-text-main font-roboto">{user.email}</p>
+            <p className="text-text-main font-roboto">{user?.email || 'N/A'}</p>
           </div>
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Clubs Joined</p>
-            <p className="text-text-main font-roboto font-medium">{user.clubsJoined}</p>
+            <p className="text-text-main font-roboto font-medium">{user?.clubsJoined ?? 0}</p>
           </div>
         </div>
       </div>

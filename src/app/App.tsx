@@ -36,18 +36,22 @@ const AppInner: React.FC = () => {
   );
 };
 
+import { GlobalErrorBoundary } from '@/Components/common/GlobalErrorBoundary';
+
 /**
  * Top-level App component — sets up all global providers.
  */
 function App(): React.ReactElement {
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <ThemeProvider>
-          <AppInner />
-        </ThemeProvider>
-      </PersistGate>
-    </Provider>
+    <GlobalErrorBoundary>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <ThemeProvider>
+            <AppInner />
+          </ThemeProvider>
+        </PersistGate>
+      </Provider>
+    </GlobalErrorBoundary>
   );
 }
 
