@@ -25,7 +25,6 @@ export const ROUTES = {
   PUSH_NOTIFICATIONS: "/notifications",
   PRIVACY_POLICY: "/privacy-policy",
   TERMS: "/terms",
-  ABOUT: "/about",
 } as const;
 
 // ─── Navigation Items ────────────────────────────────────────────────────────
@@ -39,7 +38,6 @@ export const NAV_ITEMS = [
   { label: "Push Notifications", route: ROUTES.PUSH_NOTIFICATIONS, icon: "Bell" },
   { label: "Privacy Policy", route: ROUTES.PRIVACY_POLICY, icon: "FileText" },
   { label: "Terms & Conditions", route: ROUTES.TERMS, icon: "ScrollText" },
-  { label: "About", route: ROUTES.ABOUT, icon: "Info" },
 ] as const;
 
 // ─── Login Page Copy ─────────────────────────────────────────────────────────

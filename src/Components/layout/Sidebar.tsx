@@ -9,7 +9,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, ShieldCheck, CreditCard,
    BarChart3, Headphones, Bell,
-  FileText, ScrollText, Info, LogOut, X, User, Settings,
+  FileText, ScrollText, LogOut, X, User, Settings,
   ChevronUp,
 } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
@@ -52,7 +52,6 @@ const NAV_ITEMS: NavEntry[] = [
   { label: 'Push Notifications', route: ROUTES.PUSH_NOTIFICATIONS, icon: <Bell size={ICON_SIZE} /> },
   { label: 'Privacy Policy',     route: ROUTES.PRIVACY_POLICY,     icon: <FileText size={ICON_SIZE} /> },
   { label: 'Terms & Conditions', route: ROUTES.TERMS,              icon: <ScrollText size={ICON_SIZE} /> },
-  { label: 'About',              route: ROUTES.ABOUT,              icon: <Info size={ICON_SIZE} /> },
 ];
 
 // ── Props ─────────────────────────────────────────────────────────────────────

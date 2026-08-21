@@ -1,5 +1,5 @@
 import React from 'react';
-import { HEATMAP_DATA, HEATMAP_DAYS, HEATMAP_HOURS } from '../utils/constants';
+import { HEATMAP_DATA, HEATMAP_HOURS } from '../utils/constants';
 
 export function PeakDemandHeatmap() {
   // Helper to determine the opacity/color intensity based on value (0-100)

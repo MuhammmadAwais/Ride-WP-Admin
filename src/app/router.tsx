@@ -23,7 +23,6 @@ import AnalyticsPage from '@/features/analytics/pages/AnalyticsPage';
 import NotificationPage from '@/features/notifications/pages/NotificationPage';
 import PrivacyPolicyPage from '@/features/cms/pages/PrivacyPolicyPage';
 import TermsConditionsPage from '@/features/cms/pages/TermsConditionsPage';
-import AboutPage from '@/features/cms/pages/AboutPage';
 
 import RouteErrorBoundary from '@/Components/common/RouteErrorBoundary';
 
@@ -58,7 +57,6 @@ export const router = createBrowserRouter([
       { path: 'notifications', element: <NotificationPage /> },
       { path: 'privacy-policy', element: <PrivacyPolicyPage /> },
       { path: 'terms', element: <TermsConditionsPage /> },
-      { path: 'about', element: <AboutPage /> },
       { path: '*', element: <Navigate to="/dashboard" replace /> },
     ],
   },

@@ -8,7 +8,7 @@
  */
 
 /** Valid content keys as defined by the backend API. */
-export type CMSContentType = 'about' | 'privacy_policy' | 'terms_conditions';
+export type CMSContentType = 'privacy_policy' | 'terms_conditions';
 
 /** Shape returned by GET /admin/content/:key and PUT /admin/content/:key. */
 export interface CMSContentResponse {

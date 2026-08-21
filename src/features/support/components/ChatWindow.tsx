@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, MoreVertical, Phone, Video, Paperclip, Smile, Send, Mic } from 'lucide-react';
-import { type ChatThread, type ChatMessage } from '../types/chatTypes';
+import { type ChatThread } from '../types/chatTypes';
 import { MessageBubble } from './MessageBubble';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -19,7 +19,7 @@ export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindo
   const containerRef = useRef<HTMLDivElement>(null);
   
   const { messages, sendMessage } = useChat();
-  const threadMessages = activeThread ? (messages[activeThread.id] || []) : [];
+  const threadMessages = React.useMemo(() => activeThread ? (messages[activeThread.id] || []) : [], [activeThread, messages]);
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {

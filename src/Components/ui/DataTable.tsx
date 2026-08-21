@@ -101,7 +101,7 @@ export function DataTable<T>({ data, columns, searchTerm = '', keyExtractor, pag
 
   const renderCellContent = (row: T, col: ColumnDef<T>) => {
     let content: React.ReactNode;
-    let textToHighlight = '';
+    let textToHighlight: string;
 
     if (typeof col.accessorKey === 'function') {
       content = col.accessorKey(row);
