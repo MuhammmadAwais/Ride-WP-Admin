@@ -19,6 +19,7 @@ export default function PrivacyPolicyPage() {
       const serialized = serializeCMSBlocks(updatedBlocks);
       await updateCMSContent({
         type: 'privacy_policy',
+        title: data?.title ?? 'Privacy Policy',
         content: serialized,
       }).unwrap();
     } catch (err) {

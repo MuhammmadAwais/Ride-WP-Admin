@@ -19,6 +19,7 @@ export default function AboutPage() {
       const serialized = serializeCMSBlocks(updatedBlocks);
       await updateCMSContent({
         type: 'about',
+        title: data?.title ?? 'About',
         content: serialized,
       }).unwrap();
     } catch (err) {

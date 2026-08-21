@@ -18,29 +18,29 @@ export const cmsApi = createApi({
   tagTypes: ['CMS'],
   endpoints: (builder) => ({
     /**
-     * Fetch content for a specific CMS type ('about' | 'privacy' | 'terms' | 'faq').
-     * GET /admin/content/:type
+     * Fetch content for a specific CMS key ('about' | 'privacy_policy' | 'terms_conditions').
+     * GET /admin/content/:key
      */
     getCMSContent: builder.query<CMSContentResponse, CMSContentType>({
-      query: (type) => ({
-        url: `/admin/content/${type}`,
+      query: (key) => ({
+        url: `/admin/content/${key}`,
         method: 'GET',
       }),
       transformResponse: (response: CMSApiResponse<CMSContentResponse>) => {
         return response.response;
       },
-      providesTags: (_result, _error, type) => [{ type: 'CMS', id: type }],
+      providesTags: (_result, _error, key) => [{ type: 'CMS', id: key }],
     }),
 
     /**
-     * Update content for a specific CMS type.
-     * PUT /admin/content/:type
+     * Update content for a specific CMS key.
+     * PUT /admin/content/:key  — body: { title, content }
      */
     updateCMSContent: builder.mutation<CMSContentResponse, UpdateCMSContentRequest>({
-      query: ({ type, content }) => ({
+      query: ({ type, title, content }) => ({
         url: `/admin/content/${type}`,
         method: 'PUT',
-        data: { content },
+        data: { title, content },
       }),
       transformResponse: (response: CMSApiResponse<CMSContentResponse>) => {
         return response.response;

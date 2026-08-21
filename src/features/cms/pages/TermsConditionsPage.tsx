@@ -19,6 +19,7 @@ export default function TermsConditionsPage() {
       const serialized = serializeCMSBlocks(updatedBlocks);
       await updateCMSContent({
         type: 'terms_conditions',
+        title: data?.title ?? 'Terms & Conditions',
         content: serialized,
       }).unwrap();
     } catch (err) {
