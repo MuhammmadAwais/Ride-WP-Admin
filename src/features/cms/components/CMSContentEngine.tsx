@@ -1,11 +1,13 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import {
   Pencil, CheckCircle2, Eye, Heading, AlignLeft, List,
   GripVertical, Loader2, CloudUpload, ClipboardPaste, Layers,
 } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { toast } from 'sonner';
 import { type CMSBlock, type CMSBlockType } from '../types';
+import { serializeCMSBlocks } from '../utils/contentAdapter';
 import CMSBlockItem from './CMSBlockItem';
 import CMSUploadMode from './CMSUploadMode';
 import CMSPasteMode from './CMSPasteMode';
@@ -37,7 +39,7 @@ interface CMSContentEngineProps {
   pageTitle: string;
   pageSubtitle: string;
   initialBlocks: CMSBlock[];
-  onSave: (blocks: CMSBlock[]) => void;
+  onSave: (blocks: CMSBlock[]) => Promise<void> | void;
   isLoading?: boolean;
   isSaving?: boolean;
 }
@@ -55,6 +57,10 @@ export default function CMSContentEngine({
   const [showToast, setShowToast] = useState(false);
   const [inputMode, setInputMode] = useState<InputMode>('editor');
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const charCount = useMemo(() => {
+    return serializeCMSBlocks(blocks).length;
+  }, [blocks]);
 
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -126,11 +132,19 @@ export default function CMSContentEngine({
     setDragOverIndex(null);
   };
 
-  const handleSave = () => {
-    onSave(blocks);
-    setIsEditing(false);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+  const handleSave = async () => {
+    try {
+      await onSave(blocks);
+      setIsEditing(false);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    } catch (err: any) {
+      const errorMessage =
+        err?.data?.message ||
+        err?.message ||
+        'Failed to save content changes to server.';
+      toast.error(errorMessage);
+    }
   };
 
   // ── Render ───────────────────────────────────────────────────────────────────
@@ -324,7 +338,19 @@ export default function CMSContentEngine({
 
             {/* Save footer */}
             {isEditing && (
-              <div className="pt-6 flex justify-end max-w-3xl">
+              <div className="pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 max-w-3xl">
+                <div className="flex items-center gap-2 text-xs text-text-muted font-roboto">
+                  <span className="font-medium text-text-main">
+                    {blocks.length} {blocks.length === 1 ? 'block' : 'blocks'}
+                  </span>
+                  <span>•</span>
+                  <span>{charCount.toLocaleString()} chars</span>
+                  {charCount > 30000 && (
+                    <span className="text-amber-400 font-medium ml-1">
+                      (large payload)
+                    </span>
+                  )}
+                </div>
                 <button
                   type="button"
                   onClick={handleSave}
@@ -336,6 +362,7 @@ export default function CMSContentEngine({
                 </button>
               </div>
             )}
+
           </div>
         )}
       </div>

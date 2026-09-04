@@ -24,8 +24,10 @@ export default function TermsConditionsPage() {
       }).unwrap();
     } catch (err) {
       console.error('Failed to save Terms & Conditions content:', err);
+      throw err;
     }
   };
+
 
   return (
     <>

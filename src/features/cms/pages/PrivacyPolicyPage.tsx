@@ -24,8 +24,10 @@ export default function PrivacyPolicyPage() {
       }).unwrap();
     } catch (err) {
       console.error('Failed to save Privacy Policy content:', err);
+      throw err;
     }
   };
+
 
   return (
     <>
