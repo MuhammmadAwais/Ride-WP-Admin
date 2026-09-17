@@ -1869,10 +1869,17 @@
               ]
             },
             "method": "PUT",
-            "header": [],
+            "header": [
+              {
+                "key": "language",
+                "value": "en",
+                "description": "en or es",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"title\": \"Privay Policy\",\r\n    \"content\": \"asdasd asdasdsaljdhklasjdl saljdlska\"\r\n}",
+              "raw": "{\r\n    \"title\": \"Privay Policy\",\r\n    \"content\": \"asdasd asdasdsaljdhklasjdl saljdlska\",\r\n    \"titleEs\": \"asd dasdas das\",\r\n    \"contentEs\": \"qweqwe seqwe wqewqeq weqwewqe\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
