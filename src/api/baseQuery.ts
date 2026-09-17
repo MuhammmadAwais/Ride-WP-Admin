@@ -65,6 +65,20 @@ axiosInstance.interceptors.response.use(
       `❌ [API Response Error] ${error.config?.method?.toUpperCase()} ${error.config?.url} (${error.response?.status || 'Network Error'})`,
       error.response?.data || error.message
     );
+
+    // Trigger session expiry purge for 401s on protected endpoints
+    const isLoginEndpoint =
+      error.config?.url?.includes('/admin/login') ||
+      error.config?.url?.includes('/login');
+
+    if (error.response?.status === 401 && !isLoginEndpoint) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
+        window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+      }
+    }
+
     return Promise.reject(error);
   }
 );

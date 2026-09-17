@@ -32,23 +32,42 @@ const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const savedEmail =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('rwp_remember_email') || ''
+      : '';
+
+  const [rememberMe, setRememberMe] = useState(Boolean(savedEmail));
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: savedEmail, password: '' },
   });
 
   /**
    * Handles form submission.
    * Invokes loginAdmin mutation and dispatches setCredentials on success.
+   * Enforces Role-Based Access Control (RBAC) ensuring only admin accounts proceed.
    */
   const onSubmit = async (data: LoginFormValues) => {
     try {
       setErrorMessage(null);
       const res = await loginAdmin(data).unwrap();
+
+      // Enforce RBAC guard
+      if (res.role && res.role.toLowerCase() !== 'admin') {
+        throw new Error('Access denied. Administrator privileges required.');
+      }
+
+      if (rememberMe) {
+        localStorage.setItem('rwp_remember_email', data.email);
+      } else {
+        localStorage.removeItem('rwp_remember_email');
+      }
 
       dispatch(
         setCredentials({
@@ -63,7 +82,7 @@ const LoginForm: React.FC = () => {
         })
       );
 
-      toast.success('Successfully authenticated. Welcome back!');
+      toast.success(`Welcome back, ${res.name || 'Admin'}!`);
 
       // Redirect to intended destination or dashboard
       const stateObj = location.state as { from?: { pathname?: string } } | null;
@@ -72,11 +91,13 @@ const LoginForm: React.FC = () => {
     } catch (err: unknown) {
       const errorObj = err as {
         message?: string;
-        data?: { message?: string } | string;
+        data?: { message?: string; error?: string } | string;
       };
       const msg =
+        (typeof errorObj?.data === 'object'
+          ? errorObj.data.message || errorObj.data.error
+          : errorObj?.data) ||
         errorObj?.message ||
-        (typeof errorObj?.data === 'object' ? errorObj.data.message : errorObj?.data) ||
         'Authentication failed. Please check your credentials.';
       setErrorMessage(msg);
       toast.error(msg);
@@ -176,7 +197,9 @@ const LoginForm: React.FC = () => {
           <label className="flex items-center gap-2 text-white/50 cursor-pointer hover:text-white transition-colors">
             <input
               type="checkbox"
-              className="w-4 h-4 rounded border-white/20 bg-white/5 accent-accent"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4 rounded border-white/20 bg-white/5 accent-accent cursor-pointer"
             />
             <span>Remember Me</span>
           </label>

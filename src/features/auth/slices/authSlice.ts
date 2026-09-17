@@ -19,8 +19,19 @@ const storedToken =
     ? localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
     : null;
 
+const storedUser: AdminUser | null = (() => {
+  if (typeof window === 'undefined') return null;
+  const raw = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+})();
+
 const initialState: AuthState = {
-  user: null,
+  user: storedUser,
   token: storedToken,
   isAuthenticated: Boolean(storedToken),
   isLoading: false,
@@ -43,6 +54,7 @@ export const loginUser = createAsyncThunk<
       const result = await mockLogin(credentials.email, credentials.password);
       const fakeToken = 'mock_jwt_token_development';
       localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, fakeToken);
+      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(result.user));
       return {
         user: result.user,
         token: fakeToken,
@@ -61,7 +73,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     /**
-     * Store live API credentials in state and persist JWT in localStorage.
+     * Store live API credentials in state and persist JWT & user in localStorage.
      */
     setCredentials(
       state,
@@ -71,18 +83,27 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       state.isAuthenticated = true;
       state.error = null;
-      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, action.payload.token);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, action.payload.token);
+        localStorage.setItem(
+          STORAGE_KEYS.AUTH_USER,
+          JSON.stringify(action.payload.user)
+        );
+      }
     },
     /**
      * Clears authenticated user, token, and resets the auth state.
-     * Purges JWT from localStorage.
+     * Purges JWT & user from localStorage.
      */
     logout(state) {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
       state.error = null;
-      localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
+      }
     },
     /**
      * Clears the current auth error message.
@@ -91,11 +112,17 @@ const authSlice = createSlice({
       state.error = null;
     },
     /**
-     * Directly sets the user (used by redux-persist rehydration checks).
+     * Directly sets the user and updates persisted storage.
      */
     setUser(state, action: PayloadAction<AdminUser>) {
       state.user = action.payload;
       state.isAuthenticated = true;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(
+          STORAGE_KEYS.AUTH_USER,
+          JSON.stringify(action.payload)
+        );
+      }
     },
   },
   extraReducers: (builder) => {
