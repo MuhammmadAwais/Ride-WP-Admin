@@ -56,8 +56,34 @@ export default function UsersPage() {
       accessorKey: (row) => row.endDate ? new Date(row.endDate).toLocaleDateString() : 'N/A' 
     },
     {
+      header: 'Status',
+      accessorKey: (row) => (
+        <span
+          className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${
+            row.isSuspended
+              ? 'bg-red-500/10 text-red-500 border-red-500/20'
+              : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+          }`}
+        >
+          <span
+            className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+              row.isSuspended ? 'bg-red-500' : 'bg-emerald-500'
+            }`}
+          />
+          {row.isSuspended ? 'Suspended' : 'Active'}
+        </span>
+      ),
+      sortable: false,
+    },
+    {
       header: '',
-      accessorKey: (row) => <UserActionsMenu userId={row.id} />,
+      accessorKey: (row) => (
+        <UserActionsMenu
+          userId={row.id}
+          isSuspended={row.isSuspended}
+          userName={row.fullName}
+        />
+      ),
       sortable: false,
     },
   ];

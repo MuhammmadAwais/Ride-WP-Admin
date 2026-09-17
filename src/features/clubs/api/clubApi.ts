@@ -51,15 +51,18 @@ export const clubApi = createApi({
      * GET /admin/clubs/{clubId}?tab=members&limit=5&offset=0
      */
     getClubById: builder.query<ClubDetailResponse, GetClubByIdRequest>({
-      query: ({ clubId, tab, limit, offset }) => ({
-        url: `/admin/clubs/${clubId}`,
-        method: 'GET',
-        params: {
-          ...(tab ? { tab } : {}),
-          ...(limit !== undefined ? { limit } : {}),
-          ...(offset !== undefined ? { offset } : {}),
-        },
-      }),
+      query: ({ clubId, tab, limit, offset }) => {
+        const normalizedTab = tab === 'discount' ? 'discounts' : tab;
+        return {
+          url: `/admin/clubs/${clubId}`,
+          method: 'GET',
+          params: {
+            ...(normalizedTab ? { tab: normalizedTab } : {}),
+            ...(limit !== undefined ? { limit } : {}),
+            ...(offset !== undefined ? { offset } : {}),
+          },
+        };
+      },
       transformResponse: (response: ClubApiResponse<ClubDetailResponse>) => {
         return response.response;
       },
@@ -76,6 +79,20 @@ export const clubApi = createApi({
         method: 'PUT',
         data: { isSuspended },
       }),
+      async onQueryStarted({ clubId, isSuspended }, { dispatch, queryFulfilled }) {
+        const patchProfile = dispatch(
+          clubApi.util.updateQueryData('getClubById', { clubId }, (draft) => {
+            if (draft?.profile) {
+              draft.profile.isSuspended = isSuspended;
+            }
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchProfile.undo();
+        }
+      },
       invalidatesTags: (_result, _error, arg) => [
         { type: 'Clubs', id: arg.clubId },
         { type: 'Clubs', id: 'LIST' },

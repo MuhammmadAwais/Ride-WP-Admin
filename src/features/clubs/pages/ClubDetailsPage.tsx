@@ -15,6 +15,9 @@ import { useGetClubByIdQuery, useGetClubsListQuery } from '../api/clubApi';
 import type { ClubRide, ClubMember } from '../types/clubTypes';
 import { SafeImage } from '@/Components/common/SafeImage';
 
+import { ClubActionsMenu } from '../components/ClubActionsMenu';
+import { ROUTES } from '@/Constants';
+
 export default function ClubDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -63,6 +66,7 @@ export default function ClubDetailsPage() {
           clubPrivacyName: clubFromList.clubPrivacyName,
           clubTypeName: clubFromList.clubTypeName,
           createdAt: clubFromList.createdAt,
+          isSuspended: clubFromList.isSuspended,
           owner: clubFromList.owner,
         }
       : undefined) ??
@@ -77,6 +81,7 @@ export default function ClubDetailsPage() {
           clubPrivacyName: 'Public',
           clubTypeName: 'Cycling',
           createdAt: new Date().toISOString(),
+          isSuspended: false,
           owner: { id: 0, fullName: 'Unknown Owner', email: '' },
         }
       : undefined);
@@ -108,14 +113,25 @@ export default function ClubDetailsPage() {
   return (
     <div className="flex flex-col space-y-8 pb-12 min-h-full">
       {/* Top Navigation */}
-      <div className="flex items-center gap-4">
-        <button 
-          onClick={() => navigate(-1)}
-          className="p-2 rounded-xl bg-surface border border-border hover:bg-accent/10 transition-colors text-text-muted hover:text-accent"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <h1 className="font-poppins font-bold text-2xl text-text-main tracking-tight">Club Details</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-xl bg-surface border border-border hover:bg-accent/10 transition-colors text-text-muted hover:text-accent"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <h1 className="font-poppins font-bold text-2xl text-text-main tracking-tight">Club Details</h1>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <ClubActionsMenu
+            clubId={clubId}
+            isSuspended={profile?.isSuspended}
+            clubName={profile?.clubName}
+            onDeleteSuccess={() => navigate(ROUTES.CLUBS, { replace: true })}
+          />
+        </div>
       </div>
 
       {/* Fixed Header Profile Card (Upper Zone) */}
@@ -150,6 +166,20 @@ export default function ClubDetailsPage() {
               <div className="flex flex-wrap items-center gap-3 mb-1">
                 <h2 className="font-poppins font-bold text-3xl sm:text-4xl text-text-main tracking-tight leading-tight">{profile?.clubName || 'Club Details'}</h2>
                 <ShieldCheck size={28} className="text-blue-500 shrink-0" />
+                <span
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
+                    profile?.isSuspended
+                      ? 'bg-red-500/10 text-red-500 border-red-500/20'
+                      : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                  }`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                      profile?.isSuspended ? 'bg-red-500' : 'bg-emerald-500'
+                    }`}
+                  />
+                  {profile?.isSuspended ? 'Suspended' : 'Active'}
+                </span>
               </div>
               <p className="font-roboto text-text-muted text-sm flex flex-wrap items-center gap-x-4 gap-y-1.5">
                 <span className="flex items-center gap-1.5"><UserCheck size={16} /> Created by {profile?.owner?.fullName || 'N/A'}</span>

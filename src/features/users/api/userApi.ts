@@ -75,6 +75,20 @@ export const userApi = createApi({
       transformResponse: (response: UserApiResponse<SuspendUserResponse>) => {
         return response.response;
       },
+      async onQueryStarted({ userId, isSuspended }, { dispatch, queryFulfilled }) {
+        const patchDetail = dispatch(
+          userApi.util.updateQueryData('getUserById', { userId }, (draft) => {
+            if (draft?.profile) {
+              draft.profile.isSuspended = isSuspended;
+            }
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchDetail.undo();
+        }
+      },
       invalidatesTags: (_result, _error, arg) => [
         { type: 'Users', id: arg.userId },
         { type: 'Users', id: 'LIST' },

@@ -82,8 +82,34 @@ export default function ClubsPage() {
       accessorKey: (row) => row.createdAt ? new Date(row.createdAt).toLocaleDateString() : 'N/A',
     },
     {
+      header: 'Status',
+      accessorKey: (row) => (
+        <span
+          className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${
+            row.isSuspended
+              ? 'bg-red-500/10 text-red-500 border-red-500/20'
+              : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+          }`}
+        >
+          <span
+            className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+              row.isSuspended ? 'bg-red-500' : 'bg-emerald-500'
+            }`}
+          />
+          {row.isSuspended ? 'Suspended' : 'Active'}
+        </span>
+      ),
+      sortable: false,
+    },
+    {
       header: '',
-      accessorKey: (row) => <ClubActionsMenu clubId={row.id} />,
+      accessorKey: (row) => (
+        <ClubActionsMenu
+          clubId={row.id}
+          isSuspended={row.isSuspended}
+          clubName={row.clubName}
+        />
+      ),
       sortable: false,
     },
   ];

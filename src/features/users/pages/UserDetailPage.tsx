@@ -8,6 +8,8 @@ import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { useGetUserByIdQuery } from '../api/userApi';
 import type { UserRide, UserClub, UserListing, UserPurchase } from '../types/userTypes';
 import { SafeImage } from '@/Components/common/SafeImage';
+import { UserActionsMenu } from '../components/UserActionsMenu';
+import { ROUTES } from '@/Constants';
 
 export default function UserDetailPage() {
   const { id } = useParams();
@@ -58,14 +60,25 @@ export default function UserDetailPage() {
   return (
     <div className="flex flex-col space-y-8 pb-8">
       {/* Top Navigation */}
-      <div className="flex items-center gap-4">
-        <button 
-          onClick={() => navigate(-1)}
-          className="p-2 rounded-xl bg-surface border border-border hover:bg-accent/10 transition-colors text-text-muted hover:text-accent"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <h1 className="font-poppins font-bold text-2xl text-text-main tracking-tight">User Details</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-xl bg-surface border border-border hover:bg-accent/10 transition-colors text-text-muted hover:text-accent"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <h1 className="font-poppins font-bold text-2xl text-text-main tracking-tight">User Details</h1>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <UserActionsMenu
+            userId={userId}
+            isSuspended={user?.isSuspended}
+            userName={user?.fullName}
+            onDeleteSuccess={() => navigate(ROUTES.USERS, { replace: true })}
+          />
+        </div>
       </div>
 
       {/* Profile Header Card */}
@@ -79,10 +92,27 @@ export default function UserDetailPage() {
           />
         </div>
         
-        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Name of User</p>
             <p className="text-text-main font-semibold font-poppins text-lg">{user?.fullName || 'N/A'}</p>
+          </div>
+          <div>
+            <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Status</p>
+            <span
+              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${
+                user?.isSuspended
+                  ? 'bg-red-500/10 text-red-500 border-red-500/20'
+                  : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+              }`}
+            >
+              <span
+                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
+                  user?.isSuspended ? 'bg-red-500' : 'bg-emerald-500'
+                }`}
+              />
+              {user?.isSuspended ? 'Suspended' : 'Active'}
+            </span>
           </div>
           <div>
             <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Subscription</p>

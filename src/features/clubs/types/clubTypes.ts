@@ -18,6 +18,7 @@ export interface ClubListItem {
   clubPrivacyName: string;
   clubTypeName: string;
   participantCount: number;
+  isSuspended?: boolean;
   createdAt: string;
   owner: ClubOwner;
 }
@@ -41,6 +42,7 @@ export interface ClubProfile {
   clubPrivacyName: string;
   clubTypeName: string;
   currency?: string;
+  isSuspended?: boolean;
   createdAt: string;
   owner: ClubOwner;
 }
