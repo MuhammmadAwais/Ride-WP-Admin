@@ -95,3 +95,10 @@ export interface SubscriptionApiResponse<T> {
   message: string;
   response: T;
 }
+
+/**
+ * Filter criteria types for Subscription UI.
+ */
+export type PlanScopeFilter = 'all' | 'user' | 'club';
+export type PlanIntervalFilter = 'all' | 'free' | 'monthly' | 'yearly';
+

@@ -88,6 +88,29 @@ export const subscriptionApi = createApi({
         { type: 'Plans', id: arg.planId },
         { type: 'Plans', id: 'LIST' },
       ],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          subscriptionApi.util.updateQueryData('getPlans', undefined, (draft) => {
+            const plan = draft.find((p) => p.id === arg.planId);
+            if (plan) {
+              plan.name = arg.name;
+              plan.description = arg.description;
+              plan.price = arg.price;
+              plan.currency = arg.currency;
+              plan.billingInterval = arg.billingInterval;
+              if (arg.planScope) plan.planScope = arg.planScope;
+              if (arg.trialPeriodDays !== undefined) plan.trialPeriodDays = arg.trialPeriodDays;
+              plan.isActive = arg.isActive;
+              plan.config = { ...plan.config, ...arg.config };
+            }
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
 
     /**
@@ -104,7 +127,23 @@ export const subscriptionApi = createApi({
         return response.response;
       },
       invalidatesTags: [{ type: 'Plans', id: 'LIST' }],
+      async onQueryStarted({ planId }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          subscriptionApi.util.updateQueryData('getPlans', undefined, (draft) => {
+            const index = draft.findIndex((p) => p.id === planId);
+            if (index !== -1) {
+              draft.splice(index, 1);
+            }
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
+
   }),
 });
 
