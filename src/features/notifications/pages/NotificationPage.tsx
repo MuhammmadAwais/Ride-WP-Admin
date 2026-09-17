@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { type ViewState, type TargetSegment, type RecipientUser } from '../types';
 import CompositionPanel from '../components/CompositionPanel';
@@ -60,13 +61,25 @@ export default function NotificationPage() {
   const handleSend = async () => {
     try {
       const isAllUser = targetSegment === 'All Users';
+      const userIds = !isAllUser ? selectedUsers.map((u) => Number(u.id)) : undefined;
+
       await sendPushNotification({
-        title,
-        body,
-        image: imageUrl || undefined,
+        title: title.trim(),
+        body: body.trim(),
+        targetSegment: isAllUser ? 'all' : 'specific',
+        userIds,
+        imageUrl: imageUrl.trim() || undefined,
+        // Fallback / legacy keys:
         isAllUser,
-        users: !isAllUser ? selectedUsers.map((u) => Number(u.id)) : undefined,
+        users: userIds,
+        image: imageUrl.trim() || undefined,
       }).unwrap();
+
+      toast.success(
+        isAllUser
+          ? 'Broadcast notification queued successfully for all riders!'
+          : `Targeted notification dispatched to ${selectedUsers.length} selected recipients!`
+      );
 
       // Reset state
       setTitle('');
@@ -75,13 +88,17 @@ export default function NotificationPage() {
       setTargetSegment('All Users');
       setSelectedUsers([]);
       
-      // Show Toast
+      // Show local toast & switch to history
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
-    } catch (err) {
-      console.error('Failed to send push notification:', err);
+      setView('history');
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string; data?: { message?: string } };
+      const msg = errorObj?.message || errorObj?.data?.message || 'Failed to dispatch push notification.';
+      toast.error(msg);
     }
   };
+
 
   return (
     <>

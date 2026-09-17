@@ -1,18 +1,25 @@
 /**
  * @fileoverview API types for Push Notification domain.
- * Mirrors the response schemas from Admin.postman_collection (1).json.
+ * Mirrors the request and response schemas from Admin.postman_collection.json.
  */
 
 export interface SendPushNotificationRequest {
   title: string;
   body: string;
-  image?: string;
-  isAllUser: boolean;
+  targetSegment?: 'all' | 'specific';
+  userIds?: number[];
+  imageUrl?: string;
+  // Compatibility fields with legacy payloads:
+  isAllUser?: boolean;
   users?: number[];
+  image?: string;
 }
 
 export interface SendPushNotificationResponse {
-  success: boolean;
+  success?: boolean;
+  logId?: number;
+  recipientsCount?: number;
+  status?: string;
   message?: string;
 }
 
@@ -20,14 +27,19 @@ export interface NotificationHistoryApiItem {
   id: number;
   title: string;
   body: string;
-  image: string | null;
-  isAllUser: boolean;
-  sentAt: string;
-  recipientsCount: number;
+  targetSegment?: 'all' | 'specific' | string;
+  imageUrl?: string | null;
+  image?: string | null;
+  status?: 'DELIVERED' | 'FAILED' | string;
+  recipientsCount?: number;
+  createdAt?: string;
+  sentAt?: string;
+  isAllUser?: boolean;
 }
 
 export interface NotificationHistoryResponse {
-  notifications: NotificationHistoryApiItem[];
+  history?: NotificationHistoryApiItem[];
+  notifications?: NotificationHistoryApiItem[];
   pagination?: {
     offset: number;
     limit: number;
@@ -57,6 +69,7 @@ export interface UsersPickerResponse {
     id: number;
     fullName: string;
     profileImage: string | null;
+    email?: string;
   }>;
   pagination?: {
     offset: number;

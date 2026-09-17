@@ -1,7 +1,7 @@
 /**
  * @fileoverview RTK Query API slice for Push Notifications.
- * Provides endpoints to send push notifications and fetch notification history,
- * with automated cache invalidation on new broadcasts.
+ * Provides endpoints to send push notifications, fetch notification history logs,
+ * and query lightweight user pickers with automated cache invalidation.
  */
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { axiosBaseQuery } from '@/api/baseQuery';
@@ -10,6 +10,8 @@ import type {
   SendPushNotificationResponse,
   NotificationHistoryResponse,
   GetNotificationHistoryRequest,
+  GetUsersPickerRequest,
+  UsersPickerResponse,
   NotificationApiResponse,
 } from '@/features/notifications/types/notificationApiTypes';
 
@@ -38,7 +40,7 @@ export const notificationApi = createApi({
     }),
 
     /**
-     * Fetch paginated notification history.
+     * Fetch paginated notification history audit logs.
      * GET /admin/notifications/history?offset=0&limit=10
      */
     getNotificationHistory: builder.query<
@@ -54,29 +56,33 @@ export const notificationApi = createApi({
         },
       }),
       transformResponse: (response: NotificationApiResponse<NotificationHistoryResponse>) => {
-        return response.response;
+        const data = response.response;
+        const list = data?.history || data?.notifications || [];
+        return {
+          history: list,
+          notifications: list,
+          pagination: data?.pagination,
+        };
       },
       providesTags: ['NotificationHistory'],
     }),
 
     /**
-     * Fetch users for the picker.
-     * GET /admin/users/picker?offset=0&limit=5
+     * Fetch users for the recipient picker.
+     * GET /admin/users/picker?limit=50&offset=0&search=...
      */
-    getUsersPicker: builder.query<
-      import('../types/notificationApiTypes').UsersPickerResponse,
-      import('../types/notificationApiTypes').GetUsersPickerRequest | void
-    >({
+    getUsersPicker: builder.query<UsersPickerResponse, GetUsersPickerRequest | void>({
       query: (params = {}) => ({
         url: '/admin/users/picker',
         method: 'GET',
         params: {
           offset: params?.offset ?? 0,
-          limit: params?.limit ?? 10,
+          limit: params?.limit ?? 50,
+          ...(params?.search ? { search: params.search } : {}),
         },
       }),
-      transformResponse: (response: NotificationApiResponse<import('../types/notificationApiTypes').UsersPickerResponse>) => {
-        return response.response;
+      transformResponse: (response: NotificationApiResponse<UsersPickerResponse>) => {
+        return response.response || { users: [] };
       },
     }),
   }),
