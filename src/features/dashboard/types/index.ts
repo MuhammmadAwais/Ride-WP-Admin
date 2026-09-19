@@ -8,10 +8,17 @@ export interface RegionData {
 
 export interface LiveRideLog {
   id: string;
+  title: string;
   user: string;
   departure: string;
   club: string;
-  status: 'Ongoing' | 'Completed' | 'Pending';
+  discipline: 'Road' | 'Gravel' | 'MTB' | 'Trail Run' | 'Night Ride';
+  distance: string;
+  pace: string;
+  participants: number;
+  maxParticipants: number;
+  startTime: string;
+  status: 'Ongoing' | 'Scheduled' | 'Completed' | 'Full';
 }
 
 export interface UserFeedback {

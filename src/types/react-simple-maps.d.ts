@@ -51,8 +51,24 @@ declare module 'react-simple-maps' {
     [key: string]: any;
   }
 
+  export interface MarkerProps {
+    coordinates: [number, number];
+    style?: {
+      default?: React.CSSProperties;
+      hover?: React.CSSProperties;
+      pressed?: React.CSSProperties;
+    };
+    className?: string;
+    onClick?: (event: React.MouseEvent) => void;
+    onMouseEnter?: (event: React.MouseEvent) => void;
+    onMouseLeave?: (event: React.MouseEvent) => void;
+    children?: React.ReactNode;
+    [key: string]: any;
+  }
+
   export const ComposableMap: React.FC<ComposableMapProps>;
   export const ZoomableGroup: React.FC<ZoomableGroupProps>;
   export const Geographies: React.FC<GeographiesProps>;
   export const Geography: React.FC<GeographyProps>;
+  export const Marker: React.FC<MarkerProps>;
 }
