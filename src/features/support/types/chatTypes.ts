@@ -1,48 +1,52 @@
 /**
- * @fileoverview Domain models and types for the Support Chat system using Socket.io
+ * @fileoverview Domain models and types for the App Support Helpdesk Socket system.
+ * Strictly adheres to "App Support Socket Chat Integration Documentation" (PDF 3).
  */
 
-export interface ChatUser {
+export type TicketStatus = 'open' | 'assigned' | 'resolved' | string;
+export type SenderType = 'user' | 'admin';
+
+export interface SupportUser {
   id: number;
   fullName: string;
+  email?: string;
   profileImage: string | null;
 }
 
-export interface ChatThread {
-  id: number;
-  type: "direct" | "activity";
-  userOneId?: number | null;
-  userTwoId?: number | null;
-  rideId?: number | null;
-  lastMessageAt: string;
-  createdAt: string;
-  updatedAt: string;
-  isGroup?: boolean;
-  title?: string;
-  otherUser?: ChatUser | null;
-  ride?: {
-    id: number;
-    rideName: string;
-    clubId: number | null;
-    userId: number;
-  } | null;
-  lastMessage?: ChatMessage | null;
-  unreadCount?: number;
-}
-
-export interface ChatMessage {
+export interface SupportMessage {
   id: number;
   threadId: number;
   senderId: number;
+  senderType: SenderType;
   message: string;
   isRead: boolean;
-  readAt?: string | null;
   createdAt: string;
-  updatedAt: string;
-  sender: ChatUser;
+  updatedAt?: string;
 }
 
-export interface SocketAck<T = any> {
+export interface SupportThread {
+  id: number;
+  userId: number;
+  adminId: number | null;
+  status: TicketStatus;
+  lastMessageAt: string;
+  createdAt: string;
+  updatedAt: string;
+  user: SupportUser;
+  lastMessage?: {
+    id?: number;
+    message: string;
+    createdAt: string;
+    senderType?: SenderType;
+  } | null;
+  unreadCount?: number;
+  // Backward compatibility convenience fields
+  otherUser?: SupportUser | null;
+  title?: string;
+  isGroup?: boolean;
+}
+
+export interface SocketAck<T = unknown> {
   ok: boolean;
   data?: T;
   message?: string;
@@ -50,11 +54,17 @@ export interface SocketAck<T = any> {
 
 export interface ThreadsListResponse {
   count: number;
-  totalUnreadCount: number;
-  rows: ChatThread[];
+  totalUnreadCount?: number;
+  rows: SupportThread[];
 }
 
 export interface MessagesListResponse {
   count: number;
-  rows: ChatMessage[];
+  rows: SupportMessage[];
 }
+
+// Aliases for seamless backward compatibility across UI components
+export type ChatUser = SupportUser;
+export type ChatThread = SupportThread;
+export type ChatMessage = SupportMessage;
+

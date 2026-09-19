@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, MoreVertical, Phone, Video, Paperclip, Smile, Send, Mic } from 'lucide-react';
-import { type ChatThread } from '../types/chatTypes';
+import { ArrowLeft, Headphones, Paperclip, Smile, Send, ShieldCheck, Mail } from 'lucide-react';
+import { type SupportThread } from '../types/chatTypes';
 import { MessageBubble } from './MessageBubble';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -8,7 +8,7 @@ import { SafeImage } from '@/Components/common/SafeImage';
 import { useChat } from '../context/ChatContext';
 
 interface ChatWindowProps {
-  activeThread: ChatThread | null;
+  activeThread: SupportThread | null;
   onBack: () => void;
   isHiddenOnMobile: boolean;
 }
@@ -17,11 +17,14 @@ export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindo
   const [inputText, setInputText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  const { messages, sendMessage } = useChat();
-  const threadMessages = React.useMemo(() => activeThread ? (messages[activeThread.id] || []) : [], [activeThread, messages]);
 
-  // Auto-scroll to bottom
+  const { messages, sendMessage } = useChat();
+  const threadMessages = React.useMemo(
+    () => (activeThread ? messages[activeThread.id] || [] : []),
+    [activeThread, messages]
+  );
+
+  // Auto-scroll to bottom on new messages
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -30,171 +33,211 @@ export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindo
     scrollToBottom();
   }, [threadMessages, activeThread]);
 
-  // Entrance animation for chat messages when user switches
+  // Entrance animation for chat messages when switching
   useGSAP(() => {
     if (activeThread && containerRef.current) {
       const bubbles = containerRef.current.querySelectorAll('.message-bubble-wrapper');
-      gsap.fromTo(bubbles, 
+      gsap.fromTo(
+        bubbles,
         { opacity: 0, y: 15 },
-        { opacity: 1, y: 0, duration: 0.3, stagger: 0.05, ease: 'power2.out', clearProps: 'all' }
+        { opacity: 1, y: 0, duration: 0.3, stagger: 0.04, ease: 'power2.out', clearProps: 'all' }
       );
     }
   }, [activeThread?.id]);
 
+  const handleSend = async () => {
+    if (!activeThread || !inputText.trim()) return;
+    const text = inputText.trim();
+    setInputText('');
+    await sendMessage(activeThread.id, text);
+  };
+
   if (!activeThread) {
     return (
-      <div className={`flex-1 hidden md:flex flex-col items-center justify-center relative bg-main-bg`}>
-        {/* Custom Geometric Wallpaper */}
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-[0.04] dark:opacity-[0.08]">
+      <div className="flex-1 hidden md:flex flex-col items-center justify-center relative bg-main-bg p-8">
+        {/* Subtle geometric background */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-[0.03] dark:opacity-[0.06]">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id="hexagons-empty" width="50" height="43.4" patternUnits="userSpaceOnUse" patternTransform="scale(1.5)">
-                <path d="M25,0 L50,14.5 L50,43.4 L25,57.9 L0,43.4 L0,14.5 Z" stroke="currentColor" strokeWidth="1" fill="none"/>
+                <path d="M25,0 L50,14.5 L50,43.4 L25,57.9 L0,43.4 L0,14.5 Z" stroke="currentColor" strokeWidth="1" fill="none" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#hexagons-empty)" className="text-text-main" />
           </svg>
         </div>
-        <div className="z-10 text-center">
-          <div className="w-20 h-20 bg-surface rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-border">
-             <img src="/integri-logo.svg" alt="App Logo" className="w-10 h-10 opacity-50 grayscale" onError={(e) => e.currentTarget.style.display = 'none'} />
+
+        <div className="z-10 text-center max-w-md">
+          <div className="w-18 h-18 bg-surface rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm border border-border text-accent">
+            <Headphones size={36} />
           </div>
-          <h2 className="text-2xl font-poppins font-bold text-text-main mb-2">App Support Hub</h2>
-          <p className="text-text-muted font-roboto text-sm max-w-md mx-auto">
-            Select a conversation to start helping your users with their app experience.
+          <h2 className="text-2xl font-poppins font-bold text-text-main mb-2">
+            App Support Helpdesk
+          </h2>
+          <p className="text-text-muted font-roboto text-sm leading-relaxed">
+            Select a support inquiry from the left panel to inspect user questions, auto-claim tickets, and send real-time replies.
           </p>
+          <div className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-xs font-semibold">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+            Support Socket Gateway Connected
+          </div>
         </div>
       </div>
     );
   }
 
-  const name = activeThread.isGroup ? activeThread.title || activeThread.ride?.rideName : activeThread.otherUser?.fullName;
-  const avatar = activeThread.otherUser?.profileImage;
+  const name = activeThread.user?.fullName || activeThread.otherUser?.fullName || `User #${activeThread.userId}`;
+  const avatar = activeThread.user?.profileImage || activeThread.otherUser?.profileImage;
+  const email = activeThread.user?.email;
+  const isTicketOpen = (activeThread.status || 'open').toLowerCase() === 'open';
 
   return (
-    <div 
+    <div
       className={`absolute md:relative z-10 top-0 bottom-0 right-0 w-full md:flex-1 flex flex-col bg-main-bg transition-transform duration-300 ${
         isHiddenOnMobile ? 'translate-x-full md:translate-x-0' : 'translate-x-0'
       }`}
     >
-      {/* Custom Geometric Wallpaper */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-[0.04] dark:opacity-[0.08]">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="hexagons-active" width="50" height="43.4" patternUnits="userSpaceOnUse" patternTransform="scale(1.5)">
-              <path d="M25,0 L50,14.5 L50,43.4 L25,57.9 L0,43.4 L0,14.5 Z" stroke="currentColor" strokeWidth="1" fill="none"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#hexagons-active)" className="text-text-main" />
-        </svg>
-      </div>
-
-      {/* Sticky Header */}
-      <div className="relative z-10 h-16 px-4 py-2 border-b border-border dark:border-white/5 bg-surface/80 backdrop-blur-xl flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-3">
-          <button 
+      {/* Sticky Header with Ticket Metadata */}
+      <div className="relative z-10 h-18 px-4 sm:px-6 border-b border-border dark:border-white/5 bg-surface/90 backdrop-blur-xl flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-3 min-w-0">
+          <button
             onClick={onBack}
-            className="md:hidden p-2 -ml-2 rounded-full hover:bg-accent/10 text-text-muted hover:text-accent transition-colors"
+            className="md:hidden p-2 -ml-2 rounded-xl hover:bg-accent/10 text-text-muted hover:text-accent transition-colors"
           >
             <ArrowLeft size={20} />
           </button>
-          
-          <div className="relative">
-            <SafeImage 
-              src={avatar} 
-              alt={name || 'Unknown'} 
-              className="w-10 h-10 rounded-full object-cover bg-main-bg" 
-              fallback={<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">{name?.charAt(0) || '?'}</div>}
+
+          <div className="relative shrink-0">
+            <SafeImage
+              src={avatar}
+              alt={name}
+              className="w-11 h-11 rounded-full object-cover bg-main-bg border border-border"
+              fallback={
+                <div className="w-11 h-11 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">
+                  {name.charAt(0)}
+                </div>
+              }
             />
           </div>
-          
-          <div className="flex flex-col">
-            <h3 className="font-poppins font-bold text-[15px] text-text-main leading-none">
-              {name || 'Unknown'}
-            </h3>
-            <span className="font-roboto text-[12px] text-text-muted mt-1 leading-none">
-              {activeThread.isGroup ? 'Group Chat' : 'Direct Message'}
-            </span>
+
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="font-poppins font-bold text-[15px] text-text-main truncate leading-tight">
+                {name}
+              </h3>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface border border-border text-text-muted shrink-0">
+                #TKT-{activeThread.id}
+              </span>
+            </div>
+
+            {email && (
+              <div className="flex items-center gap-1.5 text-text-muted text-[12px] font-roboto mt-0.5 truncate">
+                <Mail size={12} className="shrink-0" />
+                <span className="truncate">{email}</span>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center gap-1 sm:gap-2">
-          <button className="p-2.5 rounded-full hover:bg-accent/10 text-text-muted hover:text-accent transition-colors hidden sm:block">
-            <Video size={18} />
-          </button>
-          <button className="p-2.5 rounded-full hover:bg-accent/10 text-text-muted hover:text-accent transition-colors hidden sm:block">
-            <Phone size={18} />
-          </button>
-          <div className="w-px h-5 bg-border mx-1 hidden sm:block" />
-          <button className="p-2.5 rounded-full hover:bg-accent/10 text-text-muted hover:text-accent transition-colors">
-            <MoreVertical size={18} />
-          </button>
+        {/* Ticket Status & Assignment Indicator */}
+        <div className="flex items-center gap-2 shrink-0">
+          <span
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${
+              isTicketOpen
+                ? 'bg-amber-500/10 text-amber-500 border-amber-500/30'
+                : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30'
+            }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isTicketOpen ? 'bg-amber-500' : 'bg-emerald-500'
+              }`}
+            />
+            {activeThread.status || 'open'}
+          </span>
+
+          <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-xl bg-surface border border-border text-text-muted text-xs">
+            <ShieldCheck size={14} className="text-accent" />
+            <span>Admin Desk</span>
+          </div>
         </div>
       </div>
 
       {/* Message Feed */}
-      <div 
+      <div
         ref={containerRef}
         className="relative z-10 flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar flex flex-col"
       >
-        <div className="text-center my-4">
+        <div className="text-center my-3">
           <span className="inline-block px-3 py-1 bg-surface border border-border dark:border-white/5 rounded-lg text-[11px] font-roboto font-medium text-text-muted shadow-sm">
-            {new Date(activeThread.createdAt).toLocaleDateString()}
+            Ticket opened: {new Date(activeThread.createdAt).toLocaleString()}
           </span>
         </div>
-        
+
         {threadMessages.map((msg) => (
           <div key={msg.id} className="message-bubble-wrapper">
-            <MessageBubble message={msg as any} />
+            <MessageBubble message={msg} />
           </div>
         ))}
+
+        {threadMessages.length === 0 && (
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+            <p className="font-roboto text-sm text-text-muted">
+              No previous messages recorded in this support session.
+            </p>
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input Bar */}
-      <div className="relative z-10 p-3 sm:p-4 bg-surface/80 backdrop-blur-xl border-t border-border dark:border-white/5">
+      <div className="relative z-10 p-3 sm:p-4 bg-surface/90 backdrop-blur-xl border-t border-border dark:border-white/5">
         <div className="max-w-4xl mx-auto flex items-end gap-2 bg-main-bg border border-border dark:border-white/5 rounded-2xl p-2 shadow-sm focus-within:border-accent/40 focus-within:ring-2 focus-within:ring-accent/10 transition-all">
-          <button className="p-2 text-text-muted hover:text-accent transition-colors flex-shrink-0">
-            <Smile size={22} />
+          <button
+            type="button"
+            className="p-2 text-text-muted hover:text-accent transition-colors flex-shrink-0"
+            title="Emoji"
+          >
+            <Smile size={20} />
           </button>
-          <button className="p-2 text-text-muted hover:text-accent transition-colors flex-shrink-0">
-            <Paperclip size={22} />
+          <button
+            type="button"
+            className="p-2 text-text-muted hover:text-accent transition-colors flex-shrink-0"
+            title="Attach file"
+          >
+            <Paperclip size={20} />
           </button>
-          
+
           <textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Type a message"
-            className="flex-1 bg-transparent border-none outline-none resize-none max-h-32 min-h-[40px] py-2.5 text-[15px] font-roboto text-text-main placeholder:text-text-muted/50 custom-scrollbar"
+            placeholder={`Type support reply to ${name}...`}
+            className="flex-1 bg-transparent border-none outline-none resize-none max-h-32 min-h-[40px] py-2 text-[14px] font-roboto text-text-main placeholder:text-text-muted/50 custom-scrollbar"
             rows={1}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                if (inputText.trim()) {
-                  sendMessage(activeThread.id, inputText.trim());
-                  setInputText('');
-                }
+                handleSend();
               }
             }}
           />
-          
-          {inputText.trim() ? (
-            <button 
-              onClick={() => {
-                sendMessage(activeThread.id, inputText.trim());
-                setInputText('');
-              }}
-              className="w-10 h-10 rounded-xl bg-accent text-white flex items-center justify-center flex-shrink-0 hover:bg-accent/90 transition-colors shadow-md shadow-accent/20 mb-0.5 mr-0.5"
-            >
-              <Send size={18} className="ml-1" />
-            </button>
-          ) : (
-            <button className="p-2 text-text-muted hover:text-accent transition-colors flex-shrink-0 mb-0.5 mr-0.5">
-              <Mic size={22} />
-            </button>
-          )}
+
+          <button
+            type="button"
+            onClick={handleSend}
+            disabled={!inputText.trim()}
+            className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all mb-0.5 mr-0.5 ${
+              inputText.trim()
+                ? 'bg-accent text-white hover:bg-accent/90 shadow-md shadow-accent/20 cursor-pointer'
+                : 'bg-surface text-text-muted/40 cursor-not-allowed border border-border/40'
+            }`}
+          >
+            <Send size={18} className="ml-0.5" />
+          </button>
         </div>
       </div>
     </div>
   );
 }
+

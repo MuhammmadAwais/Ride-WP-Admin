@@ -78,12 +78,12 @@ export const MOCK_ABOUT_PAGE: CMSBlock[] = [
   {
     id: 'ab-1',
     type: 'heading',
-    content: 'Our Vision'
+    content: 'Our Mission & Community Vision'
   },
   {
     id: 'ab-2',
     type: 'paragraph',
-    content: 'Ride With Pals was built to bridge the gap between active car club organizers and driving enthusiasts. We offer advanced ride-coordination parameters, real-time map synchronization overlays, and secure, flat subscription payments.'
+    content: 'Ride With Pals was built to empower cycling, running, and endurance sports enthusiasts to connect, ride together, and grow thriving clubs. We provide real-time GPX route navigation, coordinated group rides, Strava synchronization, and transparent club membership management.'
   },
   {
     id: 'ab-3',
@@ -93,15 +93,16 @@ export const MOCK_ABOUT_PAGE: CMSBlock[] = [
   {
     id: 'ab-4',
     type: 'paragraph',
-    content: 'Since our launch, we have successfully managed and scaled hundreds of premium car club spaces across the globe, driving deeper local community connections:'
+    content: 'Since our inception, athletes and club leaders worldwide have organized thousands of rides and trail runs, elevating camaraderie and outdoor fitness:'
   },
   {
     id: 'ab-5',
     type: 'list',
     content: [
-      'Over 200,000 completed group runs and neonatal chase tracks.',
-      'Active club spaces processing subscription coordinate access safely.',
-      'High driver retention rates supported by optimized real-time communication modules.'
+      'Over 50,000 completed club rides and endurance events across road, gravel, and trail sports.',
+      'Active sports clubs processing membership tiers with seamless Stripe integrations.',
+      'Safe peer-to-peer cycling marketplace and direct club merchandise shops.'
     ]
   }
 ];
+

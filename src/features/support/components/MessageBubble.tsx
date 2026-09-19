@@ -1,31 +1,20 @@
 import React from 'react';
-import { type ChatMessage } from '../types/chatTypes';
+import { type SupportMessage } from '../types/chatTypes';
 import { Check, CheckCheck } from 'lucide-react';
-import { useAppSelector } from '@/hooks/useAppSelector';
 
 interface MessageBubbleProps {
-  message: ChatMessage;
+  message: SupportMessage;
 }
 
 export function MessageBubble({ message }: MessageBubbleProps) {
-  const currentUserId = useAppSelector((state: any) => state.auth.user?.id);
-  // Assuming if senderId is the current user (admin), it's outgoing.
-  // Or if it's undefined, we fallback to false.
-  const isOutgoing = message.senderId === currentUserId;
-  
+  // PDF 3: senderType is explicitly 'admin' or 'user'
+  const isOutgoing = message.senderType === 'admin';
+
   // Status Icon logic
   const renderStatus = () => {
     if (!isOutgoing) return null;
-    if (message.isRead) return <CheckCheck size={14} className="text-blue-400 ml-1 inline" />;
+    if (message.isRead) return <CheckCheck size={14} className="text-blue-300 ml-1 inline" />;
     return <Check size={14} className="text-white/70 ml-1 inline" />;
-  };
-
-  const renderContent = () => {
-    return (
-      <p className="text-[15px] font-poppins leading-relaxed whitespace-pre-wrap">
-        {message.message}
-      </p>
-    );
   };
 
   const formatTime = (dateStr: string) => {
@@ -35,18 +24,30 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   };
 
   return (
-    <div className={`flex w-full ${isOutgoing ? 'justify-end' : 'justify-start'} mb-4`}>
-      <div 
+    <div className={`flex w-full ${isOutgoing ? 'justify-end' : 'justify-start'} mb-3`}>
+      <div
         className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 shadow-sm relative group ${
-          isOutgoing 
-            ? 'bg-[#EB712B] text-white rounded-tr-sm' 
-            : 'bg-surface text-text-main rounded-tl-sm border border-border dark:border-white/5'
+          isOutgoing
+            ? 'bg-accent text-white rounded-tr-sm'
+            : 'bg-surface text-text-main rounded-tl-sm border border-border dark:border-white/10'
         }`}
       >
-        {renderContent()}
+        <div className="flex items-center justify-between gap-3 mb-1">
+          <span
+            className={`text-[10px] font-poppins font-bold uppercase tracking-wider ${
+              isOutgoing ? 'text-white/80' : 'text-accent'
+            }`}
+          >
+            {isOutgoing ? 'Support Staff (You)' : 'User'}
+          </span>
+        </div>
+
+        <p className="text-[14px] font-roboto leading-relaxed whitespace-pre-wrap">
+          {message.message}
+        </p>
 
         {/* Footer (Timestamp + Status) */}
-        <div 
+        <div
           className={`flex items-center justify-end gap-1 mt-1 font-roboto text-[10px] ${
             isOutgoing ? 'text-white/80' : 'text-text-muted'
           }`}
@@ -58,3 +59,4 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     </div>
   );
 }
+

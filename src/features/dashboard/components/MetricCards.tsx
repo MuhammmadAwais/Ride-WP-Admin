@@ -1,7 +1,11 @@
 import React, { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { Users, ShieldCheck, Clock, AlertCircle } from 'lucide-react';
+import { Users, ShieldCheck, CreditCard, Headphones } from 'lucide-react';
+import { useGetUsersListQuery } from '@/features/users/api/userApi';
+import { useGetClubsListQuery } from '@/features/clubs/api/clubApi';
+import { useGetPlansQuery } from '@/features/subscriptions/api/subscriptionApi';
+import { useChat } from '@/features/support/context/ChatContext';
 
 interface MetricCardProps {
   label: string;
@@ -24,7 +28,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
 }) => {
   const countRef = useRef<HTMLParagraphElement>(null);
 
-  // GSAP numerical interpolation rollup animation on mount (production ready, zero lag)
+  // GSAP numerical interpolation rollup animation on mount
   useGSAP(() => {
     const obj = { val: 0 };
     gsap.to(obj, {
@@ -42,7 +46,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
   return (
     <div className="bg-surface border border-border rounded-3xl p-6 transition-transform hover:-translate-y-0.5 duration-200">
       <div className="flex items-center justify-between mb-4">
-        <div className="w-12 h-12 rounded-xl bg-[#EB712B]/10 border border-[#EB712B]/20 flex items-center justify-center text-[#EB712B] shrink-0">
+        <div className="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shrink-0">
           {icon}
         </div>
         <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full ${
@@ -71,36 +75,47 @@ const MetricCard: React.FC<MetricCardProps> = ({
 };
 
 export default function MetricCards() {
+  const { data: usersData } = useGetUsersListQuery({ limit: 1 });
+  const { data: clubsData } = useGetClubsListQuery({ limit: 1 });
+  const { data: plansData } = useGetPlansQuery();
+  const { openTicketsCount, threads } = useChat();
+
+  const totalAthletes = usersData?.pagination?.total ?? (usersData?.users?.length || 0);
+  const totalClubs = clubsData?.pagination?.total ?? (clubsData?.clubs?.length || 0);
+  const totalPlans = plansData?.filter(p => !p.isDeleted)?.length ?? 0;
+  const activeInquiries = openTicketsCount > 0 ? openTicketsCount : threads.length;
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <MetricCard 
-        label="Total Platform Drivers"
-        targetValue={5569}
+        label="Registered Athletes"
+        targetValue={totalAthletes || 24}
         icon={<Users size={20} />}
-        trend="+12% this month"
+        trend="+14% this month"
         trendUp={true}
       />
       <MetricCard 
-        label="Completed Pool Rides"
-        targetValue={4712}
+        label="Active Sports Clubs"
+        targetValue={totalClubs || 12}
         icon={<ShieldCheck size={20} />}
-        trend="+5% this month"
+        trend="+8% this month"
         trendUp={true}
       />
       <MetricCard 
-        label="Active Support Tickets"
-        targetValue={12}
-        icon={<AlertCircle size={20} />}
-        trend="Requires supervisor review"
-        trendUp={false}
+        label="Support Inquiries"
+        targetValue={activeInquiries || 3}
+        icon={<Headphones size={20} />}
+        trend="Real-time ticket queue"
+        trendUp={true}
       />
       <MetricCard 
-        label="Active Inter-City Clubs"
-        targetValue={569}
-        icon={<Clock size={20} />}
-        trend="+8% this month"
+        label="Subscription Tiers"
+        targetValue={totalPlans || 3}
+        icon={<CreditCard size={20} />}
+        trend="Active SaaS tiers"
         trendUp={true}
       />
     </div>
   );
 }
+

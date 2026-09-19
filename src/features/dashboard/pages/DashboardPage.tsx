@@ -51,7 +51,7 @@ export default function DashboardPage() {
   return (
     <>
       <Helmet>
-        <title>Mission Control | Integri-AI Admin</title>
+        <title>Mission Control | Ride With Pals Admin</title>
       </Helmet>
 
       <div className="space-y-8 pb-12">
@@ -60,7 +60,7 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface border border-border rounded-3xl p-6 shadow-sm">
           <div>
             <h1 className="font-poppins font-bold text-text-main text-2xl tracking-tight">Mission Control</h1>
-            <p className="font-roboto text-text-muted text-sm mt-1">Real-time surveillance & telemetry across the Integri-AI transportation network</p>
+            <p className="font-roboto text-text-muted text-sm mt-1">Real-time telemetry and network oversight across global Ride With Pals cycling & athletic clubs</p>
           </div>
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold bg-green-500/10 text-green-500 border border-green-500/20">
@@ -82,8 +82,8 @@ export default function DashboardPage() {
 
           <div className="bg-surface border border-border rounded-3xl p-6 flex flex-col justify-between h-[400px]">
             <div>
-              <h3 className="font-poppins font-bold text-text-main text-[16px] tracking-tight">User Ratings Terminal</h3>
-              <p className="font-roboto text-text-muted text-xs mt-1">Real-time coordinated club and run feedback streams</p>
+              <h3 className="font-poppins font-bold text-text-main text-[16px] tracking-tight">Athlete Ratings Terminal</h3>
+              <p className="font-roboto text-text-muted text-xs mt-1">Real-time feedback streams from completed club rides</p>
             </div>
 
             {/* Ratings Scroll Area */}
@@ -136,8 +136,8 @@ export default function DashboardPage() {
         {/* Bottom Zone: Live ongoing runs ledger table */}
         <div className="bg-surface border border-border rounded-3xl p-5 sm:p-6 space-y-4">
           <div>
-            <h3 className="font-poppins font-bold text-text-main text-[16px] tracking-tight">Live Ongoing Runs</h3>
-            <p className="font-roboto text-text-muted text-xs mt-1">Active coordinated road trails and tracking routes across global hub sectors</p>
+            <h3 className="font-poppins font-bold text-text-main text-[16px] tracking-tight">Active Coordinated Group Rides</h3>
+            <p className="font-roboto text-text-muted text-xs mt-1">Active coordinated road trails, gravel loops, and tracking routes across global club chapters</p>
           </div>
 
           <DataTable 
@@ -151,3 +151,4 @@ export default function DashboardPage() {
     </>
   );
 }
+

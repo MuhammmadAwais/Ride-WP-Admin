@@ -21,12 +21,12 @@ import SubscriptionPlansTable from '@/features/subscriptions/components/Subscrip
 // ─── Mock Data for Wallet Transactions ────────────────────────────────────────
 
 const mockTransactions = [
-  { id: 'TX-9821', name: 'Club Payout - Cycling Madrid', date: 'Oct 24, 2023', amount: '+$1,450.00', status: 'Completed', type: 'in' },
-  { id: 'TX-9820', name: 'Stripe Fee Deduction', date: 'Oct 23, 2023', amount: '-$42.50', status: 'Completed', type: 'out' },
-  { id: 'TX-9819', name: 'Member Refund #402', date: 'Oct 21, 2023', amount: '-$120.00', status: 'Completed', type: 'out' },
-  { id: 'TX-9818', name: 'Club Payout - Velo BCN', date: 'Oct 19, 2023', amount: '+$2,890.00', status: 'Completed', type: 'in' },
-  { id: 'TX-9817', name: 'Monthly Server Cost', date: 'Oct 15, 2023', amount: '-$350.00', status: 'Completed', type: 'out' },
-  { id: 'TX-9816', name: 'Club Payout - Alpine Riders', date: 'Oct 12, 2023', amount: '+$840.00', status: 'Pending', type: 'in' },
+  { id: 'TX-9821', name: 'Club Gold Plan — Weekend Riders Club', date: 'Jul 14, 2026', amount: '+€40.00', status: 'Completed', type: 'in' },
+  { id: 'TX-9820', name: 'Athlete Pro Subscription — Saqib Usman', date: 'Jul 13, 2026', amount: '+€9.99', status: 'Completed', type: 'in' },
+  { id: 'TX-9819', name: 'Stripe Connect Processing Fee', date: 'Jul 13, 2026', amount: '-€1.45', status: 'Completed', type: 'out' },
+  { id: 'TX-9818', name: 'Club Fee Payout — Velo Barcelona Club', date: 'Jul 10, 2026', amount: '+€2,890.00', status: 'Completed', type: 'in' },
+  { id: 'TX-9817', name: 'Platform Service Fee Deduction', date: 'Jul 08, 2026', amount: '-€35.00', status: 'Completed', type: 'out' },
+  { id: 'TX-9816', name: 'Club Payout — Alpine Gravel Riders', date: 'Jul 05, 2026', amount: '+€840.00', status: 'Pending', type: 'in' },
 ];
 
 // ─── Page Component ───────────────────────────────────────────────────────────
@@ -78,30 +78,51 @@ export default function PaymentsPage() {
       {/* TAB 1: Wallet & Transactions */}
       {activeTab === 'wallet' && (
         <div className="space-y-8 animate-fade-in">
+          {/* Stripe Connect Gateway Notice Banner */}
+          <div className="rounded-2xl border border-accent/20 bg-accent/5 p-4 flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center text-accent shrink-0">
+                <Landmark size={18} />
+              </div>
+              <div>
+                <h4 className="text-xs font-poppins font-bold text-text-main">
+                  Stripe Connect Platform Gateway
+                </h4>
+                <p className="text-xs font-roboto text-text-muted">
+                  Club membership collections and direct payouts process automatically through connected Stripe accounts.
+                </p>
+              </div>
+            </div>
+            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+              EUR Billing Active
+            </span>
+          </div>
+
           {/* Stats Row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <StatCard 
               title="Total Balance" 
-              amount="$45,231.89" 
+              amount="€45,231.89" 
               icon={<DollarSign size={24} />} 
               color="text-emerald-500" 
               bg="bg-emerald-500/10" 
             />
             <StatCard 
               title="Pending Payouts" 
-              amount="$3,450.00" 
+              amount="€3,450.00" 
               icon={<Clock size={24} />} 
               color="text-amber-500" 
               bg="bg-amber-500/10" 
             />
             <StatCard 
               title="Monthly Revenue" 
-              amount="$12,890.45" 
+              amount="€12,890.45" 
               icon={<TrendingUp size={24} />} 
               color="text-blue-500" 
               bg="bg-blue-500/10" 
             />
           </div>
+
 
           {/* Main Layout Grid */}
           <div className="flex flex-col xl:flex-row gap-8">
