@@ -22,15 +22,46 @@ export const cmsApi = createApi({
      * GET /admin/content/:key
      */
     getCMSContent: builder.query<CMSContentResponse, CMSContentType>({
-      query: (key) => ({
-        url: `/admin/content/${key}`,
-        method: 'GET',
-      }),
-      transformResponse: (response: CMSApiResponse<CMSContentResponse>) => {
-        return response.response;
+      async queryFn(key, _queryApi, _extraOptions, fetchWithBQ) {
+        const result = await fetchWithBQ({
+          url: `/admin/content/${key}`,
+          method: 'GET',
+        });
+
+        if (result.error) {
+          const errorData = result.error.data as { message?: string; error?: string } | undefined;
+          const msg = errorData?.message || errorData?.error || result.error.message || '';
+          // If backend returns "Content not found." (e.g. 500/404 when key has not been seeded yet)
+          if (
+            result.error.status === 404 ||
+            (typeof msg === 'string' && msg.toLowerCase().includes('not found'))
+          ) {
+            return {
+              data: {
+                key,
+                title:
+                  key === 'about'
+                    ? 'About Ride With Pals'
+                    : key === 'privacy_policy'
+                    ? 'Privacy Policy'
+                    : 'Terms & Conditions',
+                content: '',
+                titleEs: key === 'about' ? 'Sobre Ride With Pals' : '',
+                contentEs: '',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              },
+            };
+          }
+          return { error: result.error };
+        }
+
+        const res = result.data as CMSApiResponse<CMSContentResponse>;
+        return { data: res.response };
       },
       providesTags: (_result, _error, key) => [{ type: 'CMS', id: key }],
     }),
+
 
     /**
      * Fetch public content for a specific CMS key (consumed by Mobile Apps without auth).
