@@ -42,13 +42,12 @@ function SupportChatContent() {
 
 export default function SupportPage() {
   return (
-    <ChatProvider>
-      <div className="flex flex-col h-[calc(100vh-130px)] md:h-[calc(100vh-160px)] min-h-[500px]">
-        <Helmet>
-          <title>App Support — {APP_NAME} Admin</title>
-        </Helmet>
-        <SupportChatContent />
-      </div>
-    </ChatProvider>
+    <div className="flex flex-col h-[calc(100vh-130px)] md:h-[calc(100vh-160px)] min-h-[500px]">
+      <Helmet>
+        <title>App Support — {APP_NAME} Admin</title>
+      </Helmet>
+      <SupportChatContent />
+    </div>
   );
 }
+

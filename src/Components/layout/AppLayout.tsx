@@ -22,6 +22,7 @@ import gsap from 'gsap';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { APP_NAME } from '@/Constants';
+import { ChatProvider } from '@/features/support/context/ChatContext';
 
 /** Derive a human-readable page title from the current pathname. */
 function deriveTitle(pathname: string): string {
@@ -50,7 +51,7 @@ const AppLayout: React.FC = () => {
   );
 
   return (
-    <>
+    <ChatProvider>
       <Helmet>
         <title>{pageTitle} — {APP_NAME} Admin</title>
       </Helmet>
@@ -89,8 +90,9 @@ const AppLayout: React.FC = () => {
           </div>
         </div>
       </div>
-    </>
+    </ChatProvider>
   );
 };
 
 export default AppLayout;
+

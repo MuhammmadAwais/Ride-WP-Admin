@@ -294,11 +294,25 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+const DEFAULT_CHAT_CONTEXT: ChatContextType = {
+  threads: [],
+  messages: {},
+  activeThreadId: null,
+  setActiveThreadId: () => {},
+  sendMessage: async () => false,
+  loadMessages: () => {},
+  markAsRead: () => {},
+  refreshThreads: () => {},
+  unreadCount: 0,
+  openTicketsCount: 0,
+};
+
 export const useChat = () => {
   const context = useContext(ChatContext);
   if (context === undefined) {
-    throw new Error('useChat must be used within a ChatProvider');
+    return DEFAULT_CHAT_CONTEXT;
   }
   return context;
 };
+
 
