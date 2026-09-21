@@ -67,6 +67,129 @@ export interface ClubRide {
 
 export interface ClubMember {
   id: number;
+  userId?: number;
+  name?: string;
+  fullName?: string;
+  userName?: string;
+  email?: string;
+  avatar?: string | null;
+  profileImage?: string | null;
+  profilePhoto?: string | null;
+  role?: string;
+  joinedDate?: string;
+  createdAt?: string;
+  phone?: string | null;
+  status?: string;
+  isSuspended?: boolean;
+  user?: {
+    id?: number;
+    fullName?: string;
+    userName?: string;
+    email?: string;
+    profileImage?: string | null;
+    phone?: string | null;
+    role?: string;
+    isAthleteProfile?: number | boolean;
+    createdAt?: string;
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
+export interface ClubLeaderboardItem {
+  id?: number;
+  rank?: number;
+  name?: string;
+  fullName?: string;
+  userName?: string;
+  avatar?: string | null;
+  profileImage?: string | null;
+  totalDistance?: string | number | null;
+  totalKm?: string | number | null;
+  distance?: string | number | null;
+  ridesCount?: number;
+  totalRides?: number;
+  attendance?: string | number;
+  points?: number;
+  team?: string;
+  role?: string;
+  status?: string;
+  user?: {
+    id?: number;
+    fullName?: string;
+    username?: string;
+    profileImage?: string | null;
+    totalDistance?: string | number;
+    ridesCount?: number;
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
+export interface ClubNewsItem {
+  id: number;
+  title?: string;
+  content?: string;
+  description?: string;
+  image?: string | null;
+  imageUrl?: string | null;
+  createdAt?: string;
+  authorName?: string;
+  author?: {
+    id?: number;
+    fullName?: string;
+    profileImage?: string | null;
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
+export interface ClubShopItem {
+  id: number;
+  name?: string;
+  productName?: string;
+  image?: string | null;
+  price?: number | string;
+  stock?: number;
+  description?: string;
+  category?: string;
+  status?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
+export interface ClubDiscountItem {
+  id: number;
+  brand?: string;
+  title?: string;
+  deal?: string;
+  code?: string;
+  discountPercentage?: number | string;
+  logo?: string | null;
+  expiry?: string;
+  expiryDate?: string;
+  isActive?: boolean;
+  description?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
+export interface ClubMarketplaceItem {
+  id: number;
+  product?: string;
+  productName?: string;
+  image?: string | null;
+  price?: number | string;
+  condition?: string;
+  status?: string;
+  isActive?: boolean;
+  isSoldOut?: boolean;
+  seller?: string;
+  sellerName?: string;
+  sellerAvatar?: string | null;
+  sellerId?: number;
+  createdAt?: string;
+  description?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
@@ -75,13 +198,11 @@ export interface ClubDetailResponse {
   profile?: ClubProfile;
   stats?: ClubStats;
   rides?: ClubRide[];
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  news?: any[];
-  leaderboard?: any[];
-  shop?: any[];
-  discounts?: any[];
-  marketplace?: any[];
-  /* eslint-enable @typescript-eslint/no-explicit-any */
+  news?: ClubNewsItem[];
+  leaderboard?: ClubLeaderboardItem[];
+  shop?: ClubShopItem[];
+  discounts?: ClubDiscountItem[];
+  marketplace?: ClubMarketplaceItem[];
   members?: ClubMember[];
   pagination?: {
     total: number;

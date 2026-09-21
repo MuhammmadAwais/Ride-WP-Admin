@@ -54,7 +54,7 @@ export function ClubDetailTabs({ activeTab, onChange }: ClubDetailTabsProps) {
         {/* Animated Highlight Indicator */}
         <div
           ref={indicatorRef}
-          className="absolute top-1 bottom-1 left-0 bg-[#EB712B] rounded-2xl z-0 pointer-events-none"
+          className="absolute top-1 bottom-1 left-0 bg-accent rounded-2xl z-0 pointer-events-none"
           style={{ width: 0, x: 0 }}
         />
 
