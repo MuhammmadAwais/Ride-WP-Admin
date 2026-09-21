@@ -66,6 +66,13 @@ export interface UserClub {
   memberCount: string;
   role: string;
   joinedDate: string;
+  logo?: string | null;
+  coverImage?: string | null;
+  location?: string;
+  clubPrivacyName?: string;
+  clubTypeName?: string;
+  description?: string;
+  participantCount?: number;
 }
 
 export interface UserListing {

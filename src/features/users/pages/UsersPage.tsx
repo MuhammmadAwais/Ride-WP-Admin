@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Search, User, X, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Search, X, Loader2, AlertCircle, RefreshCw, Shield, Phone, Calendar, Users as UsersIcon } from 'lucide-react';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { UserActionsMenu } from '../components/UserActionsMenu';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useGetUsersListQuery } from '../api/userApi';
 import type { UserListItem } from '../types/userTypes';
-import { SafeImage } from '@/Components/common/SafeImage';
+import { UserAvatar } from '@/Components/common/UserAvatar';
 
 export default function UsersPage() {
   const [searchInput, setSearchInput] = useState('');
@@ -14,7 +15,6 @@ export default function UsersPage() {
   const [limit, setLimit] = useState(20);
 
   useEffect(() => {
-    // eslint-disable-next-line
     setOffset(0);
   }, [debouncedSearchTerm]);
 
@@ -29,51 +29,139 @@ export default function UsersPage() {
 
   const columns: ColumnDef<UserListItem>[] = [
     {
-      header: 'Profile Photo',
+      header: 'Athlete',
       accessorKey: (row) => (
-        <div className="w-10 h-10 rounded-full bg-accent/5 flex items-center justify-center flex-shrink-0 border border-border overflow-hidden">
-          <SafeImage
-            src={row.profileImage}
-            alt={row.fullName}
-            className="w-full h-full object-cover"
-            fallback={<User size={20} className="text-accent/30" />}
-          />
+        <div className="flex items-center gap-3.5 min-w-[220px]">
+          <Link to={`/users/${row.id}`} className="shrink-0 group">
+            <UserAvatar
+              src={row.profileImage}
+              name={row.fullName}
+              size="md"
+              showStatus={true}
+              isSuspended={row.isSuspended}
+              className="group-hover:scale-105 transition-transform"
+            />
+          </Link>
+          <div className="flex flex-col min-w-0">
+            <Link
+              to={`/users/${row.id}`}
+              className="font-poppins font-bold text-sm text-text-main hover:text-accent transition-colors truncate"
+              title={row.fullName}
+            >
+              {row.fullName || 'Anonymous Rider'}
+            </Link>
+            <span className="font-roboto text-xs text-text-muted truncate" title={row.email}>
+              {row.email}
+            </span>
+          </div>
+        </div>
+      ),
+      sortable: true,
+      sortKey: 'fullName',
+    },
+    {
+      header: 'Phone',
+      accessorKey: (row) => (
+        <div className="flex items-center gap-1.5 text-xs font-roboto text-text-muted">
+          {row.phone ? (
+            <>
+              <Phone size={13} className="text-accent shrink-0" />
+              <span>{row.phone}</span>
+            </>
+          ) : (
+            <span className="text-text-muted/60">—</span>
+          )}
         </div>
       ),
       sortable: false,
     },
-    { header: 'Name', accessorKey: 'fullName', sortable: true },
-    { header: 'Phone no.', accessorKey: (row) => row.phone || 'N/A' },
-    { header: 'Email', accessorKey: 'email', sortable: true },
-    { header: 'Clubs Joined', accessorKey: 'clubsJoined', sortable: true },
-    { header: 'Subscription plan', accessorKey: 'subscriptionPlan', sortable: true },
-    { 
-      header: 'Start Date', 
-      accessorKey: (row) => row.startDate ? new Date(row.startDate).toLocaleDateString() : 'N/A' 
+    {
+      header: 'Clubs',
+      accessorKey: (row) => (
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface border border-border rounded-xl text-xs font-bold text-text-main shadow-xs">
+          <Shield size={13} className="text-accent shrink-0" />
+          <span>{row.clubsJoined ?? 0}</span>
+        </div>
+      ),
+      sortable: true,
+      sortKey: 'clubsJoined',
     },
-    { 
-      header: 'End Date', 
-      accessorKey: (row) => row.endDate ? new Date(row.endDate).toLocaleDateString() : 'N/A' 
+    {
+      header: 'Plan',
+      accessorKey: (row) => {
+        const plan = row.subscriptionPlan || 'Free';
+        const isPaid = plan.toLowerCase().includes('monthly') || plan.toLowerCase().includes('pro') || plan.toLowerCase().includes('gold') || plan.toLowerCase().includes('diamond');
+        
+        return (
+          <span
+            className={`inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-bold uppercase tracking-wider border whitespace-nowrap ${
+              isPaid
+                ? 'bg-accent/10 text-accent border-accent/25'
+                : 'bg-surface text-text-muted border-border'
+            }`}
+          >
+            {plan}
+          </span>
+        );
+      },
+      sortable: true,
+      sortKey: 'subscriptionPlan',
+    },
+    {
+      header: 'Membership Validity',
+      accessorKey: (row) => (
+        <div className="flex flex-col text-xs font-roboto text-text-muted">
+          {row.startDate && row.endDate ? (
+            <>
+              <span className="text-text-main font-medium">
+                {new Date(row.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+              <span className="text-[11px] text-text-muted/70">
+                to {new Date(row.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+            </>
+          ) : (
+            <span className="text-text-muted/60">—</span>
+          )}
+        </div>
+      ),
+      sortable: false,
+    },
+    {
+      header: 'Joined',
+      accessorKey: (row) => (
+        <div className="flex items-center gap-1.5 text-xs font-roboto text-text-muted">
+          <Calendar size={13} className="text-text-muted/60 shrink-0" />
+          <span>
+            {row.createdAt
+              ? new Date(row.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+              : 'N/A'}
+          </span>
+        </div>
+      ),
+      sortable: true,
+      sortKey: 'createdAt',
     },
     {
       header: 'Status',
       accessorKey: (row) => (
         <span
-          className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${
+          className={`inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-bold uppercase tracking-wider border whitespace-nowrap ${
             row.isSuspended
-              ? 'bg-red-500/10 text-red-500 border-red-500/20'
-              : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+              ? 'bg-error/10 text-error border-error/25'
+              : 'bg-success/10 text-success border-success/25'
           }`}
         >
           <span
             className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-              row.isSuspended ? 'bg-red-500' : 'bg-emerald-500'
+              row.isSuspended ? 'bg-error' : 'bg-success'
             }`}
           />
           {row.isSuspended ? 'Suspended' : 'Active'}
         </span>
       ),
-      sortable: false,
+      sortable: true,
+      sortKey: 'isSuspended',
     },
     {
       header: '',
@@ -90,12 +178,20 @@ export default function UsersPage() {
 
   return (
     <div className="flex flex-col min-h-full space-y-8 pb-10">
-      {/* Header & Search */}
+      {/* Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="font-poppins font-bold text-3xl text-text-main tracking-tight">Users Management</h1>
-          <p className="font-roboto text-[15px] text-text-muted mt-1.5 max-w-2xl">
-            Efficiently manage your community members, track subscription statuses, and moderate user activity with advanced administrative tools.
+          <div className="flex items-center gap-3">
+            <h1 className="font-poppins font-black text-3xl text-text-main tracking-tight">
+              Athletes Directory
+            </h1>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface border border-border rounded-xl text-xs font-bold text-accent shadow-xs">
+              <UsersIcon size={14} />
+              <span>{total} {total === 1 ? 'Athlete' : 'Athletes'}</span>
+            </span>
+          </div>
+          <p className="font-roboto text-sm text-text-muted mt-1.5 max-w-2xl">
+            Monitor registered platform riders, manage membership and subscription tiers, and moderate account activities.
           </p>
         </div>
 
@@ -106,7 +202,7 @@ export default function UsersPage() {
             </div>
             <input
               type="text"
-              placeholder="Search users..."
+              placeholder="Search by name or email..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="w-full bg-surface border border-border text-text-main text-sm rounded-2xl pl-12 pr-10 py-3.5 outline-none focus:border-accent/40 focus:ring-4 focus:ring-accent/10 transition-all placeholder:text-text-muted/40 shadow-sm backdrop-blur-xl"
@@ -115,41 +211,42 @@ export default function UsersPage() {
               <button
                 onClick={() => setSearchInput('')}
                 className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-text-muted/40 hover:text-accent transition-colors"
+                title="Clear search"
               >
                 <X size={16} />
               </button>
             )}
           </div>
 
-          <button 
+          <button
             onClick={() => refetch()}
             disabled={isFetching}
-            className="flex items-center justify-center p-3.5 rounded-2xl bg-accent/10 text-accent hover:bg-accent hover:text-white transition-all duration-300 border border-accent/20 disabled:opacity-50"
+            className="flex items-center justify-center p-3.5 rounded-2xl bg-surface border border-border text-text-main hover:bg-hover hover:text-accent hover:border-accent/30 transition-all duration-300 disabled:opacity-50 cursor-pointer shadow-sm"
             title="Refresh list"
           >
-            <RefreshCw size={18} className={isFetching ? 'animate-spin' : ''} />
+            <RefreshCw size={18} className={isFetching ? 'animate-spin text-accent' : ''} />
           </button>
         </div>
       </div>
 
-      {/* State Handlers & Data Table Area */}
+      {/* Table Area */}
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-20 bg-surface/50 border border-border rounded-2xl">
+        <div className="flex flex-col items-center justify-center py-24 bg-surface/50 border border-border rounded-2xl">
           <Loader2 size={36} className="animate-spin text-accent mb-3" />
-          <p className="text-text-muted text-sm font-roboto">Loading user directory...</p>
+          <p className="text-text-muted text-sm font-roboto">Loading athlete directory...</p>
         </div>
       ) : isError ? (
-        <div className="flex flex-col items-center justify-center py-16 bg-red-500/5 border border-red-500/20 rounded-2xl text-center px-4">
-          <AlertCircle size={36} className="text-red-500 mb-3" />
-          <h3 className="text-text-main font-poppins font-semibold text-lg mb-1">Failed to load users</h3>
+        <div className="flex flex-col items-center justify-center py-16 bg-error/5 border border-error/20 rounded-2xl text-center px-4">
+          <AlertCircle size={36} className="text-error mb-3" />
+          <h3 className="text-text-main font-poppins font-semibold text-lg mb-1">Failed to load athletes</h3>
           <p className="text-text-muted text-sm font-roboto max-w-md mb-4">
-            There was an issue retrieving user data from the live API. Please try again.
+            Could not retrieve athlete records from the backend API. Please check network connection and try again.
           </p>
           <button
             onClick={() => refetch()}
-            className="px-5 py-2.5 rounded-xl bg-accent text-white font-poppins text-sm font-medium hover:bg-accent/90 transition-colors"
+            className="px-5 py-2.5 rounded-xl bg-accent text-white font-poppins text-sm font-medium hover:brightness-105 transition-all shadow-sm cursor-pointer"
           >
-            Retry
+            Retry Fetch
           </button>
         </div>
       ) : (

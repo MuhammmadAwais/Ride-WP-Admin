@@ -15,6 +15,9 @@ All tokens are defined in the `@theme` block of `src/index.css`. Tailwind v4 aut
 - `--color-text-muted` → `text-text-muted`
 - `--color-border` → `border-border`
 - `--color-error` → `bg-error`, `text-error`, `border-error`
+- `--color-success` → `bg-success`, `text-success`, `border-success`
+- `--color-warning` → `bg-warning`, `text-warning`, `border-warning`
+- `--color-info` → `bg-info`, `text-info`, `border-info`
 - `--font-poppins` → `font-poppins`
 - `--font-roboto` → `font-roboto`
 
@@ -78,6 +81,9 @@ html.dark {
   --color-text-muted:      var(--color-secondary-text);
   --color-border:          var(--color-border);
   --color-error:           #EF4444;
+  --color-success:         #10B981;
+  --color-warning:         #F59E0B;
+  --color-info:            #3B82F6;
 
   /* Typography */
   --font-poppins:          'Poppins', system-ui, sans-serif;
@@ -103,8 +109,9 @@ html.dark {
 
 | Semantic State | Class Combination |
 |---|---|
-| **Active / Verified** | `bg-emerald-500/10 text-emerald-500 border border-emerald-500/20` |
-| **Pending / Review** | `bg-amber-500/10 text-amber-500 border border-amber-500/20` |
+| **Active / Verified** | `bg-success/10 text-success border border-success/20` |
+| **Pending / Review** | `bg-warning/10 text-warning border border-warning/20` |
 | **Suspended / Failed** | `bg-error/10 text-error border border-error/20` |
-| **Draft / Inactive** | `bg-slate-500/10 text-slate-400 border border-slate-500/20` |
+| **Informational / Neutral** | `bg-info/10 text-info border border-info/20` |
+| **Draft / Inactive** | `bg-surface border border-border text-text-muted` |
 | **Accent Active** | `bg-accent/15 text-accent border border-accent/30` |

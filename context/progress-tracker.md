@@ -6,9 +6,9 @@
 
 ## Current Status
 
-- **Active Milestone:** Repository & Context System Overhaul (Complete Alignment with Ride-WP & Admin APIs)
-- **Active Focus:** Agile Page-by-Page UI/UX Refactoring & Functional Wiring
-- **Next Up:** Awaiting User Design References in `context/designs/` or instructions for specific page refactor
+- **Active Milestone:** Phase 2: User Governance & 360° Athlete Dossier (Completed)
+- **Active Focus:** Phase 3: Club Governance & Deep Multi-Tab Inspector
+- **Next Up:** Awaiting User Design References or instructions for Phase 3 (Clubs Directory & Inspector)
 
 ---
 
@@ -27,10 +27,16 @@
 - [x] Auto-logout on `401 Unauthorized`
 
 ### Phase 2: User Governance & 360° Athlete Dossier
-- [ ] Refactor Users Directory table (`UsersPage.tsx`) with debounced search (`GET /admin/users`)
-- [ ] Refactor 360° Athlete Dossier (`UserDetailPage.tsx`) with sub-resource tabs (`GET /admin/users/:id`)
-- [ ] Athlete suspension toggle with optimistic UI (`PUT /admin/users/:id/suspend`)
-- [ ] Athlete permanent deletion with `ConfirmModal` (`DELETE /admin/users/:id`)
+- [x] Refactor Users Directory table (`UsersPage.tsx`) with debounced search & resilient avatars (`GET /admin/users`)
+- [x] Refactor 360° Athlete Dossier (`UserDetailPage.tsx`) with banner-free executive profile card & sub-resource inspection modals (`GET /admin/users/:id`)
+- [x] Created `RideDetailModal.tsx` for deep inspection of route, distance, pace, and GPX download
+- [x] Created `ListingDetailModal.tsx` for deep inspection of marketplace gear specs and status
+- [x] Created `UserClubCard.tsx` with dynamic club cover banner, logo avatar, sport badges, and location
+- [x] Created `ClubDetailModal.tsx` for deep inspection of joined clubs without losing athlete context
+- [x] Implemented resilient `UserAvatar.tsx` with uppercase initials fallback on brand gradient and `/uploads/` URL resolution
+- [x] Athlete suspension toggle with optimistic UI (`PUT /admin/users/:id/suspend`)
+- [x] Athlete permanent deletion with `ConfirmModal` (`DELETE /admin/users/:id`)
+- [x] Tailwind v4 `@theme` tokens audit & imprint: registered in `ui-registry.md` with zero raw/untokenized colors
 
 ### Phase 3: Club Governance & Multi-Tab Inspector
 - [ ] Refactor Club Directory table & cards (`ClubsPage.tsx`) (`GET /admin/clubs`)

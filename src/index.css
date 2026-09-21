@@ -47,6 +47,9 @@ html.dark {
   --color-text-muted:      var(--color-secondary-text);
   --color-border:          var(--color-border);
   --color-error:           #EF4444;
+  --color-success:         #10B981;
+  --color-warning:         #F59E0B;
+  --color-info:            #3B82F6;
 
   /* ── Typography ── */
   --font-poppins:          'Poppins', system-ui, sans-serif;

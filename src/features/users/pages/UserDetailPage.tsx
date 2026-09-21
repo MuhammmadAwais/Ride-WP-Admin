@@ -1,14 +1,37 @@
 import { useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { ChevronLeft, User, TrendingUp, Star, Shield, Car, CheckCircle2, Clock, XCircle, Loader2 } from 'lucide-react';
+import {
+  ChevronLeft,
+  Mail,
+  Phone,
+  Shield,
+  Bike,
+  TrendingUp,
+  Star,
+  Download,
+  ExternalLink,
+  Crown,
+  Package,
+  Receipt,
+  Loader2,
+  Users,
+  MapPin,
+  Clock,
+  Eye,
+} from 'lucide-react';
 import { DetailTabs, type TabId } from '../components/DetailTabs';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { useGetUserByIdQuery } from '../api/userApi';
 import type { UserRide, UserClub, UserListing, UserPurchase } from '../types/userTypes';
-import { SafeImage } from '@/Components/common/SafeImage';
 import { UserActionsMenu } from '../components/UserActionsMenu';
+import { UserAvatar } from '@/Components/common/UserAvatar';
+import { SafeImage } from '@/Components/common/SafeImage';
+import { RideDetailModal } from '../components/RideDetailModal';
+import { ListingDetailModal } from '../components/ListingDetailModal';
+import { ClubDetailModal } from '../components/ClubDetailModal';
+import { UserClubCard } from '../components/UserClubCard';
 import { ROUTES } from '@/Constants';
 
 export default function UserDetailPage() {
@@ -20,21 +43,27 @@ export default function UserDetailPage() {
   const [activeTab, setActiveTab] = useState<TabId>('rides');
   const tabContentRef = useRef<HTMLDivElement>(null);
 
+  // Inspection modals state
+  const [selectedRide, setSelectedRide] = useState<UserRide | null>(null);
+  const [selectedListing, setSelectedListing] = useState<UserListing | null>(null);
+  const [selectedClub, setSelectedClub] = useState<UserClub | null>(null);
+
   // GSAP Animation for Tab Content Switching
   useGSAP(() => {
     if (!tabContentRef.current) return;
-    
-    gsap.fromTo(tabContentRef.current, 
-      { opacity: 0, y: 15 },
-      { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out' }
+
+    gsap.fromTo(
+      tabContentRef.current,
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
     );
   }, [activeTab]);
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] bg-surface/50 border border-border rounded-2xl">
-        <Loader2 size={36} className="animate-spin text-accent mb-3" />
-        <p className="text-text-muted text-sm font-roboto">Loading user details...</p>
+      <div className="flex flex-col items-center justify-center min-h-[460px] bg-surface/50 border border-border rounded-3xl">
+        <Loader2 size={40} className="animate-spin text-accent mb-3" />
+        <p className="text-text-muted text-sm font-roboto">Loading athlete dossier...</p>
       </div>
     );
   }
@@ -44,340 +73,509 @@ export default function UserDetailPage() {
 
   if (isError || !data || !user) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] bg-red-500/5 border border-red-500/20 rounded-2xl text-center p-8">
-        <h3 className="text-text-main font-poppins font-semibold text-lg mb-1">Failed to load user details</h3>
-        <p className="text-text-muted text-sm font-roboto mb-4">Could not retrieve information for User #{id}.</p>
+      <div className="flex flex-col items-center justify-center min-h-[460px] bg-error/5 border border-error/20 rounded-3xl text-center p-8">
+        <h3 className="text-text-main font-poppins font-bold text-xl mb-1">Athlete Dossier Not Found</h3>
+        <p className="text-text-muted text-sm font-roboto mb-5">Could not retrieve information for Athlete #{id}.</p>
         <button
-          onClick={() => navigate(-1)}
-          className="px-5 py-2 rounded-xl bg-accent text-white font-poppins text-sm font-medium hover:bg-accent/90"
+          onClick={() => navigate(ROUTES.USERS)}
+          className="px-6 py-2.5 rounded-xl bg-accent text-white font-poppins text-sm font-semibold hover:brightness-105 transition-all cursor-pointer shadow-sm"
         >
-          Go Back
+          Back to Directory
         </button>
       </div>
     );
   }
 
+  const rides = data.rides || [];
+  const clubs = data.clubs || [];
+  const listings = data.listings || [];
+  const purchases = data.purchases || [];
+
   return (
-    <div className="flex flex-col space-y-8 pb-8">
-      {/* Top Navigation */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => navigate(-1)}
-            className="p-2 rounded-xl bg-surface border border-border hover:bg-accent/10 transition-colors text-text-muted hover:text-accent"
+    <div className="flex flex-col space-y-8 pb-12">
+      {/* ── 1. Top Navigation & Breadcrumbs ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate(ROUTES.USERS)}
+            className="p-2.5 rounded-2xl bg-surface border border-border hover:bg-hover hover:text-accent transition-colors text-text-muted shadow-xs cursor-pointer group"
+            title="Back to Athletes"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={20} className="transition-transform group-hover:-translate-x-0.5" />
           </button>
-          <h1 className="font-poppins font-bold text-2xl text-text-main tracking-tight">User Details</h1>
+          <div>
+            <div className="flex items-center gap-2 text-xs font-roboto text-text-muted">
+              <Link to={ROUTES.USERS} className="hover:text-accent transition-colors">
+                Athletes
+              </Link>
+              <span>/</span>
+              <span className="text-text-main font-medium">{user.fullName || `Athlete #${userId}`}</span>
+            </div>
+            <h1 className="font-poppins font-black text-2xl text-text-main tracking-tight mt-0.5">
+              Athlete Profile & Dossier
+            </h1>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 self-end sm:self-auto">
           <UserActionsMenu
             userId={userId}
-            isSuspended={user?.isSuspended}
-            userName={user?.fullName}
+            isSuspended={user.isSuspended}
+            userName={user.fullName}
             onDeleteSuccess={() => navigate(ROUTES.USERS, { replace: true })}
           />
         </div>
       </div>
 
-      {/* Profile Header Card */}
-      <div className="rounded-2xl border border-border bg-surface shadow-sm p-6 sm:p-8 flex flex-col sm:flex-row gap-8 items-start sm:items-center">
-        <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full shrink-0 bg-accent/5 flex items-center justify-center border-4 border-border overflow-hidden">
-          <SafeImage
-            src={user?.profileImage}
-            alt={user?.fullName || 'User'}
-            className="w-full h-full object-cover"
-            fallback={<User size={48} className="text-accent/30" />}
-          />
-        </div>
-        
-        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          <div>
-            <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Name of User</p>
-            <p className="text-text-main font-semibold font-poppins text-lg">{user?.fullName || 'N/A'}</p>
-          </div>
-          <div>
-            <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Status</p>
-            <span
-              className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${
-                user?.isSuspended
-                  ? 'bg-red-500/10 text-red-500 border-red-500/20'
-                  : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-              }`}
-            >
-              <span
-                className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                  user?.isSuspended ? 'bg-red-500' : 'bg-emerald-500'
-                }`}
+      {/* ── 2. Executive Profile Card (Clean & Banner-free) ── */}
+      <div className="rounded-3xl border border-border bg-surface shadow-xs p-6 sm:p-8">
+        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 items-start sm:items-center min-w-0 flex-1">
+            {/* Squircle Avatar with Status Ring */}
+            <div className="shrink-0 shadow-sm">
+              <UserAvatar
+                src={user.profileImage}
+                name={user.fullName}
+                size="2xl"
+                shape="squircle"
+                showStatus={true}
+                isSuspended={user.isSuspended}
+                className="border-2 border-border shadow-sm"
               />
-              {user?.isSuspended ? 'Suspended' : 'Active'}
-            </span>
-          </div>
-          <div>
-            <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Subscription</p>
-            <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-              user?.subscriptionPlan === 'Diamond' ? 'bg-blue-500/10 text-blue-500 border border-blue-500/20' :
-              user?.subscriptionPlan === 'Gold' ? 'bg-yellow-500/10 text-yellow-600 border border-yellow-500/20' :
-              'bg-gray-500/10 text-gray-500 border border-gray-500/20'
-            }`}>
-              {user?.subscriptionPlan || 'Free'}
-            </span>
-          </div>
-          <div>
-            <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Phone number</p>
-            <p className="text-text-main font-roboto">{user?.phone || 'N/A'}</p>
-          </div>
-          <div>
-            <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Start/End Date</p>
-            <p className="text-text-main font-roboto text-sm">
-              {user?.startDate ? new Date(user.startDate).toLocaleDateString() : 'N/A'} — {user?.endDate ? new Date(user.endDate).toLocaleDateString() : 'N/A'}
-            </p>
-          </div>
-          <div>
-            <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Email</p>
-            <p className="text-text-main font-roboto">{user?.email || 'N/A'}</p>
-          </div>
-          <div>
-            <p className="text-text-muted text-xs font-poppins uppercase tracking-wider mb-1">Clubs Joined</p>
-            <p className="text-text-main font-roboto font-medium">{user?.clubsJoined ?? 0}</p>
+            </div>
+
+            {/* Name & Metadata Chips */}
+            <div className="space-y-2.5 min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h2
+                  className="text-2xl sm:text-3xl font-black font-poppins tracking-tight text-text-main uppercase truncate"
+                  title={user.fullName}
+                >
+                  {user.fullName || 'Anonymous Rider'}
+                </h2>
+
+                {/* Plan Badge */}
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent/10 border border-accent/25 rounded-xl text-xs font-black uppercase tracking-wider text-accent shadow-xs">
+                  <Crown size={13} className="text-accent" />
+                  <span>{user.subscriptionPlan || 'Free Rider'}</span>
+                </span>
+              </div>
+
+              {/* Chips Row */}
+              <div className="flex flex-wrap items-center gap-2 text-xs font-bold">
+                {/* Email Chip */}
+                <div
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-main-bg/60 border border-border rounded-xl text-xs font-semibold text-text-muted hover:text-text-main transition-colors"
+                  title={user.email}
+                >
+                  <Mail size={13} className="text-accent shrink-0" />
+                  <span className="truncate max-w-[200px] sm:max-w-[320px]">{user.email}</span>
+                </div>
+
+                {/* Phone Chip */}
+                {user.phone && (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-main-bg/60 border border-border rounded-xl text-xs font-semibold text-text-muted">
+                    <Phone size={13} className="text-accent shrink-0" />
+                    <span>{user.phone}</span>
+                  </div>
+                )}
+
+                {/* Clubs Count Chip */}
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-main-bg/60 border border-border rounded-xl text-xs font-bold text-text-muted">
+                  <Shield size={13} className="text-accent shrink-0" />
+                  <span>{user.clubsJoined ?? 0} Clubs Joined</span>
+                </div>
+
+                {/* Status Chip */}
+                <div
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-wider border whitespace-nowrap ${
+                    user.isSuspended
+                      ? 'bg-error/10 text-error border-error/25'
+                      : 'bg-success/10 text-success border-success/25'
+                  }`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      user.isSuspended ? 'bg-error' : 'bg-success'
+                    }`}
+                  />
+                  <span>{user.isSuspended ? 'Suspended' : 'Active Account'}</span>
+                </div>
+
+                {/* Membership Validity Chip */}
+                {user.startDate && user.endDate && (
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-main-bg/60 border border-border rounded-xl text-xs font-semibold text-text-muted">
+                    <Clock size={13} className="text-accent shrink-0" />
+                    <span>
+                      Valid: {new Date(user.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} – {new Date(user.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* User Stats Card */}
+      {/* ── 3. Hero Telemetry Stats Strip ── */}
       {data.stats && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-5 rounded-2xl border border-border bg-surface shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
-              <Car size={24} />
+          <div className="p-5 rounded-3xl border border-border bg-surface shadow-xs flex items-center gap-4 hover:border-accent/30 transition-all">
+            <div className="w-12 h-12 rounded-2xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+              <Bike size={24} />
             </div>
             <div>
-              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider">Total Rides</p>
-              <p className="text-text-main font-poppins font-bold text-xl mt-0.5">{data.stats.totalRides}</p>
+              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider font-semibold">Total Rides</p>
+              <p className="text-text-main font-poppins font-black text-2xl mt-0.5">{data.stats.totalRides ?? 0}</p>
             </div>
           </div>
-          <div className="p-5 rounded-2xl border border-border bg-surface shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+
+          <div className="p-5 rounded-3xl border border-border bg-surface shadow-xs flex items-center gap-4 hover:border-info/30 transition-all">
+            <div className="w-12 h-12 rounded-2xl bg-info/10 text-info flex items-center justify-center shrink-0">
               <TrendingUp size={24} />
             </div>
             <div>
-              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider">Distance Covered</p>
-              <p className="text-text-main font-poppins font-bold text-xl mt-0.5">{data.stats.distanceCovered}</p>
+              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider font-semibold">Distance Covered</p>
+              <p className="text-text-main font-poppins font-black text-2xl mt-0.5">{data.stats.distanceCovered || '0 km'}</p>
             </div>
           </div>
-          <div className="p-5 rounded-2xl border border-border bg-surface shadow-sm flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-yellow-500/10 text-yellow-500 flex items-center justify-center">
+
+          <div className="p-5 rounded-3xl border border-border bg-surface shadow-xs flex items-center gap-4 hover:border-warning/30 transition-all">
+            <div className="w-12 h-12 rounded-2xl bg-warning/10 text-warning flex items-center justify-center shrink-0">
               <Star size={24} />
             </div>
             <div>
-              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider">Reputation</p>
-              <p className="text-text-main font-poppins font-bold text-xl mt-0.5">{data.stats.userReputation}</p>
+              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider font-semibold">Rider Reputation</p>
+              <p className="text-text-main font-poppins font-black text-2xl mt-0.5">{data.stats.userReputation || '5.0'} / 5.0</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Information Matrix */}
-      <div className="flex flex-col space-y-6 mt-4">
-        <DetailTabs activeTab={activeTab} onChange={setActiveTab} />
+      {/* ── 4. Sub-Resource Tabs (GSAP Animated) ── */}
+      <div className="flex flex-col space-y-6">
+        <DetailTabs
+          activeTab={activeTab}
+          onChange={setActiveTab}
+          counts={{
+            rides: rides.length,
+            clubs: clubs.length,
+            listings: listings.length,
+            purchases: purchases.length,
+          }}
+        />
 
         <div ref={tabContentRef} className="min-h-[400px]">
-          {activeTab === 'rides' && <RidesTabContent rides={data.rides || []} />}
-          {activeTab === 'clubs' && <ClubsTabContent clubs={data.clubs || []} />}
-          {activeTab === 'listings' && <ListingsTabContent listings={data.listings || []} />}
-          {activeTab === 'purchases' && <PurchasesTabContent purchases={data.purchases || []} />}
+          {activeTab === 'rides' && (
+            <RidesTabContent
+              rides={rides}
+              onInspectRide={(ride) => setSelectedRide(ride)}
+            />
+          )}
+          {activeTab === 'clubs' && (
+            <ClubsTabContent
+              clubs={clubs}
+              onInspectClub={(club) => setSelectedClub(club)}
+            />
+          )}
+          {activeTab === 'listings' && (
+            <ListingsTabContent
+              listings={listings}
+              onInspectListing={(listing) => setSelectedListing(listing)}
+            />
+          )}
+          {activeTab === 'purchases' && <PurchasesTabContent purchases={purchases} />}
         </div>
       </div>
+
+      {/* ── 5. Inspection Modals ── */}
+      <RideDetailModal
+        ride={selectedRide}
+        isOpen={Boolean(selectedRide)}
+        onClose={() => setSelectedRide(null)}
+      />
+
+      <ListingDetailModal
+        listing={selectedListing}
+        isOpen={Boolean(selectedListing)}
+        onClose={() => setSelectedListing(null)}
+      />
+
+      <ClubDetailModal
+        club={selectedClub}
+        isOpen={Boolean(selectedClub)}
+        onClose={() => setSelectedClub(null)}
+      />
     </div>
   );
 }
 
-// ─── Tab Contents ────────────────────────────────────────────────────────────
+// ─── Sub-Resource Tab Content Components ──────────────────────────────────────
 
-function RidesTabContent({ rides }: { rides: UserRide[] }) {
-  const columns: ColumnDef<UserRide>[] = [
-    { header: 'Date & Time', accessorKey: (r) => `${new Date(r.dateTime).toLocaleDateString()} ${new Date(r.dateTime).toLocaleTimeString()}`, sortKey: 'dateTime' },
-    { header: 'Route', accessorKey: 'route' },
-    { header: 'Club/Host Name', accessorKey: 'hostName' },
-    { header: 'Pace', accessorKey: 'pace' },
-    { header: 'Distance', accessorKey: 'distance' },
-    { header: 'Status', accessorKey: (r) => (
-      <div className="flex items-center gap-1.5">
-        {r.status === 'Completed' && <CheckCircle2 size={14} className="text-green-400" />}
-        {r.status === 'Upcoming' && <Clock size={14} className="text-yellow-400" />}
-        {r.status === 'Cancelled' && <XCircle size={14} className="text-red-400" />}
-        <span className={
-          r.status === 'Completed' ? 'text-green-400' :
-          r.status === 'Upcoming' ? 'text-yellow-400' : 'text-red-400'
-        }>{r.status}</span>
+function RidesTabContent({
+  rides,
+  onInspectRide,
+}: {
+  rides: UserRide[];
+  onInspectRide: (ride: UserRide) => void;
+}) {
+  if (rides.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-3xl p-8 text-center">
+        <Bike size={44} className="text-text-muted/30 mb-3" />
+        <h3 className="font-poppins font-bold text-lg text-text-main mb-1">No Rides Recorded</h3>
+        <p className="text-text-muted font-roboto text-sm max-w-sm">
+          This athlete has not participated in or created any group rides yet.
+        </p>
       </div>
-    ), sortKey: 'status' }
+    );
+  }
+
+  const columns: ColumnDef<UserRide>[] = [
+    {
+      header: 'Ride Name',
+      accessorKey: (r) => (
+        <div
+          onClick={() => onInspectRide(r)}
+          className="flex flex-col min-w-[200px] cursor-pointer group"
+          title="Click to view full ride details"
+        >
+          <span className="font-poppins font-bold text-sm text-text-main group-hover:text-accent transition-colors flex items-center gap-1.5">
+            <span>{r.rideName || 'Unnamed Ride'}</span>
+            <Eye size={12} className="opacity-0 group-hover:opacity-100 transition-opacity text-accent" />
+          </span>
+          <span className="font-roboto text-xs text-text-muted flex items-center gap-1 mt-0.5">
+            <Users size={12} className="text-accent shrink-0" />
+            Host: {r.hostName || 'Community'}
+          </span>
+        </div>
+      ),
+      sortable: true,
+      sortKey: 'rideName',
+    },
+    {
+      header: 'Date & Time',
+      accessorKey: (r) => (
+        <div className="flex flex-col text-xs font-roboto text-text-muted">
+          <span className="text-text-main font-medium">
+            {new Date(r.dateTime).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+          </span>
+          <span className="text-[11px] text-text-muted/70">
+            {new Date(r.dateTime).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+          </span>
+        </div>
+      ),
+      sortable: true,
+      sortKey: 'dateTime',
+    },
+    {
+      header: 'Route / Meeting Point',
+      accessorKey: (r) => (
+        <div className="flex items-center gap-1.5 text-xs font-roboto text-text-muted max-w-[240px] truncate" title={r.route}>
+          <MapPin size={13} className="text-accent shrink-0" />
+          <span className="truncate">{r.route && r.route !== 'null → null' ? r.route : 'Custom Route'}</span>
+        </div>
+      ),
+      sortable: false,
+    },
+    {
+      header: 'Distance & Pace',
+      accessorKey: (r) => (
+        <div className="flex flex-col text-xs font-roboto">
+          <span className="text-text-main font-bold">{r.distance ? `${r.distance} km` : '—'}</span>
+          <span className="text-text-muted text-[11px]">{r.pace || 'Moderate'}</span>
+        </div>
+      ),
+      sortable: false,
+    },
+    {
+      header: 'Riders',
+      accessorKey: (r) => (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-xl text-xs font-bold bg-surface border border-border text-text-main">
+          <Users size={12} className="text-accent" />
+          {r.participantsCount ?? 0}
+        </span>
+      ),
+      sortable: true,
+      sortKey: 'participantsCount',
+    },
+    {
+      header: 'Status',
+      accessorKey: (r) => (
+        <span
+          className={`inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-bold uppercase tracking-wider border whitespace-nowrap ${
+            r.status === 'Completed'
+              ? 'bg-success/10 text-success border-success/25'
+              : 'bg-accent/10 text-accent border-accent/25'
+          }`}
+        >
+          {r.status || 'Scheduled'}
+        </span>
+      ),
+      sortable: true,
+      sortKey: 'status',
+    },
+    {
+      header: 'Actions',
+      accessorKey: (r) => (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onInspectRide(r)}
+            className="p-2 rounded-xl bg-surface border border-border hover:bg-hover hover:text-accent transition-colors text-text-muted cursor-pointer"
+            title="Inspect Ride Details"
+          >
+            <Eye size={14} />
+          </button>
+
+          {r.gpxFile && (
+            <a
+              href={r.gpxFile}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-xl bg-surface border border-border hover:bg-hover hover:text-accent inline-flex items-center transition-colors text-text-muted"
+              title="Download GPX File"
+            >
+              <Download size={14} />
+            </a>
+          )}
+        </div>
+      ),
+      sortable: false,
+    },
   ];
 
   return (
-    <div className="flex flex-col space-y-8 pb-10">
-      {/* Ride Participation Summary Card (from Image 2) */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {rides.slice(0, 1).map((ride) => (
-          <div key={ride.id} className="rounded-[32px] p-6 sm:p-8 bg-surface border border-border shadow-md relative overflow-hidden group">
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
-              <div>
-                <h3 className="text-xl sm:text-2xl font-poppins font-bold text-text-main mb-2">{ride.route?.split('→')[0].trim() || 'Unknown'} Ride</h3>
-                <div className="space-y-1">
-                  <p className="text-sm sm:text-[15px] text-text-muted font-roboto flex items-center gap-2">
-                    <Clock size={16} className="text-accent/60" /> {new Date(ride.dateTime).toLocaleString()}
-                  </p>
-                  <p className="text-sm sm:text-[15px] text-text-muted font-roboto flex items-center gap-2">
-                    <Star size={16} className="text-accent/60" /> {ride.hostName}
-                  </p>
+    <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="font-poppins font-bold text-lg text-text-main">Participated Group Rides</h3>
+          <p className="text-text-muted font-roboto text-xs mt-0.5">Click any ride row to inspect route details and participants.</p>
+        </div>
+      </div>
+      <DataTable data={rides} columns={columns} keyExtractor={(r) => String(r.id)} />
+    </div>
+  );
+}
+
+function ClubsTabContent({
+  clubs,
+  onInspectClub,
+}: {
+  clubs: UserClub[];
+  onInspectClub: (club: UserClub) => void;
+}) {
+  if (clubs.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-3xl p-8 text-center">
+        <Shield size={44} className="text-text-muted/30 mb-3" />
+        <h3 className="font-poppins font-bold text-lg text-text-main mb-1">No Clubs Joined</h3>
+        <p className="text-text-muted font-roboto text-sm max-w-sm">
+          This athlete is not currently an active member of any registered club.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="font-poppins font-bold text-lg text-text-main">Joined Clubs & Affiliations</h3>
+          <p className="text-text-muted font-roboto text-xs mt-0.5">Click any club card to inspect governance, cover photo, and live rosters.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {clubs.map((c) => (
+          <UserClubCard key={c.id} club={c} onInspect={onInspectClub} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ListingsTabContent({
+  listings,
+  onInspectListing,
+}: {
+  listings: UserListing[];
+  onInspectListing: (listing: UserListing) => void;
+}) {
+  if (listings.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-3xl p-8 text-center">
+        <Package size={44} className="text-text-muted/30 mb-3" />
+        <h3 className="font-poppins font-bold text-lg text-text-main mb-1">No Marketplace Listings</h3>
+        <p className="text-text-muted font-roboto text-sm max-w-sm">
+          This user has not listed any cycling or motorcycle gear in the community marketplace.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="font-poppins font-bold text-lg text-text-main">Marketplace Gear Listings</h3>
+          <p className="text-text-muted font-roboto text-xs mt-0.5">Click any gear card to inspect full product specs and description.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {listings.map((v) => (
+          <div
+            key={v.id}
+            onClick={() => onInspectListing(v)}
+            className="p-4 rounded-2xl bg-main-bg/50 border border-border hover:border-accent/40 transition-all flex flex-col justify-between group shadow-xs cursor-pointer"
+          >
+            <div className="flex gap-4 items-start">
+              <div className="w-18 h-18 bg-surface rounded-xl overflow-hidden border border-border shrink-0">
+                <SafeImage
+                  src={v.image}
+                  alt={v.productName}
+                  fallback={<Package size={24} className="text-accent m-auto" />}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <h4 className="font-poppins font-bold text-sm text-text-main truncate group-hover:text-accent transition-colors" title={v.productName}>
+                  {v.productName}
+                </h4>
+                <p className="font-roboto text-xs text-text-muted capitalize mt-0.5">
+                  Condition: <span className="font-medium text-text-main">{v.condition}</span>
+                </p>
+
+                <div className="flex items-center gap-2 mt-2">
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-lg font-bold uppercase tracking-wider border ${
+                      v.isActive
+                        ? 'bg-success/10 text-success border-success/25'
+                        : 'bg-surface text-text-muted border-border'
+                    }`}
+                  >
+                    {v.isActive ? 'Active' : 'Draft'}
+                  </span>
+                  {v.isSoldOut && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-lg font-bold uppercase tracking-wider bg-error/10 text-error border-error/25">
+                      Sold Out
+                    </span>
+                  )}
                 </div>
               </div>
-              {ride.gpxFile && (
-                <div className="px-5 py-2.5 rounded-full bg-blue-600 text-white text-xs sm:text-sm font-bold tracking-wide shadow-lg shadow-blue-600/20">
-                  GPX
-                </div>
-              )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-              <div className="bg-text-muted/5 dark:bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center group-hover:bg-accent/5 transition-colors border border-border/50 sm:border-0">
-                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.pace || 'N/A'}</p>
-                <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Pace</p>
-              </div>
-              <div className="bg-text-muted/5 dark:bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center group-hover:bg-accent/5 transition-colors border border-border/50 sm:border-0">
-                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.distance || 'N/A'}</p>
-                <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Distance</p>
-              </div>
-              <div className="bg-text-muted/5 dark:bg-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-center group-hover:bg-accent/5 transition-colors border border-border/50 sm:border-0">
-                <p className="text-lg sm:text-xl font-bold text-text-main mb-1">{ride.participantsCount || 0}</p>
-                <p className="text-[10px] sm:text-xs font-semibold text-text-muted uppercase tracking-wider">Participants</p>
-              </div>
+            <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs">
+              <span className="text-text-muted font-roboto">
+                {new Date(v.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+              <span className="font-poppins font-black text-sm text-accent">
+                €{Number(v.price).toFixed(2)}
+              </span>
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="rounded-xl p-5 border border-border bg-surface flex items-center justify-between">
-          <div>
-            <p className="text-text-muted text-sm font-poppins mb-1">Total Rides</p>
-            <p className="text-3xl font-bold text-text-main font-roboto">124</p>
-          </div>
-          <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400">
-            <TrendingUp size={24} />
-          </div>
-        </div>
-        <div className="rounded-xl p-5 border border-border bg-surface flex items-center justify-between">
-          <div>
-            <p className="text-text-muted text-sm font-poppins mb-1">Distance Covered</p>
-            <p className="text-3xl font-bold text-text-main font-roboto">1,240 <span className="text-lg text-text-muted font-normal">km</span></p>
-          </div>
-          <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-            <Car size={24} />
-          </div>
-        </div>
-        <div className="rounded-xl p-5 border border-border bg-surface flex items-center justify-between">
-          <div>
-            <p className="text-text-muted text-sm font-poppins mb-1">User Reputation</p>
-            <div className="flex items-end gap-2">
-              <p className="text-3xl font-bold text-text-main font-roboto">4.8</p>
-              <p className="text-sm text-text-muted mb-1">/ 5.0</p>
-            </div>
-          </div>
-          <div className="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-400">
-            <Star size={24} fill="currentColor" />
-          </div>
-        </div>
-      </div>
-      
-      <DataTable data={rides} columns={columns} keyExtractor={(r) => r.id.toString()} />
-    </div>
-  );
-}
-
-function ClubsTabContent({ clubs }: { clubs: UserClub[] }) {
-  if (clubs.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center">
-        <Shield size={48} className="text-text-muted/30 mb-4" />
-        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">No Clubs Joined</h3>
-        <p className="text-text-muted font-roboto text-sm">This user hasn't joined any clubs yet.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {clubs.map((club) => (
-        <div key={club.id} className="relative rounded-2xl overflow-hidden bg-surface border border-border group hover:border-accent/30 transition-all shadow-sm">
-          <div className="h-24 bg-accent/10 relative">
-             <div className="absolute inset-0 backdrop-blur-sm bg-white/5"></div>
-          </div>
-          <div className="px-5 pb-5 relative -mt-8">
-            <div className="w-16 h-16 rounded-xl bg-surface border-4 border-surface flex items-center justify-center mb-3 shadow-lg overflow-hidden">
-              <SafeImage
-                src={null} // No image field in UserClub yet based on current API return
-                alt={club.clubName}
-                className="w-full h-full object-cover"
-                fallback={<Shield size={24} className="text-accent" />}
-              />
-            </div>
-            <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">{club.clubName}</h3>
-            <p className="font-roboto text-sm text-text-muted mb-4">{club.memberCount}</p>
-            
-            <div className="flex items-center justify-between border-t border-border pt-4">
-              <span className={`px-2 py-1 rounded text-xs font-bold ${club.role === 'Admin' || club.role === 'Owner' ? 'bg-accent/10 text-accent' : 'bg-text-muted/10 text-text-muted'}`}>
-                {club.role}
-              </span>
-              <span className="font-roboto text-xs text-text-muted/60 tracking-tight">Joined {new Date(club.joinedDate).toLocaleDateString()}</span>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ListingsTabContent({ listings }: { listings: UserListing[] }) {
-  if (listings.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center mt-6">
-        <Car size={48} className="text-text-muted/30 mb-4" />
-        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">No Active Listings</h3>
-        <p className="text-text-muted font-roboto text-sm">This user hasn't posted any listings.</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="rounded-2xl border border-border bg-surface p-6 shadow-sm lg:col-span-2">
-        <h3 className="font-poppins font-semibold text-lg text-text-main mb-6">User Listings</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {listings.map((v) => (
-            <div key={v.id} className="flex items-center gap-4 p-4 rounded-2xl bg-text-muted/5 border border-border group hover:border-accent/30 transition-all">
-              <div className="w-16 h-16 bg-accent/10 rounded-xl flex items-center justify-center shrink-0 overflow-hidden border border-border/50">
-                <SafeImage src={v.image} alt={v.productName} fallback={<Car size={24} className="text-accent" />} className="w-full h-full object-cover" />
-              </div>
-              <div className="flex-1">
-                <h4 className="font-poppins font-semibold text-text-main line-clamp-1">{v.productName}</h4>
-                <p className="font-roboto text-sm text-text-muted capitalize">{v.condition}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className={`text-[10px] px-2 py-0.5 rounded font-semibold ${v.isActive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-                    {v.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                  {v.isSoldOut && <span className="text-[10px] px-2 py-0.5 rounded font-semibold bg-text-muted/10 text-text-muted">Sold Out</span>}
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="px-3 py-1.5 bg-surface rounded-lg border border-border font-mono text-[13px] font-bold text-accent shadow-sm">
-                  Rs. {v.price}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
@@ -386,10 +584,12 @@ function ListingsTabContent({ listings }: { listings: UserListing[] }) {
 function PurchasesTabContent({ purchases }: { purchases: UserPurchase[] }) {
   if (purchases.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-2xl p-8 text-center mt-6">
-        <TrendingUp size={48} className="text-text-muted/30 mb-4" />
-        <h3 className="font-poppins font-semibold text-lg text-text-main mb-1">No Purchases Found</h3>
-        <p className="text-text-muted font-roboto text-sm">This user hasn't made any transactions yet.</p>
+      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-3xl p-8 text-center">
+        <Receipt size={44} className="text-text-muted/30 mb-3" />
+        <h3 className="font-poppins font-bold text-lg text-text-main mb-1">No Orders or Purchases</h3>
+        <p className="text-text-muted font-roboto text-sm max-w-sm">
+          This athlete has not placed any club shop orders or marketplace purchases yet.
+        </p>
       </div>
     );
   }
@@ -397,40 +597,50 @@ function PurchasesTabContent({ purchases }: { purchases: UserPurchase[] }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const columns: ColumnDef<any>[] = [
     {
-      header: 'Item',
+      header: 'Item / Service',
       accessorKey: (r) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-accent/5 border border-border overflow-hidden shrink-0">
-            <SafeImage
-              src={r.itemImage}
-              alt={r.type || 'Item'}
-              className="w-full h-full object-cover"
-              fallback={<TrendingUp size={18} className="m-auto text-accent/30" />}
-            />
+          <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shrink-0">
+            <Package size={18} />
           </div>
-          <span className="font-medium text-text-main">{r.type || 'Unknown Type'}</span>
+          <span className="font-poppins font-bold text-sm text-text-main">{r.type || r.title || 'Order'}</span>
         </div>
       ),
       sortable: false,
     },
-    { header: 'Transaction ID', accessorKey: 'id' },
-    { header: 'Date/Time', accessorKey: 'dateTime' },
-    { header: 'Amount', accessorKey: (r) => <span className="font-bold text-accent">{r.amount || 'N/A'}</span>, sortKey: 'amount' },
-    { header: 'Method', accessorKey: 'method' },
-    { header: 'Status', accessorKey: (r) => (
-      <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-tight ${
-        r.status === 'Success' ? 'bg-green-500/10 text-green-600 border border-green-500/20' :
-        r.status === 'Pending' ? 'bg-yellow-500/10 text-yellow-600 border border-yellow-500/20' :
-        'bg-red-500/10 text-red-600 border border-red-500/20'
-      }`}>
-        {r.status || 'Pending'}
-      </span>
-    ), sortKey: 'status' }
+    { header: 'Order ID', accessorKey: 'id' },
+    {
+      header: 'Date',
+      accessorKey: (r) =>
+        r.dateTime || r.createdAt
+          ? new Date(r.dateTime || r.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+          : '—',
+    },
+    {
+      header: 'Amount',
+      accessorKey: (r) => <span className="font-poppins font-bold text-accent">€{r.amount || '0.00'}</span>,
+      sortKey: 'amount',
+    },
+    {
+      header: 'Status',
+      accessorKey: (r) => (
+        <span className="px-2.5 py-1 rounded-xl text-xs font-bold uppercase tracking-wider bg-success/10 text-success border border-success/25">
+          {r.status || 'Paid'}
+        </span>
+      ),
+      sortKey: 'status',
+    },
   ];
 
   return (
-    <div className="pb-12">
-      <DataTable data={purchases} columns={columns} keyExtractor={(r) => r.id.toString()} />
+    <div className="rounded-3xl border border-border bg-surface p-6 shadow-xs">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="font-poppins font-bold text-lg text-text-main">Order History & Purchases</h3>
+          <p className="text-text-muted font-roboto text-xs mt-0.5">Purchases made in club shops and community gear marketplace.</p>
+        </div>
+      </div>
+      <DataTable data={purchases} columns={columns} keyExtractor={(r) => String(r.id)} />
     </div>
   );
 }

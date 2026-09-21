@@ -6,64 +6,199 @@
 
 ## Component Catalog
 
-### 1. `DataTable<T>`
-- **File:** `src/Components/ui/DataTable.tsx`
-- **Purpose:** Universal generic table handling sorting, server-side pagination, search debouncing, and skeleton loaders.
-- **Classes & Tokens:**
-  - Wrapper: `bg-surface border border-border rounded-xl overflow-hidden shadow-sm`
-  - Table Header: `bg-table-header text-text-muted text-xs uppercase font-semibold font-roboto tracking-wider border-b border-border`
-  - Table Row: `border-b border-border hover:bg-hover transition-colors text-sm font-roboto text-text-main`
-  - Pagination Container: `p-4 border-t border-border flex items-center justify-between text-xs text-text-muted font-roboto`
+### UserAvatar
 
-### 2. `StatCard` / `MetricCards`
-- **File:** `src/features/analytics/components/MetricCards.tsx`
-- **Purpose:** Top-level executive telemetry cards displaying GMV, MRR, Athletes, Clubs, and active rides.
-- **Classes & Tokens:**
-  - Card: `bg-surface border border-border rounded-xl p-5 hover:border-accent/30 transition-all duration-200`
-  - Title: `text-xs font-semibold uppercase tracking-wider text-text-muted font-roboto flex items-center justify-between`
-  - Value: `text-2xl lg:text-3xl font-extrabold font-poppins text-text-main mt-2`
-  - Trend Pill: `inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-pill`
-  - Positive Trend: `bg-emerald-500/10 text-emerald-500`
-  - Negative Trend: `bg-error/10 text-error`
+File: `src/Components/common/UserAvatar.tsx`  
+Last updated: 2026-09-21  
 
-### 3. `StatusBadge`
-- **File:** `src/Components/ui/StatusBadge.tsx`
-- **Purpose:** Standardized status pill for athletes, clubs, rides, subscriptions, and transactions.
-- **Variants:**
-  - `Active` / `Delivered` / `Verified`: `bg-emerald-500/10 text-emerald-500 border border-emerald-500/20`
-  - `Pending` / `Trial`: `bg-amber-500/10 text-amber-500 border border-amber-500/20`
-  - `Suspended` / `Failed`: `bg-error/10 text-error border border-error/20`
-  - `Private` / `Draft`: `bg-slate-500/10 text-slate-400 border border-slate-500/20`
-  - Common classes: `inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-pill text-xs font-medium font-roboto`
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (image container), `bg-gradient-to-br from-accent/20 via-accent/10 to-surface` (initials fallback), `bg-accent/5` (icon fallback) |
+| Border           | `border border-border` |
+| Border radius    | `rounded-full` (circle), `rounded-2xl` / `rounded-3xl` (squircle) |
+| Text — primary   | `font-poppins font-black text-accent` |
+| Text — secondary | `text-accent/50` |
+| Spacing          | `select-none inline-flex relative` |
+| Hover state      | `hover:opacity-95` (when clickable) |
+| Shadow           | `shadow-sm` |
+| Accent usage     | Signature initials gradient; status dot uses `bg-success` (active) or `bg-error` (suspended) |
 
-### 4. `ActionMenu`
-- **File:** `src/Components/ui/ActionMenu.tsx`
-- **Purpose:** Portal-rendered dropdown menu triggered from table row action dots.
-- **Classes & Tokens:**
-  - Trigger: `p-1.5 rounded-lg text-text-muted hover:text-text-main hover:bg-hover transition-colors`
-  - Menu Content: `bg-surface-elevated border border-border rounded-xl shadow-xl p-1.5 min-w-[160px] z-50 animate-scale-in`
-  - Menu Item: `flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-text-main hover:bg-hover hover:text-accent cursor-pointer transition-colors`
-  - Destructive Item: `text-error hover:bg-error/10 hover:text-error`
+**Pattern notes:**  
+Universal athlete avatar resolving `/uploads/` relative paths. Never leaves empty placeholders: generates 1-2 uppercase initials on a high-energy brand gradient when images fail or are null. Supports `xs` (28px) through `2xl` (112px–144px).
 
-### 5. `ConfirmModal`
-- **File:** `src/Components/ui/ConfirmModal.tsx`
-- **Purpose:** Accessible modal dialog requiring explicit user confirmation before destructive operations.
-- **Classes & Tokens:**
-  - Overlay: `fixed inset-0 bg-black/60 backdrop-blur-sm z-50`
-  - Content: `fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-surface border border-border rounded-2xl p-6 shadow-2xl max-w-md w-full z-50 animate-scale-in`
-  - Title: `text-lg font-bold font-poppins text-text-main flex items-center gap-2`
-  - Confirm Button: `bg-error text-white hover:brightness-105 font-medium px-4 py-2 rounded-xl text-sm transition-all`
-  - Cancel Button: `bg-surface border border-border text-text-main hover:bg-hover px-4 py-2 rounded-xl text-sm transition-all`
+---
 
-### 6. `DetailTabs` / `ClubDetailTabs`
-- **File:** `src/features/users/components/DetailTabs.tsx` & `src/features/clubs/components/ClubDetailTabs.tsx`
-- **Purpose:** Horizontal tabbed navigation for inspecting sub-collections within user or club profiles.
-- **Classes & Tokens:**
-  - Tab List: `flex items-center gap-2 border-b border-border mb-6 overflow-x-auto`
-  - Active Tab: `text-accent border-b-2 border-accent font-semibold font-poppins py-3 px-4 text-sm whitespace-nowrap`
-  - Inactive Tab: `text-text-muted hover:text-text-main font-medium font-poppins py-3 px-4 text-sm transition-colors whitespace-nowrap`
+### DetailTabs
 
-### 7. `SafeImage`
-- **File:** `src/Components/common/SafeImage.tsx`
-- **Purpose:** Resilient image component handling broken CDN links, missing avatars, and network errors.
-- **Fallbacks:** Renders fallback icon or monogram badge with `bg-surface border border-border`.
+File: `src/features/users/components/DetailTabs.tsx`  
+Last updated: 2026-09-21  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface backdrop-blur-md` (outer track), `bg-accent` (floating active pill) |
+| Border           | `border border-border` |
+| Border radius    | `rounded-2xl` (track), `rounded-xl` (tab pills) |
+| Text — primary   | `text-white font-poppins font-bold` (active tab) |
+| Text — secondary | `text-text-muted font-poppins font-bold` (inactive tab) |
+| Spacing          | `p-1.5 gap-2` (track), `px-5 py-2.5` (tab pill) |
+| Hover state      | `hover:text-text-main hover:bg-hover` (inactive tabs) |
+| Shadow           | `shadow-xs` (track), `shadow-[0_4px_16px_-2px_rgba(235,113,43,0.35)]` (active pill) |
+| Accent usage     | `bg-accent` for active floating pill; `bg-accent/10 text-accent border-accent/20` for unselected count badges |
+
+**Pattern notes:**  
+Interactive sub-resource navigation with GSAP spring physics moving the orange active pill smoothly between tabs. Displays live count badges for each sub-resource.
+
+---
+
+### RideDetailModal
+
+File: `src/features/users/components/RideDetailModal.tsx`  
+Last updated: 2026-09-21  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (dialog card), `bg-main-bg/50` (metric tiles), `bg-black/60 backdrop-blur-sm` (overlay) |
+| Border           | `border border-border` |
+| Border radius    | `rounded-3xl` (dialog card), `rounded-2xl` (metrics & info tiles), `rounded-xl` (buttons) |
+| Text — primary   | `font-poppins font-black text-text-main text-xl sm:text-2xl` |
+| Text — secondary | `font-roboto text-text-muted text-xs` |
+| Spacing          | `p-6 sm:p-8 max-w-2xl w-[92vw] gap-3` |
+| Hover state      | `hover:bg-hover hover:text-text-main` (close button, footer) |
+| Shadow           | `shadow-2xl` |
+| Accent usage     | `bg-accent/10 text-accent border-accent/20` (bike icon badge), `bg-accent text-white` (GPX download button) |
+
+**Pattern notes:**  
+Radix Dialog modal for inspecting athlete group rides. Displays telemetry metrics (distance, pace, riders, status), route meeting point, and one-click GPX route file download.
+
+---
+
+### ListingDetailModal
+
+File: `src/features/users/components/ListingDetailModal.tsx`  
+Last updated: 2026-09-21  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (dialog card), `bg-main-bg` (product showcase), `bg-main-bg/50` (attribute tiles) |
+| Border           | `border border-border` |
+| Border radius    | `rounded-3xl` (dialog card), `rounded-2xl` (media viewport), `rounded-xl` (price chip) |
+| Text — primary   | `font-poppins font-black text-text-main text-xl sm:text-2xl` |
+| Text — secondary | `font-roboto text-text-muted text-xs` |
+| Spacing          | `p-6 sm:p-8 max-w-xl w-[92vw] gap-3` |
+| Hover state      | `hover:bg-hover hover:text-text-main` (close & dismiss buttons) |
+| Shadow           | `shadow-2xl` |
+| Accent usage     | `text-accent` for price overlay badge (`€`), `bg-accent/10 text-accent border-accent/20` (package badge) |
+
+**Pattern notes:**  
+Radix Dialog modal for marketplace gear listings. Displays high-resolution gear photos, EUR `€` pricing pill with glassmorphism backdrop, condition rating, and stock availability pills.
+
+---
+
+### UserActionsMenu
+
+File: `src/features/users/components/UserActionsMenu.tsx`  
+Last updated: 2026-09-21  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface backdrop-blur-xl` (dropdown menu & confirmation modal) |
+| Border           | `border border-border` |
+| Border radius    | `rounded-xl` (dropdown), `rounded-3xl` (modal card) |
+| Text — primary   | `font-poppins text-text-main text-sm` |
+| Text — secondary | `font-roboto text-text-muted text-xs` |
+| Spacing          | `w-48 py-1` (dropdown), `p-[36px_32px] max-w-[420px]` (modal) |
+| Hover state      | `hover:bg-hover hover:text-accent`, `hover:bg-error/10 text-error`, `hover:bg-success/10 text-success` |
+| Shadow           | `shadow-2xl` (dropdown), `shadow-[0_24px_60px_rgba(0,0,0,0.2)]` (modal) |
+| Accent usage     | `text-accent` for view detail icon, `bg-accent` for suspend confirm button |
+
+**Pattern notes:**  
+Portal-rendered actions menu for user moderation. Features GSAP-animated modal safeguards before committing destructive operations (suspension, deletion). Strictly uses `@theme` semantic tokens (`bg-error`, `bg-success`, `bg-warning`).
+
+---
+
+### DataTable
+
+File: `src/Components/ui/DataTable.tsx`  
+Last updated: 2026-09-21  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (wrapper), `bg-table-header` (thead), `hover:bg-hover` (tbody row) |
+| Border           | `border border-border` |
+| Border radius    | `rounded-xl overflow-hidden` |
+| Text — primary   | `font-roboto text-sm text-text-main` |
+| Text — secondary | `font-roboto text-xs uppercase font-semibold text-text-muted` |
+| Spacing          | `p-4` (pagination), `px-4 py-3.5` (cells) |
+| Hover state      | `hover:bg-hover transition-colors` |
+| Shadow           | `shadow-sm` |
+| Accent usage     | `text-accent` for active sort indicators, pagination active page pill |
+
+**Pattern notes:**  
+Universal data grid component across all admin tables. Handles server-side pagination, client/server column sorting, and empty state fallbacks.
+
+---
+
+### SafeImage
+
+File: `src/Components/common/SafeImage.tsx`  
+Last updated: 2026-09-21  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` |
+| Border           | `border border-border` |
+| Border radius    | Inherited from parent (`rounded-xl` or `rounded-2xl`) |
+| Text — primary   | `text-text-main` |
+| Text — secondary | `text-text-muted` |
+| Spacing          | Context-dependent |
+| Hover state      | None |
+| Shadow           | None |
+| Accent usage     | `text-accent` fallback monogram/icon |
+
+**Pattern notes:**  
+Fail-safe image wrapper catching broken URLs and missing media assets with an embedded fallback element.
+
+---
+
+### UserClubCard
+
+File: `src/features/users/components/UserClubCard.tsx`  
+Last updated: 2026-09-21  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-main-bg/50` (card container), `bg-surface` (mini cover banner), `bg-black/60 backdrop-blur-md` (sport/privacy pills) |
+| Border           | `border border-border hover:border-accent/40` |
+| Border radius    | `rounded-3xl` (card), `rounded-2xl` (avatar & pills), `rounded-lg` (sport badges) |
+| Text — primary   | `font-poppins font-black text-text-main group-hover:text-accent` |
+| Text — secondary | `font-roboto text-text-muted text-xs` |
+| Spacing          | `p-5 pt-0` (card body), `px-5 py-3.5` (card footer) |
+| Hover state      | `hover:border-accent/40 hover:shadow-md transition-all` |
+| Shadow           | `shadow-xs hover:shadow-md` |
+| Accent usage     | `text-accent` for map pin, users icon, and inspect link; `bg-accent/10 text-accent border-accent/25` for regular member role badge |
+
+**Pattern notes:**  
+Rich club affiliation card progressively enhanced with live club details (cover banner, logo avatar with uppercase initials fallback, sport type, and privacy badge).
+
+---
+
+### ClubDetailModal
+
+File: `src/features/users/components/ClubDetailModal.tsx`  
+Last updated: 2026-09-21  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (dialog container), `bg-main-bg` (hero banner container), `bg-main-bg/50` (metrics bar), `bg-black/60 backdrop-blur-sm` (overlay) |
+| Border           | `border border-border` |
+| Border radius    | `rounded-3xl` (dialog card), `rounded-2xl` (telemetry tiles, owner card), `rounded-xl` (action buttons) |
+| Text — primary   | `font-poppins font-black text-2xl text-text-main` |
+| Text — secondary | `font-roboto text-text-muted text-xs` |
+| Spacing          | `p-6 sm:p-8 pt-10 gap-3` |
+| Hover state      | `hover:bg-hover hover:text-text-main` (close, cancel) |
+| Shadow           | `shadow-2xl` |
+| Accent usage     | `bg-accent text-white` for "Open Full Club Governance View" primary CTA; `text-accent` for location pin and active members indicator |
+
+**Pattern notes:**  
+Radix Dialog modal providing immediate deep inspection of joined clubs without losing context on the athlete profile. Displays live statistics, founder/owner contact, club mission, and quick gateway to `/clubs/:id`.
+

@@ -11,7 +11,7 @@ import { API_BASE_URL } from '../api/baseQuery';
  * - Configurable environment override via VITE_IMAGE_BASE_URL or VITE_STORAGE_BASE_URL
  */
 export function getImageUrl(path?: string | null): string {
-  if (!path || typeof path !== 'string' || !path.trim()) {
+  if (!path || typeof path !== 'string' || !path.trim() || path === 'null' || path === 'undefined') {
     return '';
   }
 
@@ -47,11 +47,11 @@ export function getImageUrl(path?: string | null): string {
     return `${origin}/${trimmed}`;
   }
 
-  // If path starts with a leading slash, prepend origin/public
+  // If path starts with a leading slash
   if (trimmed.startsWith('/')) {
-    return `${origin}/public${trimmed}`;
+    return `${origin}${trimmed}`;
   }
 
-  // By default, raw filenames (e.g., "saqi.png", "profile.jpg", "logo.png") are served under /public on the backend
-  return `${origin}/public/${trimmed}`;
+  // By default in Ride-WP backend, user uploads and avatars are hosted under /uploads/
+  return `${origin}/uploads/${trimmed}`;
 }

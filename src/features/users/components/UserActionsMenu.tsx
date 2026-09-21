@@ -146,26 +146,26 @@ export function UserActionsMenu({
             {isSuspended ? (
               <button
                 onClick={() => handleAction('unsuspend')}
-                className="w-full text-left px-4 py-2.5 text-sm font-poppins text-emerald-500 hover:bg-emerald-500/10 flex items-center gap-3 transition-colors"
+                className="w-full text-left px-4 py-2.5 text-sm font-poppins text-success hover:bg-success/10 flex items-center gap-3 transition-colors cursor-pointer"
               >
-                <UserCheck size={16} className="text-emerald-500" />
+                <UserCheck size={16} className="text-success" />
                 Unsuspend user
               </button>
             ) : (
               <button
                 onClick={() => handleAction('suspend')}
-                className="w-full text-left px-4 py-2.5 text-sm font-poppins text-amber-500 hover:bg-amber-500/10 flex items-center gap-3 transition-colors"
+                className="w-full text-left px-4 py-2.5 text-sm font-poppins text-warning hover:bg-warning/10 flex items-center gap-3 transition-colors cursor-pointer"
               >
-                <UserMinus size={16} className="text-amber-500" />
+                <UserMinus size={16} className="text-warning" />
                 Suspend user
               </button>
             )}
 
             <button
               onClick={() => handleAction('delete')}
-              className="w-full text-left px-4 py-2.5 text-sm font-poppins text-red-500 hover:bg-red-500/10 flex items-center gap-3 transition-colors"
+              className="w-full text-left px-4 py-2.5 text-sm font-poppins text-error hover:bg-error/10 flex items-center gap-3 transition-colors cursor-pointer"
             >
-              <Trash2 size={16} className="text-red-500" />
+              <Trash2 size={16} className="text-error" />
               Delete user
             </button>
           </div>,
@@ -247,10 +247,10 @@ function ActionModal({
         <div
           className={`mx-auto mb-5 w-16 h-16 rounded-2xl flex items-center justify-center border ${
             isDelete
-              ? 'bg-red-500/10 text-red-500 border-red-500/20'
+              ? 'bg-error/10 text-error border-error/20'
               : isUnsuspend
-              ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-              : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+              ? 'bg-success/10 text-success border-success/20'
+              : 'bg-warning/10 text-warning border-warning/20'
           }`}
         >
           {isDelete ? (
@@ -281,11 +281,11 @@ function ActionModal({
           <button
             onClick={onConfirm}
             disabled={isLoading}
-            className={`flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 ${
+            className={`flex-1 py-3 px-4 rounded-xl font-poppins font-semibold text-[14px] text-white transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer ${
               isDelete
-                ? 'bg-red-500 hover:bg-red-600'
+                ? 'bg-error hover:bg-error/90'
                 : isUnsuspend
-                ? 'bg-emerald-600 hover:bg-emerald-700'
+                ? 'bg-success hover:bg-success/90'
                 : 'bg-accent hover:bg-accent/90'
             }`}
           >
