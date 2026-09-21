@@ -1,0 +1,79 @@
+# Progress Tracker: Ride With Pals Admin Control Center
+
+> **Living Tracker:** Updated after every completed sprint or feature. Any AI agent reading this will immediately know what is completed, what is in progress, and what is next.
+
+---
+
+## Current Status
+
+- **Active Milestone:** Repository & Context System Overhaul (Complete Alignment with Ride-WP & Admin APIs)
+- **Active Focus:** Agile Page-by-Page UI/UX Refactoring & Functional Wiring
+- **Next Up:** Awaiting User Design References in `context/designs/` or instructions for specific page refactor
+
+---
+
+## Roadmap & Phase Progress
+
+### Phase 0: Design System & Core Transport Foundation
+- [x] Tailwind CSS v4 `@theme` design tokens established in `src/index.css`
+- [x] Standardized Axios transport layer with JWT interceptor & universal envelope unwrapping (`src/api/baseQuery.ts`)
+- [x] Global and Route Error Boundaries (`GlobalErrorBoundary.tsx`, `RouteErrorBoundary.tsx`)
+- [x] Core reusable components seeded in `src/Components/ui/` (`DataTable`, `StatusBadge`, `ActionMenu`, `ConfirmModal`, `SafeImage`)
+
+### Phase 1: Authentication & Session Gatekeeper
+- [x] Login UI with animated bubbles (`LoginPage.tsx`, `LoginForm.tsx`, `BackgroundBubbles.tsx`)
+- [x] Admin authentication service (`POST /admin/login`)
+- [x] Protected route redirection & session persistence via `redux-persist` (`ProtectedRoute.tsx`)
+- [x] Auto-logout on `401 Unauthorized`
+
+### Phase 2: User Governance & 360° Athlete Dossier
+- [ ] Refactor Users Directory table (`UsersPage.tsx`) with debounced search (`GET /admin/users`)
+- [ ] Refactor 360° Athlete Dossier (`UserDetailPage.tsx`) with sub-resource tabs (`GET /admin/users/:id`)
+- [ ] Athlete suspension toggle with optimistic UI (`PUT /admin/users/:id/suspend`)
+- [ ] Athlete permanent deletion with `ConfirmModal` (`DELETE /admin/users/:id`)
+
+### Phase 3: Club Governance & Multi-Tab Inspector
+- [ ] Refactor Club Directory table & cards (`ClubsPage.tsx`) (`GET /admin/clubs`)
+- [ ] Refactor Deep Club Inspector (`ClubDetailsPage.tsx`) with sub-resource tabs: members, rides, news, shop, marketplace (`GET /admin/clubs/:id?tab=...`)
+- [ ] Club suspension toggle (`PUT /admin/clubs/:id/suspend`)
+- [ ] Club disbanding with cascade warnings (`DELETE /admin/clubs/:id`)
+
+### Phase 4: Monetization & Subscription Tier Management
+- [ ] Payments page with segmented switcher between Ledger & Subscriptions (`PaymentsPage.tsx`)
+- [ ] SaaS Subscription Plans table with quota badges (`SubscriptionPlansTable.tsx`) (`GET /admin/subscription/plans`)
+- [ ] Create/Edit Plan modal with Zod entitlements validation (`CreateEditPlanModal.tsx`) (`POST`, `PUT /admin/subscription/plan`)
+- [ ] Safe plan archival (`DELETE /admin/subscription/plan`)
+
+### Phase 5: Push Broadcasts & Dual-Language CMS
+- [ ] FCM Push Notification Composer with targeted user picker (`NotificationPage.tsx`) (`POST /admin/notifications/send`)
+- [ ] Broadcast history & audit logs (`GET /admin/notifications/history`)
+- [ ] Dual-language Markdown CMS editor (`PrivacyPolicyPage.tsx`, `TermsConditionsPage.tsx`, `AboutPage.tsx`) (`GET`, `PUT /admin/content/:key`)
+
+### Phase 6: Real-time Customer Support Helpdesk (Socket.io)
+- [ ] Support Ticket Queue sidebar with live unread count badges (`support:threads:list`)
+- [ ] Ticket room join and claim assignment (`support:thread:join`)
+- [ ] Live chat message history and sender (`support:messages:list`, `support:message:send`, `support:message:new`)
+- [ ] Ticket resolution & refund triggers
+
+### Phase 7: Activities, Group Rides & GPX Routes
+- [ ] Group rides directory with distance, pace, and discipline filters (`GET /admin/rides`)
+- [ ] GPX route viewer with elevation profile & participant roster (`GET /admin/rides/:id`)
+- [ ] Emergency ride cancellation with athlete notification (`DELETE /admin/rides/:id`)
+
+### Phase 8: Financial Operations & Stripe Connect Ledger
+- [ ] Global transaction ledger across memberships, gear, and SaaS subscriptions (`GET /admin/financials/ledger`)
+- [ ] Stripe Connect merchant accounts table & KYC verification status (`GET /admin/financials/stripe-accounts`)
+- [ ] Manual club payout approval workflow (`PUT /admin/financials/payouts/:id/approve`)
+
+### Phase 9: Commerce & Marketplace Operations
+- [ ] P2P marketplace classifieds moderation & takedowns (`GET /admin/marketplace/listings`, `PUT .../moderate`)
+- [ ] Club merchandise shop delivery bottleneck monitor (`GET /admin/shop/orders/bottlenecks`)
+
+---
+
+## Architectural Decisions Log
+
+1. **Tailwind CSS v4 Tokens:** Configured `@theme` in `src/index.css` with dark mode default (`#202020` canvas, `#282828` cards) and signature biker orange (`#EB712B`).
+2. **Dual-Font Typography Hierarchy:** `Poppins` for display, headers, and hero metrics; `Roboto` for data tables, form inputs, and body copy.
+3. **Transport Layer:** Standardized Axios baseQuery unwraps universal `{ statusCode, message, response }` envelope and reports errors via `sonner`.
+4. **Agile Design Pipeline:** `context/designs/` is dedicated to receiving visual references and screenshots for targeted page refactoring.
