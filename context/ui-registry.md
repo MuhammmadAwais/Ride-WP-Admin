@@ -355,3 +355,47 @@ Last updated: 2026-09-22
 
 **Pattern notes:**  
 Compact operational command strip for Push Notifications on the Dashboard. Replaces bulky consoles with a streamlined bar displaying active FCM connection state, the last 2-3 live broadcast logs from `useGetNotificationHistoryQuery`, and a direct CTA to compose instant mobile announcements.
+
+---
+
+### LiveInquiriesTerminal
+
+File: `src/features/dashboard/components/LiveInquiriesTerminal.tsx`  
+Last updated: 2026-09-22  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (outer card), `bg-main-bg/50 hover:bg-main-bg` (ticket row), `bg-accent/5` (unread row), `bg-accent/10` (icon container) |
+| Border           | `border border-border` (outer card), `border border-border/80 hover:border-accent/40` (ticket row), `border-accent/30` (unread) |
+| Border radius    | `rounded-3xl` (outer card), `rounded-2xl` (ticket row, header icon), `rounded-full` (avatar, badges, unread dot) |
+| Text — primary   | `font-poppins font-bold text-base text-text-main` (title), `font-poppins font-bold text-xs text-text-main` (athlete name) |
+| Text — secondary | `font-roboto text-xs text-text-muted` (subtitles, email, preview snippet) |
+| Spacing          | `p-6 flex flex-col justify-between h-[440px] space-y-2.5` |
+| Hover state      | `hover:border-accent hover:text-accent group-hover:text-accent transition-all` |
+| Shadow           | `shadow-sm` |
+| Accent usage     | Signature `#EB712B` for unread count badge, pulse status dot, message square badge, and hover accents |
+
+**Pattern notes:**  
+Real-time Socket.io support inquiry monitor. Seamlessly tracks incoming athlete help tickets, unread messages with pulsing badges, ticket assignment states (`open`, `assigned`, `closed`), and offers direct 1-click launch into the active thread in `/support`.
+
+---
+
+### DashboardPlansCard
+
+File: `src/features/dashboard/components/DashboardPlansCard.tsx`  
+Last updated: 2026-09-22  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (outer card), `bg-main-bg/50 hover:bg-main-bg` (plan row), `bg-blue-500/10` (icon), `bg-accent/10` (PRO pill) |
+| Border           | `border border-border` (outer card), `border border-border/80 hover:border-accent/40` (plan row), `border-accent/25` (PRO pill) |
+| Border radius    | `rounded-3xl` (outer card), `rounded-2xl` (plan row, header icon, tier pill), `rounded-xl` (currency badge) |
+| Text — primary   | `font-poppins font-bold text-base text-text-main` (title), `font-poppins font-black text-sm sm:text-base` (pricing) |
+| Text — secondary | `font-roboto text-xs text-text-muted` (features & cadence), `font-poppins font-bold text-xs text-accent` (manage CTA) |
+| Spacing          | `p-6 flex flex-col justify-between h-[440px] space-y-2.5` |
+| Hover state      | `group-hover:text-accent hover:border-accent/40 transition-all` |
+| Shadow           | `shadow-sm` |
+| Accent usage     | Signature `#EB712B` for PRO tier badges, price hover transitions, and "Manage Plans" navigation CTA |
+
+**Pattern notes:**  
+Active SaaS subscription monetization deck. Displays live club & athlete subscription tiers from RTK Query with EUR (`€`) pricing, clean human-readable cadence ("Billed yearly", "Billed monthly", "Lifetime access"), verified feature counts, and Stripe Connect platform status.

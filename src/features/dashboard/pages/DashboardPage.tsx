@@ -4,6 +4,8 @@ import { Helmet } from 'react-helmet-async';
 import MetricCards from '../components/MetricCards';
 import DashboardMap from '../components/DashboardMap';
 import DashboardBroadcastBar from '../components/DashboardBroadcastBar';
+import LiveInquiriesTerminal from '../components/LiveInquiriesTerminal';
+import DashboardPlansCard from '../components/DashboardPlansCard';
 
 export default function DashboardPage() {
   return (
@@ -23,8 +25,15 @@ export default function DashboardPage() {
 
         {/* 3. Streamlined Community Push Broadcast Bar */}
         <DashboardBroadcastBar />
+
+        {/* 4. Real-time Operations: Live Support & SaaS Subscription Plans */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <LiveInquiriesTerminal />
+          <DashboardPlansCard />
+        </div>
       </div>
     </>
   );
 }
+
 

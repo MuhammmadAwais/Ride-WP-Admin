@@ -6,8 +6,9 @@
 
 ## Current Status
 
-- **Completed in Sprint:** `ClubDetailsPage.tsx` full refactor + 7 modular sub-tabs, Top-3 athletic leaderboard podium, Support chat message deduplication (`ChatContext.tsx`), 100% Dynamic Platform Analytics (`AnalyticsPage.tsx`), Dashboard Google Maps club popup detail card with live detail query & backend banner resolution (`ClubMapDetailCard.tsx`), and Dashboard Streamlining (purged mock rides table, removed redundant club spotlight, deployed live `DashboardBroadcastBar.tsx`).
+- **Completed in Sprint:** `ClubDetailsPage.tsx` full refactor + 7 modular sub-tabs, Top-3 athletic leaderboard podium, Support chat message deduplication (`ChatContext.tsx`), 100% Dynamic Platform Analytics (`AnalyticsPage.tsx`), Google Maps club popup banner fix (`ClubMapDetailCard.tsx`), and Dashboard Operations Hub (purged mock rides table, removed redundant club spotlight, deployed live `DashboardBroadcastBar.tsx`, redesigned `LiveInquiriesTerminal.tsx` and `DashboardPlansCard.tsx`).
 - **Next Up:** Refactor Club Directory table & cards (`ClubsPage.tsx`) (`GET /admin/clubs`)
+
 
 
 ---
