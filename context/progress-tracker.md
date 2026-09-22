@@ -6,9 +6,9 @@
 
 ## Current Status
 
-- **Active Milestone:** Phase 2: User Governance & 360° Athlete Dossier (Completed)
-- **Active Focus:** Phase 3: Club Governance & Deep Multi-Tab Inspector
-- **Next Up:** Awaiting User Design References or instructions for Phase 3 (Clubs Directory & Inspector)
+- **Completed in Sprint:** `ClubDetailsPage.tsx` full refactor + 7 modular sub-tabs, Top-3 athletic leaderboard podium, Support chat message deduplication (`ChatContext.tsx`), 100% Dynamic Platform Analytics (`AnalyticsPage.tsx`), Dashboard Google Maps club popup detail card with live detail query & backend banner resolution (`ClubMapDetailCard.tsx`), and Dashboard Streamlining (purged mock rides table, removed redundant club spotlight, deployed live `DashboardBroadcastBar.tsx`).
+- **Next Up:** Refactor Club Directory table & cards (`ClubsPage.tsx`) (`GET /admin/clubs`)
+
 
 ---
 
@@ -40,20 +40,24 @@
 
 ### Phase 3: Club Governance & Multi-Tab Inspector
 - [ ] Refactor Club Directory table & cards (`ClubsPage.tsx`) (`GET /admin/clubs`)
-- [ ] Refactor Deep Club Inspector (`ClubDetailsPage.tsx`) with sub-resource tabs: members, rides, news, shop, marketplace (`GET /admin/clubs/:id?tab=...`)
-- [ ] Club suspension toggle (`PUT /admin/clubs/:id/suspend`)
-- [ ] Club disbanding with cascade warnings (`DELETE /admin/clubs/:id`)
+- [x] Refactor Deep Club Inspector (`ClubDetailsPage.tsx`) with 7 sub-resource tabs: members, rides, news, shop, marketplace, discounts, leaderboard (`GET /admin/clubs/:id?tab=...`)
+- [x] Club members athlete normalization with initials fallback and dossier linking
+- [x] Athletic leaderboard with dual modes (App Rides vs. Strava Sync), month/period filters, and adaptive podium
+- [x] Sub-resource inspection modals wired (`RideDetailModal`, `ListingDetailModal`)
+- [x] Standardized currency to EUR (`€`) across revenue, merch shop, and member marketplace
+- [x] Club suspension toggle (`PUT /admin/clubs/:id/suspend`)
+- [x] Club disbanding with cascade warnings (`DELETE /admin/clubs/:id`)
 
 ### Phase 4: Monetization & Subscription Tier Management
-- [ ] Payments page with segmented switcher between Ledger & Subscriptions (`PaymentsPage.tsx`)
-- [ ] SaaS Subscription Plans table with quota badges (`SubscriptionPlansTable.tsx`) (`GET /admin/subscription/plans`)
-- [ ] Create/Edit Plan modal with Zod entitlements validation (`CreateEditPlanModal.tsx`) (`POST`, `PUT /admin/subscription/plan`)
-- [ ] Safe plan archival (`DELETE /admin/subscription/plan`)
+- [x] Streamlined 100% dynamic SaaS Monetization control center (`PaymentsPage.tsx`)
+- [x] SaaS Subscription Plans table with quota badges (`SubscriptionPlansTable.tsx`) (`GET /admin/subscription/plans`)
+- [x] Create/Edit Plan modal with Zod entitlements validation (`CreateEditPlanModal.tsx`) (`POST`, `PUT /admin/subscription/plan`)
+- [x] Safe plan archival (`DELETE /admin/subscription/plan`)
 
 ### Phase 5: Push Broadcasts & Dual-Language CMS
-- [ ] FCM Push Notification Composer with targeted user picker (`NotificationPage.tsx`) (`POST /admin/notifications/send`)
-- [ ] Broadcast history & audit logs (`GET /admin/notifications/history`)
-- [ ] Dual-language Markdown CMS editor (`PrivacyPolicyPage.tsx`, `TermsConditionsPage.tsx`, `AboutPage.tsx`) (`GET`, `PUT /admin/content/:key`)
+- [x] FCM Push Notification Composer with targeted user picker (`NotificationPage.tsx`) (`POST /admin/notifications/send`)
+- [x] Broadcast history & audit logs (`GET /admin/notifications/history`)
+- [x] Dual-language Markdown CMS editor (`PrivacyPolicyPage.tsx`, `TermsConditionsPage.tsx`, `AboutPage.tsx`) (`GET`, `PUT /admin/content/:key`)
 
 ### Phase 6: Real-time Customer Support Helpdesk (Socket.io)
 - [ ] Support Ticket Queue sidebar with live unread count badges (`support:threads:list`)

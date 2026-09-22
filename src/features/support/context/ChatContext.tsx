@@ -78,8 +78,15 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
       setMessages((prev) => {
         const existing = prev[threadId] || [];
-        // Avoid duplicate insertion
-        if (existing.some((m) => m.id === msg.id)) {
+        // Robust deduplication against ID match and timestamp fingerprint
+        const isDuplicate = existing.some(
+          (m) =>
+            (m.id && msg.id && String(m.id) === String(msg.id)) ||
+            (m.senderType === msg.senderType &&
+              m.message === msg.message &&
+              Math.abs(new Date(m.createdAt).getTime() - new Date(msg.createdAt).getTime()) < 4000)
+        );
+        if (isDuplicate) {
           return prev;
         }
         return {
@@ -237,10 +244,21 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           (response: SocketAck<SupportMessage>) => {
             if (response?.ok && response?.data) {
               const newMsg = response.data;
-              setMessages((prev) => ({
-                ...prev,
-                [threadId]: [...(prev[threadId] || []), newMsg],
-              }));
+              setMessages((prev) => {
+                const existing = prev[threadId] || [];
+                const alreadyExists = existing.some(
+                  (m) =>
+                    (m.id && newMsg.id && String(m.id) === String(newMsg.id)) ||
+                    (m.senderType === 'admin' &&
+                      m.message === newMsg.message &&
+                      Math.abs(new Date(m.createdAt).getTime() - new Date(newMsg.createdAt).getTime()) < 4000)
+                );
+                if (alreadyExists) return prev;
+                return {
+                  ...prev,
+                  [threadId]: [...existing, newMsg],
+                };
+              });
 
               // Update thread snippet
               setThreads((prev) =>

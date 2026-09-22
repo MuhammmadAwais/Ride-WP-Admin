@@ -3,9 +3,7 @@ import { Helmet } from 'react-helmet-async';
 
 import MetricCards from '../components/MetricCards';
 import DashboardMap from '../components/DashboardMap';
-import ClubsSpotlight from '../components/ClubsSpotlight';
-import DashboardOperationsDeck from '../components/DashboardOperationsDeck';
-import RecentRidesTable from '../components/RecentRidesTable';
+import DashboardBroadcastBar from '../components/DashboardBroadcastBar';
 
 export default function DashboardPage() {
   return (
@@ -23,15 +21,10 @@ export default function DashboardPage() {
           <DashboardMap />
         </div>
 
-        {/* 3. Active Sports Clubs Ecosystem Spotlight */}
-        <ClubsSpotlight />
-
-        {/* 4. Operations Deck: SaaS Monetization Tiers + Broadcast Push Transmissions */}
-        <DashboardOperationsDeck />
-
-        {/* 5. Coordinated Group Rides & Activity Streams Ledger */}
-        <RecentRidesTable />
+        {/* 3. Streamlined Community Push Broadcast Bar */}
+        <DashboardBroadcastBar />
       </div>
     </>
   );
 }
+

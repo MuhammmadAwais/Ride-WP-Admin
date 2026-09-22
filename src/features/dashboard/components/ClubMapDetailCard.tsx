@@ -1,6 +1,7 @@
 /**
  * @fileoverview Premium Club Details Card displayed when a club pin is clicked on Google Maps.
- * Renders cover banner, club avatar, privacy/visibility badges, member metrics,
+ * Automatically fetches comprehensive club details via useGetClubByIdQuery to resolve
+ * high-resolution cover banner, club avatar, privacy/visibility badges, member metrics,
  * organizer attribution, and navigation action to the full club profile.
  */
 import React, { useRef } from 'react';
@@ -8,18 +9,17 @@ import { useNavigate } from 'react-router-dom';
 import {
   X,
   MapPin,
-  Users,
-  Shield,
   Globe,
   Lock,
   ExternalLink,
   UserCheck,
-  Calendar,
   Sparkles,
   Bike,
+  Loader2,
 } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { useGetClubByIdQuery } from '@/features/clubs/api/clubApi';
 import type { ClubListItem } from '@/features/clubs/types/clubTypes';
 import { SafeImage } from '@/Components/common/SafeImage';
 import { ROUTES } from '@/Constants';
@@ -32,6 +32,38 @@ interface ClubMapDetailCardProps {
 export const ClubMapDetailCard: React.FC<ClubMapDetailCardProps> = ({ club, onClose }) => {
   const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Fetch full club details to get high-resolution banner/coverImage, accurate members, and live metadata
+  const { data: detailData, isLoading: isDetailLoading } = useGetClubByIdQuery(
+    { clubId: club.id },
+    { skip: !club.id }
+  );
+
+  const profile = detailData?.profile;
+  const stats = detailData?.stats;
+
+  // Resolve cover image from detail profile first, or fallback to list item
+  const bannerImage =
+    profile?.coverImage ??
+    (profile as any)?.cover_image ??
+    (profile as any)?.cover ??
+    (profile as any)?.bannerImage ??
+    (profile as any)?.banner ??
+    (profile as any)?.coverPhoto ??
+    club.coverImage ??
+    (club as any)?.cover_image;
+
+  // Resolve dynamic fields with fallback to list item
+  const clubName = profile?.clubName || club.clubName;
+  const logoImage = profile?.logo ?? club.logo;
+  const locationText = profile?.location || club.location || 'Global Headquarters';
+  const discipline = profile?.clubTypeName || club.clubTypeName || 'Cycling';
+  const isPrivate = ((profile?.clubPrivacyName || club.clubPrivacyName) || '').toLowerCase() === 'private';
+  const memberCount = stats?.activeMembers ?? club.participantCount ?? 0;
+  const establishedYear = (profile?.createdAt || club.createdAt)
+    ? new Date(profile?.createdAt || club.createdAt).getFullYear()
+    : 2026;
+  const ownerName = profile?.owner?.fullName || club.owner?.fullName;
 
   // GSAP Entrance
   useGSAP(() => {
@@ -58,42 +90,42 @@ export const ClubMapDetailCard: React.FC<ClubMapDetailCardProps> = ({ club, onCl
     }
   };
 
-  const isPrivate = (club.clubPrivacyName || '').toLowerCase() === 'private';
-  const memberCount = club.participantCount ?? 0;
-  const establishedYear = club.createdAt ? new Date(club.createdAt).getFullYear() : 2026;
-
   return (
     <div
       ref={cardRef}
       className="absolute bottom-5 left-4 right-4 sm:right-auto sm:left-6 sm:w-[380px] bg-surface/95 backdrop-blur-2xl border border-border/80 rounded-3xl shadow-[0_24px_60px_rgba(0,0,0,0.35)] overflow-hidden z-30 pointer-events-auto"
     >
       {/* ── Banner Image Header ────────────────────────────────────────────── */}
-      <div className="relative h-32 sm:h-36 w-full overflow-hidden bg-main-bg">
-        {club.coverImage ? (
-          <img
-            src={club.coverImage}
-            alt={club.clubName}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = 'none';
-            }}
-          />
-        ) : (
+      <div className="relative h-36 sm:h-40 w-full overflow-hidden bg-main-bg">
+        {isDetailLoading && !bannerImage ? (
           <div className="w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-950 flex items-center justify-center relative">
-            <div className="absolute inset-0 bg-[radial-gradient(#EB712B_1px,transparent_1px)] [background-size:16px_16px] opacity-15" />
-            <Bike size={44} className="text-accent/30" />
+            <div className="absolute inset-0 bg-[radial-gradient(#EB712B_1px,transparent_1px)] [background-size:16px_16px] opacity-15 animate-pulse" />
+            <Loader2 size={24} className="animate-spin text-accent/50 z-10" />
           </div>
+        ) : (
+          <SafeImage
+            src={bannerImage}
+            alt={clubName}
+            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+            fallback={
+              <div className="w-full h-full bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-950 flex items-center justify-center relative">
+                <div className="absolute inset-0 bg-[radial-gradient(#EB712B_1px,transparent_1px)] [background-size:16px_16px] opacity-20" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-accent/20 via-transparent to-accent/10" />
+                <Bike size={44} className="text-accent/35" />
+              </div>
+            }
+          />
         )}
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-surface via-black/30 to-black/50" />
+        {/* Dynamic Gradient Overlay for contrast with floating tags & close button */}
+        <div className="absolute inset-0 bg-gradient-to-t from-surface via-black/25 to-black/60 pointer-events-none" />
 
         {/* Top Badges & Close Button */}
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
           {/* Category Tag */}
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-poppins font-semibold uppercase tracking-wider bg-black/60 backdrop-blur-md text-white border border-white/10 shadow-sm">
             <Sparkles size={11} className="text-accent" />
-            <span>{club.clubTypeName || 'Cycling'}</span>
+            <span>{discipline}</span>
           </span>
 
           <div className="flex items-center gap-2">
@@ -127,12 +159,12 @@ export const ClubMapDetailCard: React.FC<ClubMapDetailCardProps> = ({ club, onCl
         <div className="flex items-end gap-3.5 -mt-8 mb-3 relative z-10">
           <div className="w-16 h-16 rounded-2xl border-4 border-surface shadow-xl overflow-hidden bg-main-bg shrink-0">
             <SafeImage
-              src={club.logo}
-              alt={club.clubName}
+              src={logoImage}
+              alt={clubName}
               className="w-full h-full object-cover"
               fallback={
                 <div className="w-full h-full bg-gradient-to-br from-accent/30 to-accent/10 flex items-center justify-center text-accent font-poppins font-bold text-xl">
-                  {club.clubName.charAt(0).toUpperCase()}
+                  {clubName.charAt(0).toUpperCase()}
                 </div>
               }
             />
@@ -140,12 +172,12 @@ export const ClubMapDetailCard: React.FC<ClubMapDetailCardProps> = ({ club, onCl
 
           <div className="min-w-0 pb-1">
             <h3 className="font-poppins font-bold text-base sm:text-lg text-text-main truncate leading-tight">
-              {club.clubName}
+              {clubName}
             </h3>
-            {club.owner?.fullName && (
+            {ownerName && (
               <p className="font-roboto text-xs text-text-muted flex items-center gap-1 mt-0.5">
                 <UserCheck size={12} className="text-accent shrink-0" />
-                <span className="truncate">Led by {club.owner.fullName}</span>
+                <span className="truncate">Led by {ownerName}</span>
               </p>
             )}
           </div>
@@ -155,7 +187,7 @@ export const ClubMapDetailCard: React.FC<ClubMapDetailCardProps> = ({ club, onCl
         <div className="flex items-start gap-2 text-xs font-roboto text-text-muted bg-main-bg/50 border border-border/60 rounded-xl p-2.5 mb-3">
           <MapPin size={14} className="text-accent shrink-0 mt-0.5" />
           <span className="line-clamp-2 leading-relaxed text-text-main/90">
-            {club.location || 'Global Headquarters'}
+            {locationText}
           </span>
         </div>
 
@@ -175,7 +207,7 @@ export const ClubMapDetailCard: React.FC<ClubMapDetailCardProps> = ({ club, onCl
               Discipline
             </span>
             <span className="font-poppins font-bold text-sm text-accent mt-0.5 truncate block">
-              {club.clubTypeName || 'Cycling'}
+              {discipline}
             </span>
           </div>
 
@@ -194,7 +226,7 @@ export const ClubMapDetailCard: React.FC<ClubMapDetailCardProps> = ({ club, onCl
           onClick={() => navigate(`${ROUTES.CLUBS}/${club.id}`)}
           className="w-full py-3 px-4 rounded-xl bg-accent text-white font-poppins font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-accent/90 shadow-[0_8px_20px_-4px_rgba(235,113,43,0.5)] hover:scale-[1.02] transition-all cursor-pointer"
         >
-          <span>Inspect Club 360°</span>
+          <span>Inspect Club</span>
           <ExternalLink size={14} />
         </button>
       </div>

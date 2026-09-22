@@ -202,3 +202,156 @@ Last updated: 2026-09-21
 **Pattern notes:**  
 Radix Dialog modal providing immediate deep inspection of joined clubs without losing context on the athlete profile. Displays live statistics, founder/owner contact, club mission, and quick gateway to `/clubs/:id`.
 
+---
+
+### ClubDetailTabs
+
+File: `src/features/clubs/components/ClubDetailTabs.tsx`  
+Last updated: 2026-09-21  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (tab container track), `bg-accent` (GSAP animated indicator) |
+| Border           | `border border-border` |
+| Border radius    | `rounded-[18px]` (track), `rounded-2xl` (active highlight indicator & buttons) |
+| Text — primary   | `text-white font-poppins font-semibold` (active button) |
+| Text — secondary | `text-text-muted hover:text-text-main font-poppins font-semibold` |
+| Spacing          | `p-1 gap-1` (track), `px-5 py-2.5` (tab button) |
+| Hover state      | `hover:text-text-main hover:bg-accent/5` |
+| Shadow           | `shadow-sm` |
+| Accent usage     | `bg-accent` for animated GSAP indicator pill; `hover:bg-accent/5` for unselected tab hover |
+
+**Pattern notes:**  
+Multi-tab switcher with GSAP physics animating the width and X coordinate of the brand accent indicator.
+
+---
+
+### ClubMembersTab
+
+File: `src/features/clubs/components/tabs/ClubMembersTab.tsx`  
+Last updated: 2026-09-21  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (empty state, search input, actions), `bg-main-bg` (table canvas) |
+| Border           | `border border-border` |
+| Border radius    | `rounded-3xl` (empty state), `rounded-xl` (inputs & dossier link), `rounded-full` (role badges) |
+| Text — primary   | `font-poppins font-bold text-text-main text-sm` |
+| Text — secondary | `font-roboto text-text-muted text-xs` |
+| Spacing          | `gap-6 pb-12 mt-6` (container), `gap-3.5` (athlete cell) |
+| Hover state      | `hover:border-accent/40 text-text-main hover:text-accent` |
+| Shadow           | `shadow-sm` |
+| Accent usage     | `bg-accent/15 text-accent border-accent/30` for Owner badge; `bg-accent/10 text-accent` count chip; `text-accent` external link hover |
+
+**Pattern notes:**  
+Comprehensive athlete membership table with dynamic multi-key normalization (`user.fullName`, `fullName`, `userName`, `user.email`), `UserAvatar` monogram fallback, hierarchical role badges (Owner, Admin, Organizer, Athlete, Member), client-side search, and direct links to `/users/:userId` dossiers.
+
+---
+
+### ClubLeaderboardTab
+
+File: `src/features/clubs/components/tabs/ClubLeaderboardTab.tsx`  
+Last updated: 2026-09-21  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (table, card body), `bg-gradient-to-b from-amber-400/10 via-surface to-surface` (1st place podium), `bg-gradient-to-b from-slate-300/10 via-surface to-surface` (2nd place podium), `bg-gradient-to-b from-amber-600/10 via-surface to-surface` (3rd place podium) |
+| Border           | `border border-border`, `border-amber-400/40` (1st), `border-slate-300/40` (2nd), `border-amber-600/40` (3rd) |
+| Border radius    | `rounded-3xl` (podium cards, empty state), `rounded-2xl` (metric tiles), `rounded-full` (rank pills, badges) |
+| Text — primary   | `font-poppins font-black text-accent text-base` (distance), `font-poppins font-bold text-text-main` (athlete name) |
+| Text — secondary | `font-roboto text-text-muted text-xs` |
+| Spacing          | `gap-8 pb-12 mt-6` (container), `p-6` (podium card) |
+| Hover state      | `hover:scale-[1.02] transition-all` (podium cards), `hover:text-accent` (profile link) |
+| Shadow           | `shadow-lg` (podium cards), `shadow-sm` (table) |
+| Accent usage     | `text-accent` for distance `km` metric and bike icon; `bg-accent/10 text-accent` for season standings pill; `bg-success/10 text-success` for attendance percentage |
+
+**Pattern notes:**  
+Authentic athletic cycling/running leaderboard replacing legacy taxi/car copy. Features top-3 podium highlight cards (Gold, Silver, Bronze), distance in kilometers (`km`), rides attended, and athlete dossier linking.
+
+---
+
+### SubscriptionPlansTable
+
+File: `src/features/subscriptions/components/SubscriptionPlansTable.tsx`  
+Last updated: 2026-09-22  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (outer cards, filter container), `bg-main-bg` (search inputs, segmented tracks, Stripe telemetry strip), `bg-accent/10` (interval badge, header icon) |
+| Border           | `border border-border` (standard), `border-amber-500/30 hover:border-amber-500/60` (Gold Tier card), `border-accent/30 hover:border-accent/60` (Pro Tier card) |
+| Border radius    | `rounded-3xl` (plan cards, metric KPI cards, filter bar), `rounded-2xl` (search inputs, segmented controllers, Stripe widget), `rounded-full` (scope & interval pills) |
+| Text — primary   | `font-poppins font-black text-3xl sm:text-4xl text-text-main` (pricing & metrics), `font-poppins font-bold text-xl text-text-main` (plan name) |
+| Text — secondary | `font-roboto text-xs sm:text-sm text-text-muted`, `font-poppins font-bold text-[11px] uppercase tracking-wider` |
+| Spacing          | `space-y-8` (main stack), `p-6 sm:p-7` (plan cards), `gap-4` (metric grid), `p-4` (search bar) |
+| Hover state      | `hover:-translate-y-1 hover:shadow-xl group-hover:text-accent duration-300 transition-all` |
+| Shadow           | `shadow-sm` (default), `shadow-[0_8px_20px_-4px_rgba(235,113,43,0.5)]` (primary Create CTA), `shadow-inner` (search & filter tracks) |
+| Accent usage     | Signature `#EB712B` for primary CTA, interval badge (`bg-accent/10 text-accent`), quota icons, price accents, and active scope pills |
+
+**Pattern notes:**  
+SaaS Subscription Monetization control deck. Combines live executive KPIs, multi-dimensional search/scope/interval/sort filtering, and elevated tier cards with Stripe product telemetry (click-to-copy), capability micro-pills (Strava, GPX, Stripe, Paid Events), and quota limits. Fully dynamic with zero mock data.
+
+---
+
+### AnalyticsPage
+
+File: `src/features/analytics/pages/AnalyticsPage.tsx`  
+Last updated: 2026-09-22  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (metric cards, charts container), `bg-main-bg` (tooltips), `bg-accent/10` (header icon, metric icon badges) |
+| Border           | `border border-border` |
+| Border radius    | `rounded-3xl` (outer charts, metric cards), `rounded-2xl` (tooltips, icon containers), `rounded-full` (pills, legends) |
+| Text — primary   | `font-poppins font-black text-3xl sm:text-4xl text-text-main` (metrics, donut total), `font-poppins font-bold text-xl` (chart titles) |
+| Text — secondary | `font-roboto text-xs sm:text-sm text-text-muted`, `font-poppins font-semibold text-xs uppercase tracking-wider` |
+| Spacing          | `space-y-8 pb-12` (page stack), `gap-6` (charts grid, metric grid), `p-6 sm:p-7` (chart cards) |
+| Hover state      | `hover:border-accent/30 hover:scale-105 transition-all` |
+| Shadow           | `shadow-sm` (cards), `shadow-xl` (Recharts tooltips) |
+| Accent usage     | Signature `#EB712B` for athlete metrics, onboarding AreaChart trajectory, roster density bars, and refresh indicator |
+
+**Pattern notes:**  
+100% Dynamic athletic community analytics dashboard. Replaces legacy taxi mock data with real-time community growth velocity, sport discipline distributions (Cycling, Running, Triathlon, Gravel, MTB), club roster density rankings, and SaaS subscription tier comparisons in EUR (`€`).
+
+---
+
+### ClubMapDetailCard
+
+File: `src/features/dashboard/components/ClubMapDetailCard.tsx`  
+Last updated: 2026-09-22  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface/95 backdrop-blur-2xl` (popup card), `bg-main-bg` (banner & avatar wrapper), `bg-main-bg/50` (location tile), `bg-main-bg/70` (metrics grid) |
+| Border           | `border border-border/80` (card), `border border-border/60` (tiles & grid), `border-4 border-surface` (avatar squircle) |
+| Border radius    | `rounded-3xl` (card), `rounded-2xl` (avatar, metrics strip), `rounded-xl` (location, CTA button), `rounded-full` (badges & close) |
+| Text — primary   | `font-poppins font-bold text-base sm:text-lg text-text-main` (club name), `font-poppins font-bold text-sm text-text-main` (metric values) |
+| Text — secondary | `font-roboto text-xs text-text-muted` (attribution, location, badges) |
+| Spacing          | `sm:w-[380px] p-5 pt-0` (card body), `p-2.5` (location & metrics), `gap-2` (grid) |
+| Hover state      | `hover:bg-accent/90 hover:scale-[1.02] transition-all` (CTA), `hover:scale-105 transition-transform duration-700` (banner) |
+| Shadow           | `shadow-[0_24px_60px_rgba(0,0,0,0.35)]` (card elevation), `shadow-xl` (avatar), `shadow-[0_8px_20px_-4px_rgba(235,113,43,0.5)]` (CTA) |
+| Accent usage     | Signature `#EB712B` for Inspect Club 360° CTA button, location pin, organizer icon, discipline highlight, and fallback bike icon |
+
+**Pattern notes:**  
+Google Maps interactive pin popup card. Automatically fetches full club details via `useGetClubByIdQuery` to resolve high-resolution cover banners through `SafeImage` and backend URL normalization (`getImageUrl`). Progressively enhances member counts, established year, and founder attribution, with fallback radial biker gradients.
+
+---
+
+### DashboardBroadcastBar
+
+File: `src/features/dashboard/components/DashboardBroadcastBar.tsx`  
+Last updated: 2026-09-22  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (outer bar), `bg-main-bg/50 hover:bg-main-bg` (history chips), `bg-accent/10` (radio icon, send icon chips) |
+| Border           | `border border-border` (outer bar), `border border-border hover:border-accent/40` (chips & log button) |
+| Border radius    | `rounded-3xl` (outer bar), `rounded-2xl` (status icon, history chips), `rounded-xl` (buttons), `rounded-full` (FCM badge) |
+| Text — primary   | `font-poppins font-bold text-sm sm:text-base text-text-main` (title), `font-poppins font-bold text-xs` (chip titles & CTA) |
+| Text — secondary | `font-roboto text-xs text-text-muted` (subtitles & timestamps) |
+| Spacing          | `p-4 sm:p-5 gap-4` (container), `p-2.5 px-3 gap-2.5` (history chips) |
+| Hover state      | `hover:scale-[1.02] transition-all` (CTA), `hover:border-accent/40 group-hover:text-accent` (chips) |
+| Shadow           | `shadow-sm` (outer bar), `shadow-[0_4px_14px_-2px_rgba(235,113,43,0.4)]` (Send Alert CTA) |
+| Accent usage     | Signature `#EB712B` for radio pulse badge, Send Alert CTA button, and history broadcast icon |
+
+**Pattern notes:**  
+Compact operational command strip for Push Notifications on the Dashboard. Replaces bulky consoles with a streamlined bar displaying active FCM connection state, the last 2-3 live broadcast logs from `useGetNotificationHistoryQuery`, and a direct CTA to compose instant mobile announcements.
