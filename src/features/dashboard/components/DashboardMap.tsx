@@ -21,8 +21,8 @@ import ClubMapDetailCard from './ClubMapDetailCard';
 
 // ── Google Maps Custom Dark Theme Stylesheet ──────────────────────────────────
 const DARK_MAP_STYLES: google.maps.MapTypeStyle[] = [
-  { elementType: 'geometry', stylers: [{ color: '#18181b' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#18181b' }] },
+  { elementType: 'geometry', stylers: [{ color: '#121212' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#181818' }] },
   { elementType: 'labels.text.fill', stylers: [{ color: '#71717a' }] },
   {
     featureType: 'administrative.locality',
@@ -249,7 +249,7 @@ export default function DashboardMap() {
         streetViewControl: false,
         fullscreenControl: false,
         gestureHandling: 'greedy', // Drag without holding Ctrl
-        backgroundColor: '#18181b',
+        backgroundColor: '#121212',
       });
 
       // Dismiss card when clicking on map background
@@ -372,7 +372,7 @@ export default function DashboardMap() {
   };
 
   return (
-    <div className="relative w-full h-[520px] sm:h-[560px] bg-surface border border-border rounded-3xl overflow-hidden shadow-sm select-none">
+    <div className="relative w-full h-full min-h-[500px] bg-surface border border-border rounded-3xl overflow-hidden shadow-xs select-none">
       {/* Google Maps Container */}
       <div
         ref={mapContainerRef}
@@ -408,8 +408,8 @@ export default function DashboardMap() {
       <div className="absolute top-4 left-4 right-4 z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pointer-events-none">
         {/* Network Badge */}
         <div className="bg-surface/90 backdrop-blur-xl border border-border rounded-2xl p-3 shadow-lg flex items-center gap-3 pointer-events-auto">
-          <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shrink-0">
-            <Navigation size={18} />
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent dark:from-[#2a170e] dark:via-[#1c1410] dark:to-[#120f0e] border border-[#EB712B]/25 flex items-center justify-center text-accent shrink-0 shadow-xs">
+            <Navigation size={17} />
           </div>
           <div>
             <h4 className="font-poppins font-bold text-xs sm:text-sm text-text-main leading-tight flex items-center gap-2">

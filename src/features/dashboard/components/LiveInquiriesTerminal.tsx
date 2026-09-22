@@ -40,12 +40,12 @@ export default function LiveInquiriesTerminal() {
   };
 
   return (
-    <div className="bg-surface border border-border rounded-3xl p-6 flex flex-col justify-between h-[440px] shadow-sm relative overflow-hidden">
+    <div className="bg-surface border border-border rounded-3xl p-5 sm:p-6 flex flex-col justify-between h-full min-h-[500px] shadow-xs relative overflow-hidden">
       {/* ── Header ────────────────────────────────────────────────────────── */}
       <div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-accent/10 border border-accent/20 text-accent flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent dark:from-[#2a170e] dark:via-[#1c1410] dark:to-[#120f0e] border border-[#EB712B]/25 text-accent flex items-center justify-center shrink-0 shadow-xs">
               <MessageSquare size={18} />
             </div>
             <div>
@@ -60,7 +60,7 @@ export default function LiveInquiriesTerminal() {
 
           <div className="flex items-center gap-2">
             {unreadCount > 0 ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-poppins font-bold bg-accent/15 text-accent border border-accent/30 animate-pulse">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-poppins font-bold bg-accent/15 text-accent border border-accent/30 animate-pulse">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                 {unreadCount} Unread
               </span>
@@ -148,8 +148,8 @@ export default function LiveInquiriesTerminal() {
           })
         ) : (
           <div className="h-full flex flex-col items-center justify-center text-center p-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3">
-              <ShieldCheck size={24} />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent dark:from-[#2a170e] dark:via-[#1c1410] dark:to-[#120f0e] border border-[#EB712B]/25 text-accent flex items-center justify-center mb-3 shadow-xs">
+              <ShieldCheck size={22} />
             </div>
             <h4 className="font-poppins font-bold text-text-main text-sm">Helpdesk All Clear</h4>
             <p className="font-roboto text-text-muted text-xs mt-1 max-w-[240px]">
@@ -175,7 +175,7 @@ export default function LiveInquiriesTerminal() {
 
         <button
           onClick={() => navigate(ROUTES.APP_SUPPORT)}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-surface border border-border hover:border-accent hover:text-accent text-text-main text-xs font-poppins font-semibold transition-all cursor-pointer group"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-main-bg/80 border border-border hover:border-accent hover:text-accent text-text-main text-xs font-poppins font-semibold transition-all cursor-pointer group"
         >
           <span>Support Desk</span>
           <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

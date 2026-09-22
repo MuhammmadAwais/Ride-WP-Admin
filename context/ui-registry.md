@@ -365,18 +365,18 @@ Last updated: 2026-09-22
 
 | Property         | Class |
 | ---------------- | ----- |
-| Background       | `bg-surface` (outer card), `bg-main-bg/50 hover:bg-main-bg` (ticket row), `bg-accent/5` (unread row), `bg-accent/10` (icon container) |
+| Background       | `bg-surface` (outer card), `bg-main-bg/50 hover:bg-main-bg` (ticket row), `bg-accent/5` (unread row), ember gradient container (header & empty) |
 | Border           | `border border-border` (outer card), `border border-border/80 hover:border-accent/40` (ticket row), `border-accent/30` (unread) |
-| Border radius    | `rounded-3xl` (outer card), `rounded-2xl` (ticket row, header icon), `rounded-full` (avatar, badges, unread dot) |
+| Border radius    | `rounded-3xl` (outer card), `rounded-2xl` (ticket row), `rounded-xl` (header icon), `rounded-full` (avatar, status badges) |
 | Text — primary   | `font-poppins font-bold text-base text-text-main` (title), `font-poppins font-bold text-xs text-text-main` (athlete name) |
 | Text — secondary | `font-roboto text-xs text-text-muted` (subtitles, email, preview snippet) |
-| Spacing          | `p-6 flex flex-col justify-between h-[440px] space-y-2.5` |
+| Spacing          | `p-5 sm:p-6 flex flex-col justify-between h-full min-h-[500px] space-y-2.5` |
 | Hover state      | `hover:border-accent hover:text-accent group-hover:text-accent transition-all` |
-| Shadow           | `shadow-sm` |
-| Accent usage     | Signature `#EB712B` for unread count badge, pulse status dot, message square badge, and hover accents |
+| Shadow           | `shadow-xs` |
+| Accent usage     | Signature `#EB712B` for unread count badge, pulse status dot, ember gradient icon container, and hover accents |
 
 **Pattern notes:**  
-Real-time Socket.io support inquiry monitor. Seamlessly tracks incoming athlete help tickets, unread messages with pulsing badges, ticket assignment states (`open`, `assigned`, `closed`), and offers direct 1-click launch into the active thread in `/support`.
+Real-time Socket.io support inquiry monitor placed in the Surveillance & Support hub alongside Google Maps. Seamlessly tracks incoming athlete help tickets, unread messages with pulsing badges, ticket assignment states (`open`, `assigned`, `closed`), and offers direct 1-click launch into the active thread in `/support`.
 
 ---
 
@@ -387,15 +387,38 @@ Last updated: 2026-09-22
 
 | Property         | Class |
 | ---------------- | ----- |
-| Background       | `bg-surface` (outer card), `bg-main-bg/50 hover:bg-main-bg` (plan row), `bg-blue-500/10` (icon), `bg-accent/10` (PRO pill) |
-| Border           | `border border-border` (outer card), `border border-border/80 hover:border-accent/40` (plan row), `border-accent/25` (PRO pill) |
-| Border radius    | `rounded-3xl` (outer card), `rounded-2xl` (plan row, header icon, tier pill), `rounded-xl` (currency badge) |
-| Text — primary   | `font-poppins font-bold text-base text-text-main` (title), `font-poppins font-black text-sm sm:text-base` (pricing) |
-| Text — secondary | `font-roboto text-xs text-text-muted` (features & cadence), `font-poppins font-bold text-xs text-accent` (manage CTA) |
-| Spacing          | `p-6 flex flex-col justify-between h-[440px] space-y-2.5` |
-| Hover state      | `group-hover:text-accent hover:border-accent/40 transition-all` |
-| Shadow           | `shadow-sm` |
-| Accent usage     | Signature `#EB712B` for PRO tier badges, price hover transitions, and "Manage Plans" navigation CTA |
+| Background       | `bg-surface` (outer card), `bg-main-bg/50 hover:bg-main-bg` (tier card), ember gradient container (header icon) |
+| Border           | `border border-border` (outer card), `border border-border hover:border-accent/40` (tier cards) |
+| Border radius    | `rounded-3xl` (outer card), `rounded-2xl` (tier cards), `rounded-xl` (header icon, currency badge), `rounded-md` (scope pills) |
+| Text — primary   | `font-poppins font-bold text-base sm:text-lg text-text-main` (title), `font-poppins font-black text-2xl` (pricing) |
+| Text — secondary | `font-roboto text-xs text-text-muted` (features & cadence), `font-poppins font-semibold text-accent` (configure CTA) |
+| Spacing          | `p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4` |
+| Hover state      | `group-hover:text-accent hover:border-accent/40 transition-all cursor-pointer` |
+| Shadow           | `shadow-xs` |
+| Accent usage     | Signature `#EB712B` for scope badges, tier card hover borders, ember icon container, and "Configure" CTAs |
 
 **Pattern notes:**  
-Active SaaS subscription monetization deck. Displays live club & athlete subscription tiers from RTK Query with EUR (`€`) pricing, clean human-readable cadence ("Billed yearly", "Billed monthly", "Lifetime access"), verified feature counts, and Stripe Connect platform status.
+Full-width SaaS monetization tier showcase across row 4 of the Dashboard. Displays active club & athlete subscription packages from RTK Query with EUR (`€`) pricing, verified billing intervals ("Lifetime access", "/month", "/year"), dynamic feature entitlements parsed from `plan.config` (e.g. Strava telemetry, GPX export, club payouts), and PCI-DSS / Stripe Billing live webhook status.
+
+---
+
+### MetricCards (Blended Divided Telemetry Bar)
+
+File: `src/features/dashboard/components/MetricCards.tsx`  
+Last updated: 2026-09-22  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface/50 backdrop-blur-sm` (outer container), `hover:bg-hover/30` (cell hover), ember gradient container (icon) |
+| Border           | `border border-border rounded-3xl` (outer container), `divide-y sm:divide-y-0 sm:divide-x divide-border` (internal telemetry grid) |
+| Border radius    | `rounded-3xl` (outer bar), `rounded-xl` / `rounded-2xl` (ember icon container) |
+| Text — primary   | `font-poppins font-black text-2xl sm:text-3xl text-text-main` (numerical telemetry count) |
+| Text — secondary | `text-[10px] sm:text-[11px] font-poppins font-black uppercase tracking-widest text-text-muted` (labels) |
+| Spacing          | `p-5 sm:p-6 flex items-center justify-between gap-4` |
+| Hover state      | `hover:bg-hover/30 group-hover:scale-105 group-hover:border-[#EB712B]/40 transition-all` |
+| Shadow           | `shadow-xs` |
+| Accent usage     | Signature `#EB712B` ember icon container (`bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent dark:from-[#2a170e] dark:via-[#1c1410] dark:to-[#120f0e] border border-[#EB712B]/25 text-accent`) |
+
+**Pattern notes:**  
+Continuous architectural telemetry strip aligned 1:1 with `Ride-WP/src/features/public-club/pages/UserWallet.tsx`. Replaces disjointed floating cards with a cohesive 4-cell divided deck featuring GSAP numerical rollups, real-time platform metrics (Athletes, Clubs, Inquiries, Tiers), and signature ember icon containers.
+

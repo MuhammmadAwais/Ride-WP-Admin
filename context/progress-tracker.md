@@ -4,9 +4,14 @@
 
 ---
 
-## Current Status
-
-- **Completed in Sprint:** `ClubDetailsPage.tsx` full refactor + 7 modular sub-tabs, Top-3 athletic leaderboard podium, Support chat message deduplication (`ChatContext.tsx`), 100% Dynamic Platform Analytics (`AnalyticsPage.tsx`), Google Maps club popup banner fix (`ClubMapDetailCard.tsx`), and Dashboard Operations Hub (purged mock rides table, removed redundant club spotlight, deployed live `DashboardBroadcastBar.tsx`, redesigned `LiveInquiriesTerminal.tsx` and `DashboardPlansCard.tsx`).
+- **Completed in Sprint:** 
+  - `Ride-WP` companion app styling alignment: dark mode palette (`#121212` canvas, `#181818` card surface, `rgba(255, 255, 255, 0.08)` borders, `#A1A1AA` secondary text).
+  - Signature `Ride-WP` ember icon containers: `bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent dark:from-[#2a170e] dark:via-[#1c1410] dark:to-[#120f0e] border border-[#EB712B]/25 text-accent shadow-xs`.
+  - Executive Command Dashboard restructure:
+    1. Top 4 Metric Cards as continuous, divided architectural telemetry strip (`divide-x divide-border`).
+    2. Surveillance & Support row: Google Maps ~75% width on left + Live Helpdesk Terminal on right (`h-[560px]`).
+    3. Community Push Notification Broadcast Strip (`DashboardBroadcastBar.tsx`).
+    4. Full-width SaaS Monetization Showcase (`DashboardPlansCard.tsx`) with EUR (`€`) pricing and dynamic config entitlements.
 - **Next Up:** Refactor Club Directory table & cards (`ClubsPage.tsx`) (`GET /admin/clubs`)
 
 

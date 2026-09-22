@@ -22,14 +22,14 @@ accent:
   glow: 'rgba(235, 113, 43, 0.25)'   # Elevation focus glow
 
 dark_theme (default):
-  main-bg: '#202020'       # Deep matte charcoal canvas
-  surface: '#282828'       # Primary card and sidebar background (with 90% alpha support #282828E5)
-  surface-elevated: '#323232' # Elevated dropdowns, popovers, and modals
+  main-bg: '#121212'       # Pure sleek midnight canvas (matches Ride-WP)
+  surface: '#181818'       # Primary deep charcoal card and surface background
+  surface-elevated: '#222222' # Elevated dropdowns, popovers, and modals
   text-main: '#FFFFFF'     # High-contrast primary text
-  text-muted: '#95908D'    # Secondary descriptive text & icons
-  border: 'rgba(255, 255, 255, 0.05)' # Ultra-clean border division
+  text-muted: '#A1A1AA'    # Zinc-400 crisp secondary descriptive text & icons
+  border: 'rgba(255, 255, 255, 0.08)' # Subtle boundary borders
   hover: 'rgba(255, 255, 255, 0.05)'  # Row & item hover state
-  glass-bg: 'rgba(40, 40, 40, 0.65)'  # Frosted glassmorphism for sticky bars
+  glass-bg: 'rgba(18, 18, 18, 0.85)'  # Frosted glassmorphism for sticky bars
   table-header: 'rgba(235, 113, 43, 0.08)' # Subtle accent-tinted table headers
 
 light_theme:

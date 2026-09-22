@@ -36,7 +36,7 @@ export const DashboardBroadcastBar: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         {/* ── Left Identity & Status ───────────────────────────────────────── */}
         <div className="flex items-center gap-3.5 shrink-0">
-          <div className="w-11 h-11 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shrink-0 shadow-xs">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent dark:from-[#2a170e] dark:via-[#1c1410] dark:to-[#120f0e] border border-[#EB712B]/25 flex items-center justify-center text-accent shrink-0 shadow-xs">
             <Radio size={20} className="animate-pulse" />
           </div>
 

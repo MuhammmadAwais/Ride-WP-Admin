@@ -20,16 +20,16 @@
 }
 
 html.dark {
-  /* Dark Theme */
-  --color-main-bg: #202020;
-  --color-secondary-bg: #282828E5;
-  --color-main-text: #FFFFFF;
-  --color-secondary-text: #95908D;
-  --color-accent: #EB712B;
-  --color-border: rgba(255, 255, 255, 0.05); /* Smooth blending for dark mode */
-  --color-hover: rgba(255, 255, 255, 0.05);
-  --color-glass-bg: rgba(40, 40, 40, 0.5);
-  --color-table-header: rgba(235, 113, 43, 0.08);
+  /* Dark Theme — Aligned 1:1 with Ride-WP companion app */
+  --color-main-bg:         #121212;
+  --color-secondary-bg:    #181818;
+  --color-main-text:       #FFFFFF;
+  --color-secondary-text:  #A1A1AA;
+  --color-accent:          #EB712B;
+  --color-border:          rgba(255, 255, 255, 0.08);
+  --color-hover:           rgba(255, 255, 255, 0.05);
+  --color-glass-bg:        rgba(18, 18, 18, 0.85);
+  --color-table-header:    rgba(235, 113, 43, 0.08);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
@@ -46,6 +46,7 @@ html.dark {
   --color-text-main:       var(--color-main-text);
   --color-text-muted:      var(--color-secondary-text);
   --color-border:          var(--color-border);
+  --color-hover:           var(--color-hover);
   --color-error:           #EF4444;
   --color-success:         #10B981;
   --color-warning:         #F59E0B;
