@@ -422,3 +422,93 @@ Last updated: 2026-09-22
 **Pattern notes:**  
 Continuous architectural telemetry strip aligned 1:1 with `Ride-WP/src/features/public-club/pages/UserWallet.tsx`. Replaces disjointed floating cards with a cohesive 4-cell divided deck featuring GSAP numerical rollups, real-time platform metrics (Athletes, Clubs, Inquiries, Tiers), and signature ember icon containers.
 
+---
+
+### AnalyticsMetricCards (Divided Platform Telemetry Bar)
+
+File: `src/features/analytics/components/MetricCards.tsx`  
+Last updated: 2026-09-22  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface/50 backdrop-blur-sm` (outer container), `hover:bg-hover/30` (cell hover), ember gradient container (icon) |
+| Border           | `border border-border rounded-3xl` (outer container), `divide-y sm:divide-y-0 sm:divide-x divide-border` |
+| Border radius    | `rounded-3xl` (outer bar), `rounded-xl` (ember icon container) |
+| Text — primary   | `font-poppins font-black text-2xl sm:text-3xl lg:text-4xl text-text-main` (animated counter) |
+| Text — secondary | `text-[10px] sm:text-[11px] font-poppins font-black uppercase tracking-widest text-text-muted` (title), `font-roboto text-[11px] text-text-muted` (subtext) |
+| Spacing          | `p-5 sm:p-6 flex items-center justify-between gap-4` |
+| Hover state      | `hover:bg-hover/30 group-hover:scale-105 group-hover:border-[#EB712B]/40 transition-all` |
+| Shadow           | `shadow-xs` |
+| Accent usage     | Signature `#EB712B` ember icon container, live status pulses (`bg-emerald-500 animate-pulse`), and brand badges |
+
+**Pattern notes:**  
+Analytics platform telemetry strip tracking Community Athletes, Registered Sports Clubs, Active Sport Disciplines, and SaaS Monetization Plans. Adopts the standard divided architectural layout to eliminate detached card visual noise and maintain 1:1 consistency with Dashboard and Payments.
+
+---
+
+### PaymentsMetricCards (Divided SaaS Tiers Telemetry Bar)
+
+File: `src/features/subscriptions/components/SubscriptionPlansTable.tsx`  
+Last updated: 2026-09-22  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface/50 backdrop-blur-sm` (outer container), `hover:bg-hover/30` (cell hover), ember gradient container (icon) |
+| Border           | `border border-border rounded-3xl` (outer container), `divide-y sm:divide-y-0 sm:divide-x divide-border` |
+| Border radius    | `rounded-3xl` (outer bar), `rounded-xl` (ember icon container) |
+| Text — primary   | `font-poppins font-black text-2xl sm:text-3xl lg:text-4xl text-text-main` (tier counts) |
+| Text — secondary | `text-[10px] sm:text-[11px] font-poppins font-black uppercase tracking-widest text-text-muted` (title), `font-roboto text-[11px] text-text-muted` (subtext) |
+| Spacing          | `p-5 sm:p-6 flex items-center justify-between gap-4` |
+| Hover state      | `hover:bg-hover/30 group-hover:scale-105 group-hover:border-[#EB712B]/40 transition-all` |
+| Shadow           | `shadow-xs` |
+| Accent usage     | Signature `#EB712B` ember icon container, `text-emerald-400` with pulse dot for Stripe Active status |
+
+**Pattern notes:**  
+Monetization KPI telemetry strip in the Payments control deck tracking Total Configured Tiers, Active on Stripe Tiers, Club Organizer Tiers, and Individual Athlete Tiers. Standardized into the divided architectural telemetry strip.
+
+---
+
+### DataTable (Universal Ride-WP Data Table)
+
+File: `src/Components/ui/DataTable.tsx`  
+Last updated: 2026-09-22  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (wrapper), `bg-hover/50` (thead tr), `hover:bg-hover/30` (tbody tr), `bg-main-bg` (pagination buttons) |
+| Border           | `border border-border` (outer wrapper), `border-b border-border` (thead tr), `border-b border-border/70` (tbody tr), `border-t border-border` (pagination bar) |
+| Border radius    | `rounded-2xl` (outer wrapper), `rounded-lg` / `rounded-xl` (pagination buttons, per-page select), `rounded-2xl` (empty state squircle) |
+| Text — primary   | `font-poppins text-[11px] font-bold text-text-muted uppercase tracking-[0.08em]` (th), `font-roboto text-[13px] text-text-main/90` (td) |
+| Text — secondary | `font-roboto text-xs text-text-muted` (pagination microcopy, empty state subtext) |
+| Spacing          | `py-3.5 px-5` (th and td padding), `px-6 py-3.5` (pagination footer) |
+| Hover state      | `hover:bg-hover/30` (rows), `hover:text-accent` (sortable column headers), `hover:bg-hover hover:text-accent` (page buttons) |
+| Shadow           | `shadow-xs dark:shadow-xl` (table wrapper), `shadow-[0_3px_10px_-2px_rgba(235,113,43,0.4)]` (active page button) |
+| Accent usage     | Signature `#EB712B` sort direction indicators with glow drop-shadow, amber glow query highlight (`mark`), active pagination button, and empty state squircle |
+
+**Pattern notes:**  
+Universal tabular data engine across all admin views (Users, Clubs, Notifications, Member Rosters, Club Rides, Purchases, and Leaderboards). Aligned 1:1 with `Ride-WP/src/components/ui/DataTable.tsx`: features GSAP staggered row entrances, search term substring highlighting, linear gradient shimmer skeleton loading rows, illuminated sort states, and theme-adaptive squircle empty states.
+
+---
+
+### SubscriptionPlanCard (SaaS Monetization Tier Deck)
+
+File: `src/features/subscriptions/components/SubscriptionPlansTable.tsx`  
+Last updated: 2026-09-22  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (card surface), `bg-main-bg` (cadence badge, edit buttons), `bg-emerald-500/10` (active/trial pills) |
+| Border           | `border border-border hover:border-accent/40` (card surface), `border-border/70` (dividers) |
+| Border radius    | `rounded-3xl` (card surface), `rounded-lg` (scope badges, action buttons), `rounded-full` (status badges) |
+| Text — primary   | `font-poppins font-bold text-xl text-text-main group-hover:text-accent` (name), `font-poppins font-black text-3xl sm:text-4xl text-text-main` (price hero) |
+| Text — secondary | `font-roboto text-xs sm:text-sm text-text-muted` (description), `font-roboto text-xs sm:text-sm text-text-main/90` (feature checklist) |
+| Spacing          | `p-6 sm:p-7 flex flex-col justify-between` |
+| Hover state      | `hover:border-accent/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300` |
+| Shadow           | `shadow-xs` (base), `hover:shadow-xl` (hover) |
+| Accent usage     | Signature `#EB712B` for title hover, athlete scope badge, and Stripe icon; `text-emerald-400` checkmarks for all entitlements |
+
+**Pattern notes:**  
+SaaS tier card in the Payments control deck. Eliminates all generic filler and non-functional grey boxes. Directly parses and displays verified entitlements (Group rides, Marketplace listings, Club roster capacity, Strava sync, GPX export, club payouts) using clean checkmark items, auto-suppressing zero counts. Displays Stripe Product ID with one-click copy and active status pulse.
+
+
+

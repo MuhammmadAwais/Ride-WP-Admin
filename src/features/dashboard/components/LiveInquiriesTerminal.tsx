@@ -59,17 +59,7 @@ export default function LiveInquiriesTerminal() {
           </div>
 
           <div className="flex items-center gap-2">
-            {unreadCount > 0 ? (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-poppins font-bold bg-accent/15 text-accent border border-accent/30 animate-pulse">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                {unreadCount} Unread
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-poppins font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Live Socket
-              </span>
-            )}
+            
           </div>
         </div>
       </div>

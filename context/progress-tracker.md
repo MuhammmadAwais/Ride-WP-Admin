@@ -6,12 +6,10 @@
 
 - **Completed in Sprint:** 
   - `Ride-WP` companion app styling alignment: dark mode palette (`#121212` canvas, `#181818` card surface, `rgba(255, 255, 255, 0.08)` borders, `#A1A1AA` secondary text).
-  - Signature `Ride-WP` ember icon containers: `bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent dark:from-[#2a170e] dark:via-[#1c1410] dark:to-[#120f0e] border border-[#EB712B]/25 text-accent shadow-xs`.
-  - Executive Command Dashboard restructure:
-    1. Top 4 Metric Cards as continuous, divided architectural telemetry strip (`divide-x divide-border`).
-    2. Surveillance & Support row: Google Maps ~75% width on left + Live Helpdesk Terminal on right (`h-[560px]`).
-    3. Community Push Notification Broadcast Strip (`DashboardBroadcastBar.tsx`).
-    4. Full-width SaaS Monetization Showcase (`DashboardPlansCard.tsx`) with EUR (`€`) pricing and dynamic config entitlements.
+  - Signature `Ride-WP` ember icon containers across all telemetry strips and cards.
+  - Universal `DataTable.tsx` overhaul matching `Ride-WP` 1:1 (squircle empty states, linear shimmer skeleton rows, illuminated sort states, search highlight marks, compact row typography).
+  - SaaS Plan Cards in Payments (`SubscriptionPlansTable.tsx`): purged generic grey box and "0" quotas, implemented clean checkmark entitlements, sleek header pills, and Stripe ID copy helper.
+  - Executive Command Dashboard restructure (4-tier layout with 75% Map / 25% Helpdesk).
 - **Next Up:** Refactor Club Directory table & cards (`ClubsPage.tsx`) (`GET /admin/clubs`)
 
 

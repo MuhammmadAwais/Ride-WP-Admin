@@ -52,6 +52,55 @@ import CreateEditPlanModal from './CreateEditPlanModal';
 
 type SortOption = 'price-asc' | 'price-desc' | 'name-asc' | 'id-desc';
 
+function getPlanEntitlements(plan: SubscriptionPlan): string[] {
+  const items: string[] = [];
+  const cfg = plan.config || {};
+
+  // Rides Quota
+  if (cfg.unlimitedRides) {
+    items.push('Unlimited Group Rides');
+  } else if (cfg.numberOfRides && Number(cfg.numberOfRides) > 0) {
+    items.push(`${cfg.numberOfRides} Group Rides / mo`);
+  }
+
+  // Marketplace Gear Quota (Do not show 0!)
+  if (cfg.unlimitedItemInMarketplace) {
+    items.push('Unlimited Marketplace Gear');
+  } else if (cfg.marketplaceItems && Number(cfg.marketplaceItems) > 0) {
+    items.push(`${cfg.marketplaceItems} Marketplace Gear Listings`);
+  }
+
+  // Club Members Capacity (Do not show 0!)
+  if (cfg.unlimitedClubMembers) {
+    items.push('Unlimited Club Roster Capacity');
+  } else if (cfg.clubMembers && Number(cfg.clubMembers) > 0) {
+    items.push(`Up to ${cfg.clubMembers} Member Capacity`);
+  }
+
+  // Verified Platform Capabilities
+  if (cfg.stravaConnection) {
+    items.push('Strava Sync & Telemetry');
+  }
+  if (cfg.gpxDownload) {
+    items.push('GPX Route File Export');
+  }
+  if (cfg.clubStripeIntegration) {
+    items.push('Direct Club Stripe Payouts');
+  }
+  if (cfg.paidActivities) {
+    items.push('Ticketed Events & Races');
+  }
+  if (cfg.premiumChat) {
+    items.push('Encrypted Club Chat Channels');
+  }
+
+  if (items.length === 0) {
+    items.push('Standard platform access');
+  }
+
+  return items;
+}
+
 const SubscriptionPlansTable: React.FC = () => {
   const { data: plans, isLoading, isError, error, refetch, isFetching } = useGetPlansQuery();
   const [deletePlan, { isLoading: isDeleting }] = useDeletePlanMutation();
@@ -199,65 +248,81 @@ const SubscriptionPlansTable: React.FC = () => {
         </div>
       </div>
 
-      {/* ── 2. Dynamic Metric KPI Cards ─────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Tiers */}
-        <div className="p-5 rounded-3xl border border-border bg-surface shadow-sm relative overflow-hidden group hover:border-accent/40 transition-all">
-          <div className="flex items-center justify-between mb-3">
-            <span className="font-roboto text-xs font-semibold text-text-muted uppercase tracking-wider">
-              Total Tiers
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
-              <Layers size={18} />
+      {/* ── 2. Dynamic Metric KPI Cards (Architectural Divided Bar) ─────────── */}
+      <div className="rounded-3xl border border-border bg-surface/50 backdrop-blur-sm overflow-hidden shadow-xs w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border">
+          {/* Total Tiers */}
+          <div className="p-5 sm:p-6 flex items-center justify-between gap-4 hover:bg-hover/30 transition-colors group">
+            <div className="space-y-1 min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-poppins font-black uppercase tracking-widest text-text-muted block truncate">
+                Total Tiers
+              </span>
+              <p className="font-poppins font-black text-2xl sm:text-3xl lg:text-4xl text-text-main block truncate tracking-tight my-0.5">
+                {metrics.total}
+              </p>
+              <span className="text-[11px] font-roboto font-medium text-text-muted block truncate">
+                Configured membership tiers
+              </span>
+            </div>
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent dark:from-[#2a170e] dark:via-[#1c1410] dark:to-[#120f0e] border border-[#EB712B]/25 flex items-center justify-center shrink-0 shadow-xs text-accent group-hover:scale-105 group-hover:border-[#EB712B]/40 transition-all">
+              <Layers size={19} />
             </div>
           </div>
-          <p className="font-poppins font-black text-3xl text-text-main">{metrics.total}</p>
-          <p className="font-roboto text-xs text-text-muted mt-1">Configured membership tiers</p>
-        </div>
 
-        {/* Active on Stripe */}
-        <div className="p-5 rounded-3xl border border-border bg-surface shadow-sm relative overflow-hidden group hover:border-emerald-500/40 transition-all">
-          <div className="flex items-center justify-between mb-3">
-            <span className="font-roboto text-xs font-semibold text-text-muted uppercase tracking-wider">
-              Active Tiers
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-              <CheckCircle2 size={18} />
+          {/* Active on Stripe */}
+          <div className="p-5 sm:p-6 flex items-center justify-between gap-4 hover:bg-hover/30 transition-colors group">
+            <div className="space-y-1 min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-poppins font-black uppercase tracking-widest text-text-muted block truncate">
+                Active Tiers
+              </span>
+              <p className="font-poppins font-black text-2xl sm:text-3xl lg:text-4xl text-emerald-400 block truncate tracking-tight my-0.5">
+                {metrics.active}
+              </p>
+              <div className="flex items-center gap-1.5 text-[11px] font-roboto text-emerald-400/90 font-medium truncate">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="truncate">Live on Stripe</span>
+              </div>
+            </div>
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent dark:from-[#2a170e] dark:via-[#1c1410] dark:to-[#120f0e] border border-[#EB712B]/25 flex items-center justify-center shrink-0 shadow-xs text-accent group-hover:scale-105 group-hover:border-[#EB712B]/40 transition-all">
+              <CheckCircle2 size={19} />
             </div>
           </div>
-          <p className="font-poppins font-black text-3xl text-emerald-400">{metrics.active}</p>
-          <div className="flex items-center gap-1.5 mt-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-            <span className="font-roboto text-xs text-emerald-500 font-medium">Live on Stripe</span>
-          </div>
-        </div>
 
-        {/* Club Tiers */}
-        <div className="p-5 rounded-3xl border border-border bg-surface shadow-sm relative overflow-hidden group hover:border-indigo-500/40 transition-all">
-          <div className="flex items-center justify-between mb-3">
-            <span className="font-roboto text-xs font-semibold text-text-muted uppercase tracking-wider">
-              Club Tiers
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-              <Shield size={18} />
+          {/* Club Tiers */}
+          <div className="p-5 sm:p-6 flex items-center justify-between gap-4 hover:bg-hover/30 transition-colors group">
+            <div className="space-y-1 min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-poppins font-black uppercase tracking-widest text-text-muted block truncate">
+                Club Tiers
+              </span>
+              <p className="font-poppins font-black text-2xl sm:text-3xl lg:text-4xl text-text-main block truncate tracking-tight my-0.5">
+                {metrics.clubs}
+              </p>
+              <span className="text-[11px] font-roboto font-medium text-text-muted block truncate">
+                For team organizers
+              </span>
+            </div>
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent dark:from-[#2a170e] dark:via-[#1c1410] dark:to-[#120f0e] border border-[#EB712B]/25 flex items-center justify-center shrink-0 shadow-xs text-accent group-hover:scale-105 group-hover:border-[#EB712B]/40 transition-all">
+              <Shield size={19} />
             </div>
           </div>
-          <p className="font-poppins font-black text-3xl text-indigo-400">{metrics.clubs}</p>
-          <p className="font-roboto text-xs text-text-muted mt-1">For team organizers</p>
-        </div>
 
-        {/* User Tiers */}
-        <div className="p-5 rounded-3xl border border-border bg-surface shadow-sm relative overflow-hidden group hover:border-cyan-500/40 transition-all">
-          <div className="flex items-center justify-between mb-3">
-            <span className="font-roboto text-xs font-semibold text-text-muted uppercase tracking-wider">
-              Athlete Tiers
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
-              <Bike size={18} />
+          {/* User Tiers */}
+          <div className="p-5 sm:p-6 flex items-center justify-between gap-4 hover:bg-hover/30 transition-colors group">
+            <div className="space-y-1 min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-poppins font-black uppercase tracking-widest text-text-muted block truncate">
+                Athlete Tiers
+              </span>
+              <p className="font-poppins font-black text-2xl sm:text-3xl lg:text-4xl text-text-main block truncate tracking-tight my-0.5">
+                {metrics.users}
+              </p>
+              <span className="text-[11px] font-roboto font-medium text-text-muted block truncate">
+                For individual riders
+              </span>
+            </div>
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent dark:from-[#2a170e] dark:via-[#1c1410] dark:to-[#120f0e] border border-[#EB712B]/25 flex items-center justify-center shrink-0 shadow-xs text-accent group-hover:scale-105 group-hover:border-[#EB712B]/40 transition-all">
+              <Bike size={19} />
             </div>
           </div>
-          <p className="font-poppins font-black text-3xl text-cyan-400">{metrics.users}</p>
-          <p className="font-roboto text-xs text-text-muted mt-1">For individual riders</p>
         </div>
       </div>
 
@@ -425,7 +490,6 @@ const SubscriptionPlansTable: React.FC = () => {
             const isFree =
               (plan.billingInterval || '').toLowerCase() === 'free' || Number(plan.price) === 0;
             const isClub = (plan.planScope || 'club').toLowerCase() === 'club';
-            const isGold = plan.name.toLowerCase().includes('gold');
             const currencySymbol =
               (plan.currency || 'eur').toLowerCase() === 'usd'
                 ? '$'
@@ -433,38 +497,32 @@ const SubscriptionPlansTable: React.FC = () => {
                 ? '£'
                 : '€';
 
-            // Distinct border and accent styling by tier
-            const borderAccentClass = isGold
-              ? 'border-amber-500/30 hover:border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.06)]'
-              : !isFree
-              ? 'border-accent/30 hover:border-accent/60 shadow-[0_0_20px_rgba(235,113,43,0.06)]'
-              : 'border-border hover:border-text-muted/40';
+            const entitlements = getPlanEntitlements(plan);
 
             return (
               <div
                 key={plan.id}
-                className={`rounded-3xl border bg-surface p-6 sm:p-7 flex flex-col justify-between shadow-sm transition-all group relative hover:shadow-xl hover:-translate-y-1 duration-300 ${borderAccentClass}`}
+                className="rounded-3xl border border-border hover:border-accent/40 bg-surface p-6 sm:p-7 flex flex-col justify-between shadow-xs transition-all duration-300 group relative hover:shadow-xl hover:-translate-y-0.5"
               >
                 <div>
                   {/* Top Badges & Actions Row */}
-                  <div className="flex items-start justify-between gap-2 mb-4">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {/* Billing Interval Badge */}
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-[11px] font-bold text-accent uppercase tracking-wider font-poppins">
-                        <Calendar size={11} />
-                        <span>{plan.billingInterval}</span>
-                      </span>
-
-                      {/* Scope Badge (Club vs Athlete) */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      {/* Scope Badge */}
                       <span
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider font-poppins border ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-poppins font-black uppercase tracking-wider border ${
                           isClub
                             ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
-                            : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
+                            : 'bg-accent/10 text-accent border-accent/20'
                         }`}
                       >
                         {isClub ? <Shield size={11} /> : <Bike size={11} />}
-                        <span>{isClub ? 'Club' : 'Athlete'}</span>
+                        <span>{isClub ? 'Club Tier' : 'Athlete Tier'}</span>
+                      </span>
+
+                      {/* Billing Interval Badge */}
+                      <span className="text-[10px] font-poppins font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-main-bg border border-border text-text-muted">
+                        {isFree ? 'Free Access' : plan.billingInterval}
                       </span>
                     </div>
 
@@ -472,28 +530,30 @@ const SubscriptionPlansTable: React.FC = () => {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => handleEdit(plan)}
-                        className="p-2 rounded-xl text-text-muted hover:text-text-main hover:bg-main-bg transition-colors cursor-pointer"
+                        className="p-1.5 rounded-lg text-text-muted hover:text-accent hover:bg-main-bg border border-transparent hover:border-border transition-all cursor-pointer"
                         title="Edit plan configuration"
                       >
-                        <Edit3 size={16} />
+                        <Edit3 size={15} />
                       </button>
                       <button
                         onClick={() => setPlanToDelete(plan)}
-                        className="p-2 rounded-xl text-text-muted hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
+                        className="p-1.5 rounded-lg text-text-muted hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all cursor-pointer"
                         title="Archive plan"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </div>
 
                   {/* Plan Name & Description */}
-                  <h3 className="font-poppins font-bold text-xl text-text-main tracking-tight group-hover:text-accent transition-colors leading-tight">
-                    {plan.name}
-                  </h3>
-                  <p className="font-roboto text-xs sm:text-sm text-text-muted mt-1.5 line-clamp-2 min-h-[38px] leading-relaxed">
-                    {plan.description || 'No description provided.'}
-                  </p>
+                  <div className="mt-3.5">
+                    <h3 className="font-poppins font-bold text-xl text-text-main tracking-tight group-hover:text-accent transition-colors leading-tight">
+                      {plan.name}
+                    </h3>
+                    <p className="font-roboto text-xs sm:text-sm text-text-muted mt-1 line-clamp-2 min-h-[36px] leading-relaxed">
+                      {plan.description || 'Configured platform subscription tier with automated entitlements.'}
+                    </p>
+                  </div>
 
                   {/* Price Tag Hero */}
                   <div className="my-5 flex items-baseline gap-1.5">
@@ -501,122 +561,60 @@ const SubscriptionPlansTable: React.FC = () => {
                       {isFree ? 'Free' : `${currencySymbol}${Number(plan.price).toFixed(2)}`}
                     </span>
                     {!isFree && (
-                      <span className="font-roboto text-xs text-text-muted font-semibold uppercase tracking-wider">
+                      <span className="font-roboto text-xs text-text-muted font-medium uppercase tracking-wider">
                         /{plan.billingInterval}
                       </span>
                     )}
                     {plan.trialPeriodDays ? (
-                      <span className="ml-auto text-[11px] font-bold font-poppins px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                        {plan.trialPeriodDays}-Day Trial
+                      <span className="ml-auto text-[11px] font-bold font-poppins px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        {plan.trialPeriodDays}-Day Free Trial
                       </span>
                     ) : null}
                   </div>
 
-                  {/* Stripe Gateway Telemetry Strip */}
-                  <div className="mb-5 p-3 rounded-2xl bg-main-bg border border-border/80 flex items-center justify-between text-xs font-roboto shadow-inner">
-                    <span className="text-text-muted flex items-center gap-2 font-medium">
-                      <CreditCard size={14} className="text-accent shrink-0" />
-                      <span>Stripe Gateway</span>
-                    </span>
-
-                    {plan.stripeProductId ? (
-                      <div className="flex items-center gap-1.5">
-                        <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-bold font-poppins uppercase tracking-wider">
-                          <CheckCircle2 size={12} />
-                          Synced
-                        </span>
-                        <button
-                          onClick={() => handleCopyStripeId(plan.stripeProductId!)}
-                          className="p-1 rounded-lg hover:bg-surface text-text-muted hover:text-text-main transition-colors cursor-pointer"
-                          title={`Copy Product ID (${plan.stripeProductId})`}
-                        >
-                          {copiedId === plan.stripeProductId ? (
-                            <Check size={12} className="text-emerald-400" />
-                          ) : (
-                            <Copy size={12} />
-                          )}
-                        </button>
-                      </div>
-                    ) : (
-                      <span className="text-[11px] font-semibold text-text-muted px-2 py-0.5 rounded-md bg-surface border border-border">
-                        Direct / Free
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Included Quotas & Capacity */}
-                  <div className="space-y-2.5 border-t border-border/70 pt-4 mb-4">
-                    <p className="font-poppins text-[11px] font-bold text-text-muted uppercase tracking-wider">
-                      Included Quotas
+                  {/* Included Entitlements & Features (Clean checklist, zero 0s, zero generic filler) */}
+                  <div className="space-y-2.5 border-t border-border/70 pt-4 mb-5">
+                    <p className="font-poppins text-[10px] font-black uppercase tracking-widest text-text-muted">
+                      Included Entitlements
                     </p>
-
-                    {/* Rides Quota */}
-                    <div className="flex items-center gap-2.5 text-xs sm:text-sm text-text-main font-roboto">
-                      <Bike size={15} className="text-accent shrink-0" />
-                      <span>
-                        {plan.config?.unlimitedRides
-                          ? 'Unlimited Rides'
-                          : `${plan.config?.numberOfRides ?? 0} Rides Allowed`}
-                      </span>
+                    <div className="space-y-2">
+                      {entitlements.map((feat, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-2.5 text-xs sm:text-sm text-text-main/90 font-roboto group-hover:text-text-main transition-colors"
+                        >
+                          <CheckCircle2 size={14} className="text-emerald-400 shrink-0" />
+                          <span className="truncate">{feat}</span>
+                        </div>
+                      ))}
                     </div>
-
-                    {/* Marketplace Quota */}
-                    <div className="flex items-center gap-2.5 text-xs sm:text-sm text-text-main font-roboto">
-                      <ShoppingBag size={15} className="text-accent shrink-0" />
-                      <span>
-                        {plan.config?.unlimitedItemInMarketplace
-                          ? 'Unlimited Marketplace Items'
-                          : `${plan.config?.marketplaceItems ?? 0} Marketplace Listings`}
-                      </span>
-                    </div>
-
-                    {/* Club Members Quota (if club scope) */}
-                    {isClub && (
-                      <div className="flex items-center gap-2.5 text-xs sm:text-sm text-text-main font-roboto">
-                        <Users size={15} className="text-accent shrink-0" />
-                        <span>
-                          {plan.config?.unlimitedClubMembers
-                            ? 'Unlimited Club Members'
-                            : `${plan.config?.clubMembers ?? 0} Member Capacity`}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Capability Badges Strip */}
-                  <div className="flex flex-wrap gap-1.5 pt-3 border-t border-border/70 mb-5">
-                    {plan.config?.stravaConnection && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold font-poppins px-2 py-0.5 rounded-lg bg-orange-500/10 text-orange-400 border border-orange-500/20">
-                        <Zap size={10} />
-                        <span>Strava Sync</span>
-                      </span>
-                    )}
-                    {plan.config?.gpxDownload && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold font-poppins px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                        <Navigation size={10} />
-                        <span>GPX Export</span>
-                      </span>
-                    )}
-                    {plan.config?.clubStripeIntegration && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold font-poppins px-2 py-0.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                        <CreditCard size={10} />
-                        <span>Club Payments</span>
-                      </span>
-                    )}
-                    {plan.config?.paidActivities && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold font-poppins px-2 py-0.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                        <Sparkles size={10} />
-                        <span>Paid Events</span>
-                      </span>
-                    )}
                   </div>
                 </div>
 
                 {/* Card Footer */}
                 <div className="pt-4 border-t border-border/70 flex items-center justify-between text-xs font-roboto">
-                  <span className="font-mono text-text-muted text-[11px] font-semibold">
-                    #{plan.id}
-                  </span>
+                  {plan.stripeProductId ? (
+                    <div className="flex items-center gap-1.5 text-text-muted" title={`Stripe ID: ${plan.stripeProductId}`}>
+                      <CreditCard size={13} className="text-accent shrink-0" />
+                      <span className="font-mono text-[11px] truncate max-w-[130px]">{plan.stripeProductId}</span>
+                      <button
+                        onClick={() => handleCopyStripeId(plan.stripeProductId!)}
+                        className="p-1 rounded hover:bg-main-bg text-text-muted hover:text-text-main transition-colors cursor-pointer"
+                        title="Copy Stripe Product ID"
+                      >
+                        {copiedId === plan.stripeProductId ? (
+                          <Check size={11} className="text-emerald-400" />
+                        ) : (
+                          <Copy size={11} />
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="font-mono text-text-muted text-[11px]">
+                      #ID-{plan.id} • Direct Tier
+                    </span>
+                  )}
+
                   <span
                     className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-poppins font-semibold ${
                       plan.isActive
@@ -626,7 +624,7 @@ const SubscriptionPlansTable: React.FC = () => {
                   >
                     <span
                       className={`w-1.5 h-1.5 rounded-full ${
-                        plan.isActive ? 'bg-emerald-400' : 'bg-neutral-400'
+                        plan.isActive ? 'bg-emerald-400 animate-pulse' : 'bg-neutral-400'
                       }`}
                     />
                     {plan.isActive ? 'Active' : 'Draft'}

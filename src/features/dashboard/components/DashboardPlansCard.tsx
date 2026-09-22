@@ -56,10 +56,7 @@ export default function DashboardPlansCard() {
               <h3 className="font-poppins font-bold text-base sm:text-lg text-text-main tracking-tight">
                 SaaS Monetization & Club Tiers
               </h3>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-poppins font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Stripe Live
-              </span>
+             
             </div>
             <p className="font-roboto text-xs text-text-muted mt-0.5">
               Active athlete and sports club membership tiers with automated Stripe billing

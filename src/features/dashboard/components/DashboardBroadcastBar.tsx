@@ -45,10 +45,7 @@ export const DashboardBroadcastBar: React.FC = () => {
               <h3 className="font-poppins font-bold text-sm sm:text-base text-text-main tracking-tight">
                 Push Transmission Center
               </h3>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-poppins font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                FCM Active
-              </span>
+           
             </div>
             <p className="font-roboto text-xs text-text-muted mt-0.5">
               Instant mobile announcements to the athlete community
