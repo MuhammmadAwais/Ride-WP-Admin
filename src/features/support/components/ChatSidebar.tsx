@@ -122,15 +122,15 @@ export function ChatSidebar({ threads, activeThreadId, onSelectThread, isHiddenO
               <button
                 key={tab}
                 onClick={() => setStatusFilter(tab)}
-                className={`px-3 py-1 rounded-lg text-xs font-poppins font-medium capitalize transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1 rounded-xl text-xs font-poppins font-bold capitalize transition-all flex items-center gap-1.5 cursor-pointer ${
                   isActive
-                    ? 'bg-accent text-white shadow-sm'
-                    : 'bg-surface hover:bg-main-bg text-text-muted hover:text-text-main border border-border/50'
+                    ? 'bg-accent text-white shadow-[0_4px_12px_-2px_rgba(235,113,43,0.35)]'
+                    : 'bg-main-bg hover:bg-hover text-text-muted hover:text-text-main border border-border/60'
                 }`}
               >
                 <span>{tab}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                  className={`text-[10px] font-black px-1.5 py-0.2 rounded-full ${
                     isActive ? 'bg-white/20 text-white' : 'bg-border/60 text-text-muted'
                   }`}
                 >
@@ -143,7 +143,7 @@ export function ChatSidebar({ threads, activeThreadId, onSelectThread, isHiddenO
       </div>
 
       {/* Ticket List */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar divide-y divide-border/40">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar divide-y divide-border/40">
         {filteredThreads.map((thread) => {
           const isActive = thread.id === activeThreadId;
           const name = thread.user?.fullName || thread.otherUser?.fullName || `User #${thread.userId}`;
@@ -156,37 +156,49 @@ export function ChatSidebar({ threads, activeThreadId, onSelectThread, isHiddenO
             <button
               key={thread.id}
               onClick={() => onSelectThread(thread.id)}
-              className={`w-full p-3.5 flex items-start gap-3 transition-colors text-left ${
-                isActive ? 'bg-accent/10 dark:bg-accent/5' : 'hover:bg-surface/80'
+              className={`w-full p-3.5 flex items-start gap-3 transition-all text-left cursor-pointer border-l-2 ${
+                isActive
+                  ? 'bg-accent/10 border-accent text-text-main shadow-xs'
+                  : 'hover:bg-surface/80 border-transparent text-text-muted hover:text-text-main'
               }`}
             >
-              {/* Avatar */}
+              {/* Squircle Avatar with live dot */}
               <div className="relative flex-shrink-0 mt-0.5">
                 <SafeImage
                   src={avatar}
                   alt={name}
-                  className="w-10 h-10 rounded-full object-cover bg-surface border border-border"
+                  className="w-10 h-10 rounded-xl object-cover bg-surface border border-border shadow-xs"
                   fallback={
-                    <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">
+                    <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-xs font-black text-accent font-poppins">
                       {name?.charAt(0) || '?'}
                     </div>
                   }
+                />
+                <span
+                  className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-surface ${
+                    isTicketOpen ? 'bg-amber-400' : 'bg-emerald-400'
+                  }`}
                 />
               </div>
 
               {/* Info Column */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
-                  <h3
-                    className={`font-poppins font-semibold text-[14px] truncate ${
-                      isActive ? 'text-text-main' : 'text-text-main/90'
-                    }`}
-                  >
-                    {renderHighlightedText(name, searchTerm)}
-                  </h3>
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <h3
+                      className={`font-poppins font-bold text-[13.5px] truncate ${
+                        isActive ? 'text-text-main' : 'text-text-main/90'
+                      }`}
+                    >
+                      {renderHighlightedText(name, searchTerm)}
+                    </h3>
+                    <span className="text-[9px] font-mono font-bold text-text-muted/70 px-1 py-0.2 rounded bg-main-bg border border-border/50 shrink-0">
+                      #{thread.id}
+                    </span>
+                  </div>
                   <span
                     className={`text-[10px] font-roboto whitespace-nowrap ml-1 ${
-                      isActive ? 'text-accent' : 'text-text-muted'
+                      isActive ? 'text-accent font-semibold' : 'text-text-muted'
                     }`}
                   >
                     {formatTime(thread.lastMessageAt || thread.createdAt)}
@@ -194,7 +206,7 @@ export function ChatSidebar({ threads, activeThreadId, onSelectThread, isHiddenO
                 </div>
 
                 {email && (
-                  <p className="text-[11px] text-text-muted truncate mb-1">
+                  <p className="text-[11px] font-roboto text-text-muted truncate mb-1">
                     {renderHighlightedText(email, searchTerm)}
                   </p>
                 )}
@@ -202,25 +214,25 @@ export function ChatSidebar({ threads, activeThreadId, onSelectThread, isHiddenO
                 <div className="flex items-center justify-between gap-2">
                   <p className="font-roboto text-[12px] text-text-muted truncate flex-1">
                     {thread.lastMessage?.senderType === 'admin' && (
-                      <span className="text-accent font-medium mr-1">You:</span>
+                      <span className="text-accent font-bold mr-1">You:</span>
                     )}
                     {renderHighlightedText(msg, searchTerm)}
                   </p>
 
                   <div className="flex items-center gap-1.5 shrink-0">
                     <span
-                      className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md border ${
+                      className={`text-[9px] font-poppins font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${
                         isTicketOpen
-                          ? 'bg-amber-500/10 text-amber-500 border-amber-500/20'
-                          : 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/25'
+                          : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
                       }`}
                     >
                       {thread.status || 'open'}
                     </span>
 
                     {(thread.unreadCount || 0) > 0 && (
-                      <div className="min-w-[18px] h-4.5 rounded-full bg-accent flex items-center justify-center px-1 shadow-sm shadow-accent/20">
-                        <span className="text-[10px] font-bold text-white leading-none">
+                      <div className="min-w-[18px] h-4.5 rounded-full bg-accent flex items-center justify-center px-1 shadow-xs shadow-accent/30">
+                        <span className="text-[10px] font-black text-white leading-none">
                           {thread.unreadCount}
                         </span>
                       </div>

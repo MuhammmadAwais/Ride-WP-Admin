@@ -510,5 +510,94 @@ Last updated: 2026-09-22
 **Pattern notes:**  
 SaaS tier card in the Payments control deck. Eliminates all generic filler and non-functional grey boxes. Directly parses and displays verified entitlements (Group rides, Marketplace listings, Club roster capacity, Strava sync, GPX export, club payouts) using clean checkmark items, auto-suppressing zero counts. Displays Stripe Product ID with one-click copy and active status pulse.
 
+---
+
+### ClubDetailTabs (Segmented Sub-Navigation Deck)
+
+File: `src/features/clubs/components/ClubDetailTabs.tsx`  
+Last updated: 2026-09-23  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface/80 backdrop-blur-md` (outer container), `bg-accent` (active indicator pill) |
+| Border           | `border border-border` |
+| Border radius    | `rounded-2xl` (outer container), `rounded-xl` (buttons and indicator) |
+| Text — primary   | `font-poppins text-xs sm:text-sm font-bold text-white` (active tab) |
+| Text — secondary | `font-poppins text-xs sm:text-sm font-bold text-text-muted hover:text-text-main` (inactive tabs) |
+| Spacing          | `p-1.5 gap-1.5` (container), `px-4 sm:px-5 py-2.5` (tab items) |
+| Hover state      | `hover:text-text-main hover:bg-hover/50` |
+| Shadow           | `shadow-xs` (container), `shadow-[0_4px_16px_-2px_rgba(235,113,43,0.35)]` (ember glow active indicator) |
+| Accent usage     | Signature `#EB712B` active GSAP pill with soft glow; active icons in crisp white |
+
+**Pattern notes:**  
+Elevated segmented horizontal tab bar for club workspaces (Rides, News, Leaderboard, Shop, Discounts, Marketplace, Members). Each tab features a dedicated Lucide icon and count pill, with smooth GSAP floating indicator animations.
+
+---
+
+### SupportChatWorkspace (Helpdesk & Real-Time Inquiries)
+
+Files: `src/features/support/components/ChatSidebar.tsx`, `ChatWindow.tsx`, `MessageBubble.tsx`  
+Last updated: 2026-09-23  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (workspace container), `bg-main-bg` (message viewport), `bg-gradient-to-br from-accent to-[#d45e1b]` (outgoing bubble), `bg-surface` (incoming bubble) |
+| Border           | `border border-border` (containers, bubbles, search bar) |
+| Border radius    | `rounded-3xl` (outer window), `rounded-2xl rounded-br-xs` (outgoing bubble), `rounded-2xl rounded-bl-xs` (incoming bubble), `rounded-2xl` (floating input card) |
+| Text — primary   | `font-poppins font-bold text-text-main` (ticket titles, usernames), `font-roboto text-[13.5px] sm:text-[14px]` (message copy) |
+| Text — secondary | `font-roboto text-xs text-text-muted` (ticket snippets, timestamps) |
+| Spacing          | `p-4 sm:p-6` (chat stream), `px-4 py-3` (message bubbles), `p-3 sm:p-4` (input bar) |
+| Hover state      | `hover:bg-hover/60 hover:border-accent/40` (ticket list items, action chips) |
+| Shadow           | `shadow-[0_4px_14px_-3px_rgba(235,113,43,0.35)]` (outgoing bubble & send button), `shadow-xs` (incoming bubble) |
+| Accent usage     | Signature `#EB712B` gradient for outgoing staff replies, active ticket left border, unread badge counter, and send CTA |
+
+**Pattern notes:**  
+Real-time support desk with Socket.io streaming. Purged all repetitive "SUPPORT STAFF (YOU)" and "USER" header tags from message bubbles. Outgoing messages feature a warm burnt-orange gradient and read status checkmarks; incoming messages feature an elevated dark card with user squircle avatar.
+
+---
+
+### AthleteDossierAndStats (User Profile & Telemetry Strip)
+
+Files: `src/features/users/pages/UserDetailPage.tsx`, `DetailTabs.tsx`  
+Last updated: 2026-09-23  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (executive card), `bg-surface/50 backdrop-blur-sm` (divided stats bar) |
+| Border           | `border border-border` (outer cards), `divide-border` (stats bar dividers) |
+| Border radius    | `rounded-3xl` (executive card & stats bar), `rounded-2xl` (avatar & icon containers) |
+| Text — primary   | `font-poppins font-black text-2xl sm:text-3xl text-text-main` (stats values, name) |
+| Text — secondary | `font-poppins text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-text-muted` (KPI labels), `font-roboto text-[11px] text-text-muted` (subtext) |
+| Spacing          | `p-6 sm:p-8` (executive card), `p-5 sm:p-6` (divided stats cells) |
+| Hover state      | `hover:bg-hover/30 transition-colors` (stats cells), `hover:bg-hover` (action buttons) |
+| Shadow           | `shadow-xs` (cards), `shadow-2xs` (chips) |
+| Accent usage     | Glowing squircle icon container (`from-[#EB712B]/15 via-[#EB712B]/10 to-transparent border-[#EB712B]/25 text-accent`), sky-blue telemetry container, amber rating container |
+
+**Pattern notes:**  
+Architectural executive profile layout. Replaces large empty right-hand void with an Athlete Record panel (ID `#ATH-xxx`, Support Desk shortcut, clipboard email copy). Telemetry stats are unified into an architectural divided bar with glowing gradient squircle icon containers. Empty states feature signature ember squircles.
+
+---
+
+### CreateEditPlanModal (SaaS Monetization Configurator)
+
+File: `src/features/subscriptions/components/CreateEditPlanModal.tsx`  
+Last updated: 2026-09-23  
+
+| Property         | Class |
+| ---------------- | ----- |
+| Background       | `bg-surface` (modal card), `bg-main-bg/40` (section containers), `bg-surface` (inputs, quota tiles) |
+| Border           | `border border-border` (modal card, section containers, inputs, tiles) |
+| Border radius    | `rounded-3xl` (modal card), `rounded-2xl` (section cards, quota tiles, buttons), `rounded-xl` (inputs) |
+| Text — primary   | `font-poppins font-bold text-xl text-text-main` (title), `font-poppins font-semibold text-xs sm:text-sm text-text-main` (labels) |
+| Text — secondary | `font-roboto text-sm text-text-muted` (subtitle), `font-roboto text-[11px] text-text-muted` (microcopy) |
+| Spacing          | `p-6 sm:p-8 max-w-2xl` (modal card), `p-5 space-y-4` (section cards) |
+| Hover state      | `hover:border-accent/30 hover:bg-hover/60` (capability tiles), `hover:scale-105 active:scale-95` (submit button) |
+| Shadow           | `shadow-[0_24px_60px_rgba(0,0,0,0.3)]` (dialog), `shadow-[0_8px_20px_-4px_rgba(235,113,43,0.5)]` (submit CTA) |
+| Accent usage     | Signature `#EB712B` header icon squircle, section icon badges, reactive dynamic currency prefix (`€`, `$`, `£`), active toggle switches, and primary submit button |
+
+**Pattern notes:**  
+Elevated SaaS tier configurator dialog. Structured into 4 distinct card containers (Tier Identity & Billing, Resource Quotas & Allowances, Platform Capabilities, Plan Availability). Eliminates hardcoded dollar symbols in favor of reactive currency matching (`€`, `$`, `£`).
+
+
 
 

@@ -20,7 +20,10 @@ import {
   MapPin,
   Clock,
   Eye,
+  Copy,
+  MessageSquare,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { DetailTabs, type TabId } from '../components/DetailTabs';
 import { DataTable, type ColumnDef } from '@/Components/ui/DataTable';
 import { useGetUserByIdQuery } from '../api/userApi';
@@ -127,9 +130,9 @@ export default function UserDetailPage() {
         </div>
       </div>
 
-      {/* ── 2. Executive Profile Card (Clean & Banner-free) ── */}
+      {/* ── 2. Executive Profile Card (Balanced Architectural Layout) ── */}
       <div className="rounded-3xl border border-border bg-surface shadow-xs p-6 sm:p-8">
-        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+        <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between">
           <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 items-start sm:items-center min-w-0 flex-1">
             {/* Squircle Avatar with Status Ring */}
             <div className="shrink-0 shadow-sm">
@@ -214,39 +217,100 @@ export default function UserDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* Right Action & Dossier Panel (Eliminates Empty Space) */}
+          <div className="flex flex-col items-start lg:items-end justify-between gap-3 self-stretch lg:self-auto border-t lg:border-t-0 lg:border-l border-border pt-4 lg:pt-0 lg:pl-6 shrink-0 min-w-[210px]">
+            <div className="flex lg:flex-col items-center lg:items-end justify-between w-full gap-1">
+              <span className="text-[10px] font-poppins font-black uppercase tracking-widest text-text-muted">
+                Athlete Record
+              </span>
+              <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-main-bg border border-border text-text-main shadow-2xs">
+                #ATH-{userId}
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 w-full justify-start lg:justify-end">
+              <Link
+                to={ROUTES.APP_SUPPORT}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent/10 hover:bg-accent/20 border border-accent/25 text-accent text-xs font-poppins font-bold transition-all shadow-2xs cursor-pointer"
+                title="Open live support thread"
+              >
+                <MessageSquare size={13} />
+                <span>Support Desk</span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(user.email || '');
+                  toast.success('Athlete email copied to clipboard');
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-main-bg hover:bg-hover border border-border text-text-muted hover:text-text-main text-xs font-poppins font-semibold transition-all cursor-pointer shadow-2xs"
+                title="Copy email to clipboard"
+              >
+                <Copy size={13} />
+                <span>Copy Email</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ── 3. Hero Telemetry Stats Strip ── */}
+      {/* ── 3. Hero Telemetry Stats Strip (Architectural Divided Bar) ── */}
       {data.stats && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="p-5 rounded-3xl border border-border bg-surface shadow-xs flex items-center gap-4 hover:border-accent/30 transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
-              <Bike size={24} />
+        <div className="rounded-3xl border border-border bg-surface/50 backdrop-blur-sm overflow-hidden shadow-xs w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border">
+            {/* Total Rides */}
+            <div className="p-5 sm:p-6 flex items-center justify-between gap-4 hover:bg-hover/30 transition-colors group">
+              <div className="space-y-1 min-w-0">
+                <span className="text-[10px] sm:text-[11px] font-poppins font-black uppercase tracking-widest text-text-muted block truncate">
+                  Total Group Rides
+                </span>
+                <p className="font-poppins font-black text-2xl sm:text-3xl text-text-main block truncate tracking-tight my-0.5">
+                  {data.stats.totalRides ?? 0}
+                </p>
+                <span className="text-[11px] font-roboto font-medium text-text-muted block truncate">
+                  Lifetime organized events
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent border border-[#EB712B]/25 flex items-center justify-center shrink-0 shadow-xs text-accent group-hover:scale-105 group-hover:border-[#EB712B]/40 transition-all">
+                <Bike size={22} />
+              </div>
             </div>
-            <div>
-              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider font-semibold">Total Rides</p>
-              <p className="text-text-main font-poppins font-black text-2xl mt-0.5">{data.stats.totalRides ?? 0}</p>
-            </div>
-          </div>
 
-          <div className="p-5 rounded-3xl border border-border bg-surface shadow-xs flex items-center gap-4 hover:border-info/30 transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-info/10 text-info flex items-center justify-center shrink-0">
-              <TrendingUp size={24} />
+            {/* Distance Covered */}
+            <div className="p-5 sm:p-6 flex items-center justify-between gap-4 hover:bg-hover/30 transition-colors group">
+              <div className="space-y-1 min-w-0">
+                <span className="text-[10px] sm:text-[11px] font-poppins font-black uppercase tracking-widest text-text-muted block truncate">
+                  Distance Covered
+                </span>
+                <p className="font-poppins font-black text-2xl sm:text-3xl text-text-main block truncate tracking-tight my-0.5">
+                  {data.stats.distanceCovered || '0 km'}
+                </p>
+                <span className="text-[11px] font-roboto font-medium text-text-muted block truncate">
+                  Verified route telemetry
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#EB712B]/15 via-[#EB712B]/10 to-transparent border border-[#EB712B]/25 flex items-center justify-center shrink-0 shadow-xs text-accent group-hover:scale-105 group-hover:border-[#EB712B]/40 transition-all">
+                <TrendingUp size={22} />
+              </div>
             </div>
-            <div>
-              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider font-semibold">Distance Covered</p>
-              <p className="text-text-main font-poppins font-black text-2xl mt-0.5">{data.stats.distanceCovered || '0 km'}</p>
-            </div>
-          </div>
 
-          <div className="p-5 rounded-3xl border border-border bg-surface shadow-xs flex items-center gap-4 hover:border-warning/30 transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-warning/10 text-warning flex items-center justify-center shrink-0">
-              <Star size={24} />
-            </div>
-            <div>
-              <p className="text-text-muted text-xs font-poppins uppercase tracking-wider font-semibold">Rider Reputation</p>
-              <p className="text-text-main font-poppins font-black text-2xl mt-0.5">{data.stats.userReputation || '5.0'} / 5.0</p>
+            {/* Rider Reputation */}
+            <div className="p-5 sm:p-6 flex items-center justify-between gap-4 hover:bg-hover/30 transition-colors group">
+              <div className="space-y-1 min-w-0">
+                <span className="text-[10px] sm:text-[11px] font-poppins font-black uppercase tracking-widest text-text-muted block truncate">
+                  Rider Reputation
+                </span>
+                <p className="font-poppins font-black text-2xl sm:text-3xl text-amber-400 block truncate tracking-tight my-0.5">
+                  {data.stats.userReputation || '5.0'} <span className="text-sm font-semibold text-text-muted">/ 5.0</span>
+                </p>
+                <span className="text-[11px] font-roboto font-medium text-text-muted block truncate">
+                  Community peer rating
+                </span>
+              </div>
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/15 via-amber-500/10 to-transparent border border-amber-500/25 flex items-center justify-center shrink-0 shadow-xs text-amber-400 group-hover:scale-105 group-hover:border-amber-500/40 transition-all">
+                <Star size={22} />
+              </div>
             </div>
           </div>
         </div>
@@ -466,8 +530,10 @@ function ClubsTabContent({
 }) {
   if (clubs.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-3xl p-8 text-center">
-        <Shield size={44} className="text-text-muted/30 mb-3" />
+      <div className="rounded-3xl border border-border bg-surface p-12 text-center flex flex-col items-center justify-center min-h-[300px] shadow-xs">
+        <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent mb-3.5 shadow-xs">
+          <Shield size={26} />
+        </div>
         <h3 className="font-poppins font-bold text-lg text-text-main mb-1">No Clubs Joined</h3>
         <p className="text-text-muted font-roboto text-sm max-w-sm">
           This athlete is not currently an active member of any registered club.
@@ -503,8 +569,10 @@ function ListingsTabContent({
 }) {
   if (listings.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-3xl p-8 text-center">
-        <Package size={44} className="text-text-muted/30 mb-3" />
+      <div className="rounded-3xl border border-border bg-surface p-12 text-center flex flex-col items-center justify-center min-h-[300px] shadow-xs">
+        <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent mb-3.5 shadow-xs">
+          <Package size={26} />
+        </div>
         <h3 className="font-poppins font-bold text-lg text-text-main mb-1">No Marketplace Listings</h3>
         <p className="text-text-muted font-roboto text-sm max-w-sm">
           This user has not listed any cycling or motorcycle gear in the community marketplace.
@@ -584,8 +652,10 @@ function ListingsTabContent({
 function PurchasesTabContent({ purchases }: { purchases: UserPurchase[] }) {
   if (purchases.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] bg-surface/50 border border-border border-dashed rounded-3xl p-8 text-center">
-        <Receipt size={44} className="text-text-muted/30 mb-3" />
+      <div className="rounded-3xl border border-border bg-surface p-12 text-center flex flex-col items-center justify-center min-h-[300px] shadow-xs">
+        <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent mb-3.5 shadow-xs">
+          <Receipt size={26} />
+        </div>
         <h3 className="font-poppins font-bold text-lg text-text-main mb-1">No Orders or Purchases</h3>
         <p className="text-text-muted font-roboto text-sm max-w-sm">
           This athlete has not placed any club shop orders or marketplace purchases yet.

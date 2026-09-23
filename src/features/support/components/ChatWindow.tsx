@@ -98,7 +98,7 @@ export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindo
       }`}
     >
       {/* Sticky Header with Ticket Metadata */}
-      <div className="relative z-10 h-18 px-4 sm:px-6 border-b border-border dark:border-white/5 bg-surface/90 backdrop-blur-xl flex items-center justify-between shadow-sm">
+      <div className="relative z-10 h-18 px-4 sm:px-6 border-b border-border bg-surface/90 backdrop-blur-xl flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={onBack}
@@ -111,9 +111,9 @@ export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindo
             <SafeImage
               src={avatar}
               alt={name}
-              className="w-11 h-11 rounded-full object-cover bg-main-bg border border-border"
+              className="w-11 h-11 rounded-2xl object-cover bg-main-bg border border-border shadow-xs"
               fallback={
-                <div className="w-11 h-11 rounded-full bg-accent/20 flex items-center justify-center text-sm font-bold text-accent">
+                <div className="w-11 h-11 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-sm font-black text-accent font-poppins shadow-xs">
                   {name.charAt(0)}
                 </div>
               }
@@ -125,14 +125,14 @@ export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindo
               <h3 className="font-poppins font-bold text-[15px] text-text-main truncate leading-tight">
                 {name}
               </h3>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface border border-border text-text-muted shrink-0">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-main-bg border border-border text-text-muted font-bold shrink-0">
                 #TKT-{activeThread.id}
               </span>
             </div>
 
             {email && (
-              <div className="flex items-center gap-1.5 text-text-muted text-[12px] font-roboto mt-0.5 truncate">
-                <Mail size={12} className="shrink-0" />
+              <div className="flex items-center gap-1.5 text-text-muted text-[11px] font-roboto mt-0.5 truncate">
+                <Mail size={12} className="shrink-0 text-accent/80" />
                 <span className="truncate">{email}</span>
               </div>
             )}
@@ -142,21 +142,21 @@ export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindo
         {/* Ticket Status & Assignment Indicator */}
         <div className="flex items-center gap-2 shrink-0">
           <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black uppercase tracking-wider border shadow-xs ${
               isTicketOpen
-                ? 'bg-amber-500/10 text-amber-500 border-amber-500/30'
-                : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30'
+                ? 'bg-amber-500/10 text-amber-400 border-amber-500/25'
+                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25'
             }`}
           >
             <span
               className={`w-1.5 h-1.5 rounded-full ${
-                isTicketOpen ? 'bg-amber-500' : 'bg-emerald-500'
+                isTicketOpen ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400 animate-pulse'
               }`}
             />
             {activeThread.status || 'open'}
           </span>
 
-          <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-xl bg-surface border border-border text-text-muted text-xs">
+          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-main-bg border border-border text-text-muted text-xs font-semibold">
             <ShieldCheck size={14} className="text-accent" />
             <span>Admin Desk</span>
           </div>
@@ -166,17 +166,17 @@ export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindo
       {/* Message Feed */}
       <div
         ref={containerRef}
-        className="relative z-10 flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar flex flex-col"
+        className="relative z-10 flex-1 overflow-y-auto p-4 sm:p-6 no-scrollbar flex flex-col"
       >
         <div className="text-center my-3">
-          <span className="inline-block px-3 py-1 bg-surface border border-border dark:border-white/5 rounded-lg text-[11px] font-roboto font-medium text-text-muted shadow-sm">
-            Ticket opened: {new Date(activeThread.createdAt).toLocaleString()}
+          <span className="inline-block px-3.5 py-1 bg-surface/80 border border-border rounded-full text-[11px] font-roboto font-medium text-text-muted shadow-xs">
+            Ticket opened • {new Date(activeThread.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })} at {new Date(activeThread.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
 
         {threadMessages.map((msg) => (
           <div key={msg.id} className="message-bubble-wrapper">
-            <MessageBubble message={msg} />
+            <MessageBubble message={msg} showSenderLabel={false} />
           </div>
         ))}
 
@@ -191,19 +191,19 @@ export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindo
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Bar */}
-      <div className="relative z-10 p-3 sm:p-4 bg-surface/90 backdrop-blur-xl border-t border-border dark:border-white/5">
-        <div className="max-w-4xl mx-auto flex items-end gap-2 bg-main-bg border border-border dark:border-white/5 rounded-2xl p-2 shadow-sm focus-within:border-accent/40 focus-within:ring-2 focus-within:ring-accent/10 transition-all">
+      {/* Modern Floating Input Bar */}
+      <div className="relative z-10 p-3 sm:p-4 bg-surface/90 backdrop-blur-xl border-t border-border">
+        <div className="max-w-4xl mx-auto flex items-end gap-2 bg-main-bg border border-border rounded-2xl p-2 shadow-xs focus-within:border-accent/40 focus-within:ring-2 focus-within:ring-accent/10 transition-all">
           <button
             type="button"
-            className="p-2 text-text-muted hover:text-accent transition-colors flex-shrink-0"
-            title="Emoji"
+            className="p-2 text-text-muted hover:text-accent transition-colors flex-shrink-0 cursor-pointer"
+            title="Insert emoji"
           >
             <Smile size={20} />
           </button>
           <button
             type="button"
-            className="p-2 text-text-muted hover:text-accent transition-colors flex-shrink-0"
+            className="p-2 text-text-muted hover:text-accent transition-colors flex-shrink-0 cursor-pointer"
             title="Attach file"
           >
             <Paperclip size={20} />
@@ -213,7 +213,7 @@ export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindo
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder={`Type support reply to ${name}...`}
-            className="flex-1 bg-transparent border-none outline-none resize-none max-h-32 min-h-[40px] py-2 text-[14px] font-roboto text-text-main placeholder:text-text-muted/50 custom-scrollbar"
+            className="flex-1 bg-transparent border-none outline-none resize-none max-h-32 min-h-[40px] py-2 text-[14px] font-roboto text-text-main placeholder:text-text-muted/50 no-scrollbar"
             rows={1}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
@@ -227,9 +227,9 @@ export function ChatWindow({ activeThread, onBack, isHiddenOnMobile }: ChatWindo
             type="button"
             onClick={handleSend}
             disabled={!inputText.trim()}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all mb-0.5 mr-0.5 ${
+            className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all mb-0.5 mr-0.5 cursor-pointer ${
               inputText.trim()
-                ? 'bg-accent text-white hover:bg-accent/90 shadow-md shadow-accent/20 cursor-pointer'
+                ? 'bg-accent text-white hover:bg-accent/90 shadow-[0_4px_14px_-2px_rgba(235,113,43,0.4)] hover:scale-105 active:scale-95'
                 : 'bg-surface text-text-muted/40 cursor-not-allowed border border-border/40'
             }`}
           >
