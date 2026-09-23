@@ -64,6 +64,7 @@ export default function DashboardPlansCard() {
           </div>
         </div>
 
+
         <div className="flex items-center gap-3 shrink-0">
           <span className="hidden md:inline-flex font-poppins font-semibold text-[11px] text-text-muted bg-main-bg/80 border border-border px-3 py-1.5 rounded-xl">
             EUR (€) Base Currency
