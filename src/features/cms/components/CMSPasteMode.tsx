@@ -35,10 +35,11 @@ Your Rights:
 You have the right to request deletion of your personal data at any time.
 Contact us at privacy@example.com to submit a request.`;
 
-const BLOCK_META = {
-  heading:   { label: 'H', cls: 'bg-[#EB712B]/12 text-[#EB712B]',  icon: <Heading   size={10} /> },
-  paragraph: { label: 'P', cls: 'bg-border/60 text-text-muted',    icon: <AlignLeft size={10} /> },
-  list:      { label: 'L', cls: 'bg-blue-500/10 text-blue-400',    icon: <List      size={10} /> },
+const BLOCK_META: Record<string, { label: string; cls: string; icon: React.ReactNode }> = {
+  heading:    { label: 'H1', cls: 'bg-accent/15 text-accent border border-accent/25', icon: <Heading size={10} /> },
+  subheading: { label: 'H2', cls: 'bg-surface border border-border text-text-main',    icon: <Heading size={9} /> },
+  paragraph:  { label: 'P',  cls: 'bg-border/60 text-text-muted',                     icon: <AlignLeft size={10} /> },
+  list:       { label: 'L',  cls: 'bg-info/10 text-info border border-info/20',       icon: <List size={10} /> },
 };
 
 const CMSPasteMode: React.FC<CMSPasteModeProps> = ({ onImport }) => {
@@ -52,9 +53,10 @@ const CMSPasteMode: React.FC<CMSPasteModeProps> = ({ onImport }) => {
     [rawText],
   );
 
-  const headingsCount   = parsedBlocks.filter(b => b.type === 'heading').length;
-  const paragraphsCount = parsedBlocks.filter(b => b.type === 'paragraph').length;
-  const listsCount      = parsedBlocks.filter(b => b.type === 'list').length;
+  const headingsCount    = parsedBlocks.filter(b => b.type === 'heading').length;
+  const subheadingsCount = parsedBlocks.filter(b => b.type === 'subheading').length;
+  const paragraphsCount  = parsedBlocks.filter(b => b.type === 'paragraph').length;
+  const listsCount       = parsedBlocks.filter(b => b.type === 'list').length;
 
   const handleImport = useCallback(() => {
     if (parsedBlocks.length === 0) return;
@@ -78,7 +80,7 @@ const CMSPasteMode: React.FC<CMSPasteModeProps> = ({ onImport }) => {
       {/* ── Textarea ──────────────────────────────────────────────────────────── */}
       <div className={`relative rounded-[24px] transition-all duration-400 ${
         hasContent
-          ? 'ring-2 ring-[#EB712B]/30 shadow-[0_0_40px_rgba(235,113,43,0.08)] bg-surface'
+          ? 'ring-2 ring-accent/30 shadow-[0_0_40px_rgba(235,113,43,0.08)] bg-surface'
           : 'ring-1 ring-border/60 hover:ring-border hover:shadow-[0_0_30px_rgba(235,113,43,0.03)] bg-surface'
       }`}>
         <textarea
@@ -89,7 +91,7 @@ const CMSPasteMode: React.FC<CMSPasteModeProps> = ({ onImport }) => {
           placeholder={PLACEHOLDER}
           rows={16}
           spellCheck={false}
-          className="w-full bg-transparent border-none rounded-[24px] px-6 py-5 pb-14 text-text-main font-roboto text-[14px] leading-[1.8] focus:outline-none focus:ring-1 focus:ring-[#EB712B]/50 resize-none transition-all custom-scrollbar placeholder:text-text-muted/50"
+          className="w-full bg-transparent border-none rounded-[24px] px-6 py-5 pb-14 text-text-main font-roboto text-[14px] leading-[1.8] focus:outline-none focus:ring-1 focus:ring-accent/50 resize-none transition-all custom-scrollbar placeholder:text-text-muted/50"
           aria-label="Paste or type content to import"
         />
 
@@ -113,7 +115,7 @@ const CMSPasteMode: React.FC<CMSPasteModeProps> = ({ onImport }) => {
               type="button"
               onClick={handleClear}
               title="Clear all content"
-              className="flex items-center gap-1.5 text-text-muted hover:text-red-400 font-poppins font-bold text-[10px] uppercase tracking-widest transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 text-text-muted hover:text-error font-poppins font-bold text-[10px] uppercase tracking-widest transition-colors cursor-pointer"
             >
               <Eraser size={12} strokeWidth={2.5} /> Clear
             </button>
@@ -140,8 +142,13 @@ const CMSPasteMode: React.FC<CMSPasteModeProps> = ({ onImport }) => {
           {/* Type chips */}
           <div className="flex items-center gap-1.5 flex-wrap">
             {headingsCount > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#EB712B]/10 font-poppins font-bold text-[9px] uppercase tracking-wider text-[#EB712B]">
-                <Heading size={9} /> {headingsCount} Heading{headingsCount > 1 ? 's' : ''}
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-accent/10 font-poppins font-bold text-[9px] uppercase tracking-wider text-accent border border-accent/20">
+                <Heading size={9} /> {headingsCount} H1
+              </span>
+            )}
+            {subheadingsCount > 0 && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface border border-border font-poppins font-bold text-[9px] uppercase tracking-wider text-text-main">
+                <Heading size={9} /> {subheadingsCount} H2
               </span>
             )}
             {paragraphsCount > 0 && (
@@ -150,7 +157,7 @@ const CMSPasteMode: React.FC<CMSPasteModeProps> = ({ onImport }) => {
               </span>
             )}
             {listsCount > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-500/10 font-poppins font-bold text-[9px] uppercase tracking-wider text-blue-400">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-info/10 border border-info/20 font-poppins font-bold text-[9px] uppercase tracking-wider text-info">
                 <List size={9} /> {listsCount} List{listsCount > 1 ? 's' : ''}
               </span>
             )}
@@ -170,7 +177,7 @@ const CMSPasteMode: React.FC<CMSPasteModeProps> = ({ onImport }) => {
         <div className="rounded-2xl border border-border bg-surface overflow-hidden">
           <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
             <div className="flex items-center gap-2">
-              <Sparkles size={13} className="text-[#EB712B]" />
+              <Sparkles size={13} className="text-accent" />
               <span className="font-poppins font-bold text-[10px] uppercase tracking-wider text-text-muted">
                 Detected Blocks
               </span>
@@ -182,7 +189,7 @@ const CMSPasteMode: React.FC<CMSPasteModeProps> = ({ onImport }) => {
 
           <div className="p-3 space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar">
             {parsedBlocks.slice(0, 6).map((block) => {
-              const meta = BLOCK_META[block.type];
+              const meta = BLOCK_META[block.type] || BLOCK_META.paragraph;
               const preview = Array.isArray(block.content)
                 ? (block.content as string[]).slice(0, 2).map(s => `• ${s}`).join('  ') +
                   (block.content.length > 2 ? '  …' : '')
@@ -217,7 +224,7 @@ const CMSPasteMode: React.FC<CMSPasteModeProps> = ({ onImport }) => {
           type="button"
           onClick={handleImport}
           disabled={parsedBlocks.length === 0 || isImporting}
-          className="flex-1 sm:flex-none bg-[#EB712B] hover:bg-[#d66524] disabled:opacity-35 text-white font-poppins font-bold text-[11px] uppercase tracking-widest py-3.5 px-10 rounded-xl transition-all shadow-sm shadow-[#EB712B]/20 cursor-pointer select-none flex items-center justify-center gap-2"
+          className="flex-1 sm:flex-none bg-accent hover:bg-accent/90 disabled:opacity-35 text-white font-poppins font-bold text-[11px] uppercase tracking-widest py-3.5 px-10 rounded-xl transition-all shadow-sm cursor-pointer select-none flex items-center justify-center gap-2"
         >
           {isImporting
             ? <><Loader2 size={14} className="animate-spin" /> Importing…</>
@@ -230,18 +237,18 @@ const CMSPasteMode: React.FC<CMSPasteModeProps> = ({ onImport }) => {
       {/* ── Syntax guide ─────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1.5 px-1 pt-1">
         {[
-          ['# Heading text',     '→ Heading block'],
-          ['ALL CAPS LINE',      '→ Heading block'],
-          ['"Section Name:"',   '→ Heading block (colon label)'],
+          ['# Heading text',     '→ Main Heading (H1)'],
+          ['## Subheading text', '→ Subheading (H2)'],
+          ['ALL CAPS LINE',      '→ Main Heading (H1)'],
+          ['"Section Name:"',    '→ Subheading (colon label)'],
           ['- or • item',        '→ Bullet list item'],
           ['1. 2. 3.',           '→ Numbered list'],
-          ['a. b. c.',           '→ Alphabetical sub-list'],
         ].map(([syntax, result]) => (
           <div key={syntax} className="flex items-center gap-2">
-            <code className="font-roboto text-[10px] text-[#EB712B] bg-[#EB712B]/8 px-1.5 py-0.5 rounded">
+            <code className="font-roboto text-[10px] text-accent bg-accent/10 px-1.5 py-0.5 rounded border border-accent/20">
               {syntax}
             </code>
-            <span className="font-roboto text-text-muted text-[10px] opacity-60">{result}</span>
+            <span className="font-roboto text-text-muted text-[10px] opacity-70">{result}</span>
           </div>
         ))}
       </div>

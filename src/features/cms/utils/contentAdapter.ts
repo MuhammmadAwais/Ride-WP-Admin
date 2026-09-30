@@ -72,6 +72,12 @@ export function serializeCMSBlocks(blocks: CMSBlock[]): string {
         return headingText.startsWith('#') ? headingText : `# ${headingText}`;
       }
 
+      if (block.type === 'subheading') {
+        const subText = (typeof block.content === 'string' ? block.content : '').trim();
+        if (!subText) return '';
+        return subText.startsWith('##') ? subText : `## ${subText}`;
+      }
+
       if (block.type === 'list') {
         const items = Array.isArray(block.content) ? block.content : [block.content];
         return items

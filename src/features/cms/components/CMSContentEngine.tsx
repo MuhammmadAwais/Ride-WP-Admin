@@ -156,9 +156,17 @@ export default function CMSContentEngine({
           ? activeLanguage === 'es'
             ? ['Nuevo elemento de lista']
             : ['New bullet item']
+          : type === 'heading'
+          ? activeLanguage === 'es'
+            ? 'Nuevo Encabezado Principal'
+            : 'New Section Heading'
+          : type === 'subheading'
+          ? activeLanguage === 'es'
+            ? 'Nueva Subsección'
+            : 'New Subheading'
           : activeLanguage === 'es'
-          ? 'Nuevo elemento de texto...'
-          : 'New text element...',
+          ? 'Nuevo párrafo de texto...'
+          : 'New paragraph text...',
     };
     setBlocks((prev) => [...prev, newBlock]);
   };
@@ -295,7 +303,7 @@ export default function CMSContentEngine({
       </div>
 
       {/* ── Main Content Card ────────────────────────────────────────────────── */}
-      <div className="w-full max-w-5xl bg-surface border border-border rounded-3xl p-5 sm:p-10 shadow-sm relative overflow-hidden">
+      <div className="w-full max-w-4xl bg-surface border border-border rounded-3xl p-6 sm:p-10 shadow-sm relative overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 size={32} className="animate-spin text-accent mb-3" />
@@ -309,7 +317,7 @@ export default function CMSContentEngine({
           <CMSPasteMode onImport={handleImportBlocks} />
         ) : (
           /* ── Block Editor Mode ──────────────────────────────────────────── */
-          <div ref={containerRef} className="w-full space-y-1">
+          <div ref={containerRef} className="w-full space-y-0.5">
             {blocks.map((block, index) => (
               <div
                 key={block.id}
@@ -321,20 +329,24 @@ export default function CMSContentEngine({
                   setDraggedIndex(null);
                   setDragOverIndex(null);
                 }}
-                className={`flex items-center gap-4 transition-all duration-200 rounded-2xl ${
-                  isEditing ? 'hover:bg-hover/30 p-2.5 -mx-2.5 border border-transparent' : ''
-                } ${draggedIndex === index ? 'opacity-30 scale-[0.98]' : ''} ${
-                  dragOverIndex === index && draggedIndex !== index
-                    ? 'border-2 border-dashed border-accent/40 bg-accent/5'
-                    : ''
-                }`}
+                className={
+                  isEditing
+                    ? `flex items-start gap-3 transition-all duration-200 rounded-2xl hover:bg-hover/30 p-2.5 -mx-2.5 border border-transparent ${
+                        draggedIndex === index ? 'opacity-30 scale-[0.98]' : ''
+                      } ${
+                        dragOverIndex === index && draggedIndex !== index
+                          ? 'border-2 border-dashed border-accent/40 bg-accent/5'
+                          : ''
+                      }`
+                    : 'w-full'
+                }
               >
                 {isEditing && (
                   <div
-                    className="cursor-grab active:cursor-grabbing text-text-muted/40 hover:text-text-main transition-colors shrink-0 p-1 select-none"
+                    className="cursor-grab active:cursor-grabbing text-text-muted/40 hover:text-text-main transition-colors shrink-0 p-1 mt-2.5 select-none"
                     title="Drag to reorder"
                   >
-                    <GripVertical size={20} />
+                    <GripVertical size={18} />
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
@@ -398,6 +410,13 @@ export default function CMSContentEngine({
                     className="bg-main-bg hover:bg-hover border border-border text-text-main font-poppins font-bold text-[10px] uppercase tracking-wider py-2.5 px-4 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 select-none"
                   >
                     <Heading size={13} className="text-accent" /> Heading
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleAddBlock('subheading')}
+                    className="bg-main-bg hover:bg-hover border border-border text-text-main font-poppins font-bold text-[10px] uppercase tracking-wider py-2.5 px-4 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 select-none"
+                  >
+                    <Heading size={11} className="text-accent opacity-80" /> Subheading
                   </button>
                   <button
                     type="button"

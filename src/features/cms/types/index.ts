@@ -1,4 +1,4 @@
-export type CMSBlockType = 'heading' | 'paragraph' | 'list';
+export type CMSBlockType = 'heading' | 'subheading' | 'paragraph' | 'list';
 
 export interface CMSBlock {
   id: string;
